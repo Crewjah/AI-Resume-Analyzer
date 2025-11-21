@@ -1,74 +1,41 @@
-# 🤖 AI Resume Analyzer
+# AI Resume Analyzer
 
-![AI Resume Analyzer](https://img.shields.io/badge/AI-Resume%20Analyzer-blue?style=for-the-badge&logo=artificial-intelligence)
-![Python](https://img.shields.io/badge/Python-3.8+-green?style=for-the-badge&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red?style=for-the-badge&logo=streamlit)
-![Machine Learning](https://img.shields.io/badge/ML-Powered-orange?style=for-the-badge&logo=tensorflow)
+A professional web application for analyzing resumes using AI and machine learning. Get insights on ATS compatibility, skills analysis, and job matching.
 
-A beautiful, modern web application that uses **Natural Language Processing (NLP)** and **Machine Learning** to analyze resumes intelligently. Get comprehensive insights, ATS compatibility scores, and personalized recommendations to improve your resume.
+## Features
 
-## ✨ Features
+- **Resume Analysis**: Upload and analyze resume files
+- **ATS Scoring**: Get compatibility scores for Applicant Tracking Systems
+- **Skills Detection**: Identify technical and professional skills
+- **Job Matching**: Compare resume against job descriptions
+- **Recommendations**: Get actionable improvement suggestions
 
-### 🎯 Core Analysis
-- **Smart Resume Parsing** - Extracts text from PDF, DOCX, and TXT files
-- **Skills Detection** - Identifies technical and soft skills with confidence scores
-- **ATS Compatibility** - Calculates Applicant Tracking System compatibility score
-- **Job Matching** - Compares resume against job descriptions for compatibility
-- **Experience Analysis** - Extracts and analyzes work experience and education
+## Installation
 
-### 🎨 Beautiful UI/UX
-- **Modern Design** - Gradient backgrounds and smooth animations
-- **Responsive Layout** - Works perfectly on desktop and mobile
-- **Interactive Charts** - Plotly-powered visualizations and gauges
-- **Real-time Analysis** - Live progress indicators and animated metrics
-- **Dark/Light Theme** - Beautiful color schemes with CSS animations
-
-### 📊 Advanced Analytics
-- **Skill Radar Charts** - Visual representation of skill categories
-- **Compatibility Gauges** - Beautiful score displays with color coding
-- **Keyword Analysis** - Missing and matching keyword identification
-- **Sentiment Analysis** - Resume tone and writing style evaluation
-- **Industry Matching** - Industry-specific keyword optimization
-
-### 💡 AI-Powered Recommendations
-- **Personalized Suggestions** - Tailored improvement recommendations
-- **Priority-Based** - High, medium, and low priority suggestions
-- **Industry-Specific** - Recommendations based on target industry
-- **Actionable Insights** - Clear steps to improve resume effectiveness
-
-## 🚀 Quick Start
-
-### Installation
-
-1. **Clone the repository**
+1. Clone the repository:
 ```bash
-git clone https://github.com/yourusername/ai-resume-analyzer.git
-cd ai-resume-analyzer
+git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
 ```
 
-2. **Create virtual environment**
-```bash
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
-```
-
-3. **Install dependencies**
+2. Install dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Download spaCy model**
+3. Run the application:
 ```bash
-python -m spacy download en_core_web_sm
+streamlit run streamlit_app.py
 ```
 
-5. **Run the application**
-```bash
-streamlit run app.py
-```
+## Deployment
 
-6. **Open in browser**
-Visit `http://localhost:8501` to use the application
+### Vercel Deployment
+
+1. Push your code to GitHub
+2. Connect your GitHub repository to Vercel
+3. Vercel will automatically detect the Streamlit app
+4. Deploy with default settings
 
 ## 🎨 UI Showcase
 
