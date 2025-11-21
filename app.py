@@ -1,19 +1,36 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
-import plotly.graph_objects as go
-from plotly.subplots import make_subplots
 import io
 import time
+import re
 from datetime import datetime
-import base64
 
-# Import custom modules
-from resume_analyzer import ResumeAnalyzer
-from ui_components import (create_animated_metric, create_skill_radar_chart, create_compatibility_gauge, 
-                           create_skills_treemap, create_keyword_comparison_chart, create_progress_chart,
-                           create_skill_proficiency_chart, create_sentiment_gauge, create_word_cloud_chart)
+# Try to import optional dependencies
+try:
+    import plotly.express as px
+    import plotly.graph_objects as go
+    from plotly.subplots import make_subplots
+    PLOTLY_AVAILABLE = True
+except ImportError:
+    PLOTLY_AVAILABLE = False
+    st.warning("⚠️ Plotly not available. Some visualizations will be simplified.")
+
+# Import custom modules with error handling
+try:
+    from resume_analyzer import ResumeAnalyzer
+    ANALYZER_AVAILABLE = True
+except ImportError:
+    ANALYZER_AVAILABLE = False
+    st.error("❌ Resume analyzer module not found. Using simplified analyzer.")
+
+try:
+    from ui_components import (create_animated_metric, create_skill_radar_chart, create_compatibility_gauge, 
+                               create_skills_treemap, create_keyword_comparison_chart, create_progress_chart,
+                               create_skill_proficiency_chart, create_sentiment_gauge, create_word_cloud_chart)
+    UI_COMPONENTS_AVAILABLE = True
+except ImportError:
+    UI_COMPONENTS_AVAILABLE = False
 
 # Configure page
 st.set_page_config(
@@ -382,8 +399,69 @@ def analyze_resume(uploaded_file, job_description, analysis_type, depth, industr
         progress_bar.progress(progress)
         time.sleep(0.8)  # Simulate processing time
     
-    # Initialize analyzer
-    analyzer = ResumeAnalyzer()
+    # Initialize analyzer with fallback
+    if ANALYZER_AVAILABLE:
+        analyzer = ResumeAnalyzer()
+    else:
+        # Fallback simple analyzer
+        class SimpleAnalyzer:
+            def __init__(self):
+                self.skills_database = [
+                    "Python", "Java", "JavaScript", "React", "Angular", "Vue.js",
+                    "Django", "Flask", "Node.js", "Express", "HTML", "CSS", "SQL",
+                    "MySQL", "PostgreSQL", "MongoDB", "AWS", "Azure", "Docker", "Git"
+                ]
+            
+            def extract_text_from_file(self, uploaded_file):
+                try:
+                    if uploaded_file.type == "text/plain":
+                        return str(uploaded_file.read(), "utf-8")
+                    else:
+                        return uploaded_file.read().decode('utf-8', errors='ignore')
+                except:
+                    return "Error reading file"
+            
+            def analyze_resume(self, resume_text, job_description="", analysis_type="Complete Analysis", depth=3, industry="Technology"):
+                word_count = len(resume_text.split())
+                found_skills = []
+                text_lower = resume_text.lower()
+                
+                for skill in self.skills_database:
+                    if skill.lower() in text_lower:
+                        count = text_lower.count(skill.lower())
+                        found_skills.append({
+                            'name': skill,
+                            'count': count,
+                            'confidence': min(100, count * 20 + 60),
+                            'category': 'Technical'
+                        })
+                
+                found_skills.sort(key=lambda x: x['confidence'], reverse=True)
+                ats_score = min(100, len(found_skills) * 10 + 30)
+                match_score = 50 if not job_description else min(100, len(set(job_description.lower().split()) & set(resume_text.lower().split())) * 2)
+                
+                exp_pattern = r'(\d+)[\+\s]*(?:years?|yrs?)[\s]*(?:of\s*)?(?:experience|exp)'
+                exp_match = re.search(exp_pattern, resume_text, re.IGNORECASE)
+                experience_years = int(exp_match.group(1)) if exp_match else 0
+                
+                return {
+                    'word_count': word_count,
+                    'skills': found_skills,
+                    'skill_count': len(found_skills),
+                    'top_skills': found_skills[:10],
+                    'ats_score': ats_score,
+                    'match_score': match_score,
+                    'experience_years': experience_years,
+                    'sections': ['Experience', 'Education', 'Skills'],
+                    'education_level': 'Bachelor',
+                    'skill_categories': {'Technical': len(found_skills)},
+                    'recommendations': [
+                        {'title': 'Add More Skills', 'description': 'Include more technical skills relevant to your field.', 'priority': 'Medium'},
+                        {'title': 'Improve ATS Score', 'description': 'Add more industry keywords to improve ATS compatibility.', 'priority': 'High'}
+                    ]
+                }
+        
+        analyzer = SimpleAnalyzer()
     
     # Process the uploaded file
     resume_text = analyzer.extract_text_from_file(uploaded_file)
@@ -479,8 +557,14 @@ def display_overview_tab(results):
     
     with col1:
         # ATS Compatibility Gauge
-        fig = create_compatibility_gauge(results['ats_score'], "ATS Compatibility Score")
-        st.plotly_chart(fig, use_container_width=True)
+        if UI_COMPONENTS_AVAILABLE and PLOTLY_AVAILABLE:
+            fig = create_compatibility_gauge(results['ats_score'], "ATS Compatibility Score")
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            # Simple progress bar fallback
+            st.markdown("### 🎯 ATS Compatibility Score")
+            st.progress(results['ats_score'] / 100)
+            st.metric("ATS Score", f"{results['ats_score']}/100")
     
     with col2:
         st.markdown("""
