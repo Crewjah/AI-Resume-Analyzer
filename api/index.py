@@ -486,9 +486,8 @@ def health():
         'version': '2.0'
     })
 
-# For Vercel
-def handler(request):
-    return app(request.environ, lambda *args: None)
+# For Vercel serverless deployment
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
 
 if __name__ == '__main__':
     app.run(debug=True)

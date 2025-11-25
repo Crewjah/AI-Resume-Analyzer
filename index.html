@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🚀 AI Resume Nexus - Ultra Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a0520 50%, #0f0a1a 100%);
+            color: #ffffff;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .title {
+            font-size: 4rem;
+            background: linear-gradient(45deg, #00f5ff, #bf00ff, #ff0080);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 50px 0 20px;
+            text-shadow: 0 0 30px rgba(0, 245, 255, 0.3);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { text-shadow: 0 0 20px rgba(0, 245, 255, 0.3); }
+            to { text-shadow: 0 0 40px rgba(0, 245, 255, 0.6), 0 0 60px rgba(191, 0, 255, 0.3); }
+        }
+        
+        .subtitle {
+            color: #00f5ff;
+            font-size: 1.5rem;
+            margin-bottom: 30px;
+        }
+        
+        .launch-btn {
+            background: linear-gradient(45deg, #00f5ff, #bf00ff);
+            color: white;
+            border: none;
+            padding: 20px 50px;
+            border-radius: 30px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 30px;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 30px rgba(0, 245, 255, 0.4);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .launch-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(191, 0, 255, 0.5);
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 60px 0;
+        }
+        
+        .feature-card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid rgba(0, 245, 255, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(191, 0, 255, 0.3);
+        }
+        
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+        }
+        
+        .feature-title {
+            color: #00f5ff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+        
+        .feature-desc {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+        }
+        
+        .status {
+            background: rgba(57, 255, 20, 0.2);
+            border: 1px solid #39ff14;
+            padding: 10px 20px;
+            border-radius: 25px;
+            color: #39ff14;
+            margin-top: 40px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="title">🚀 AI Resume Nexus</h1>
+        <p class="subtitle">⚡ Ultra-Modern Neural Analysis Engine ⚡</p>
+        
+        <a href="/api/" class="launch-btn">🧠 Launch Analysis Portal</a>
+        
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3 class="feature-title">ATS Optimization</h3>
+                <p class="feature-desc">Advanced AI algorithms analyze your resume for ATS compatibility and provide actionable optimization recommendations.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💼</div>
+                <h3 class="feature-title">Skills Detection</h3>
+                <p class="feature-desc">Intelligent skill extraction and matching against industry standards with comprehensive technology stack analysis.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3 class="feature-title">Multi-Format Support</h3>
+                <p class="feature-desc">Supports TXT, PDF, and DOCX formats with advanced parsing capabilities for accurate content extraction.</p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <h3 class="feature-title">Real-Time Analysis</h3>
+                <p class="feature-desc">Lightning-fast processing with neural networks delivering comprehensive insights in seconds.</p>
+            </div>
+        </div>
+        
+        <div class="status">
+            ✨ System Status: Online & Ready
+        </div>
+    </div>
+    
+    <script>
+        // Add some interactive effects
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.borderColor = 'rgba(191, 0, 255, 0.6)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.borderColor = 'rgba(0, 245, 255, 0.3)';
+            });
+        });
+    </script>
+</body>
+</html>
