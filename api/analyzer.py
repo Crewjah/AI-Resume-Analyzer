@@ -1,13 +1,16 @@
 """
-Resume analysis engine with skills detection and scoring
+Resume analysis engine with skills detection and scoring - Optimized for Vercel
 """
 import re
 from typing import Dict, List, Any
 import io
+import os
+
 try:
     import PyPDF2
 except ImportError:
     PyPDF2 = None
+
 try:
     from docx import Document
 except ImportError:
