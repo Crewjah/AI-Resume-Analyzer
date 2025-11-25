@@ -353,7 +353,7 @@ HTML_TEMPLATE = """
             formData.append('file', fileInput.files[0]);
             
             try {
-                const response = await fetch('/api/analyze', {
+                const response = await fetch('./analyze', {
                     method: 'POST',
                     body: formData
                 });
@@ -431,7 +431,7 @@ HTML_TEMPLATE = """
 def index():
     return render_template_string(HTML_TEMPLATE)
 
-@app.route('/api/analyze', methods=['POST'])
+@app.route('/analyze', methods=['POST'])
 def analyze():
     try:
         if 'file' not in request.files:
