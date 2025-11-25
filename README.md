@@ -64,18 +64,6 @@ streamlit run app.py
 - **Morphic floating effects** for cards
 - **Neural pulse animations** for interactive elements
 
-## 📁 Project Structure
-
-```
-AI-Resume-Analyzer/
-├── app.py                 # Main Streamlit application
-├── analyzer.py           # Resume analysis engine
-├── ui_components.py      # Ultra-modern UI components
-├── config.py            # Configuration settings
-├── requirements.txt     # Python dependencies
-└── README.md           # Project documentation
-```
-
 ## 🔧 Technical Stack
 
 - **Frontend**: Streamlit with custom CSS/HTML
@@ -84,9 +72,6 @@ AI-Resume-Analyzer/
 - **Design**: Custom cyberpunk UI with CSS animations
 - **Deployment**: Vercel-ready configuration
 
-## 🚀 Live Demo
-
-Experience the future of resume analysis: [AI Resume Nexus](https://your-vercel-deployment-url.vercel.app)
 
 ## 🤝 Contributing
 
@@ -264,14 +249,6 @@ flake8 .
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙋‍♂️ Support
-
-Having issues? We're here to help!
-
-- **📧 Email**: support@ai-resume-analyzer.com
-- **🐛 Bug Reports**: [GitHub Issues](https://github.com/yourusername/ai-resume-analyzer/issues)
-- **💬 Discussions**: [GitHub Discussions](https://github.com/yourusername/ai-resume-analyzer/discussions)
-- **📚 Documentation**: [Wiki](https://github.com/yourusername/ai-resume-analyzer/wiki)
 
 ## 🌟 Acknowledgments
 
@@ -286,7 +263,6 @@ Having issues? We're here to help!
 
 **Made with ❤️ by the AI Resume Analyzer Team**
 
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/ai-resume-analyzer?style=social)](https://github.com/yourusername/ai-resume-analyzer)
-[![Twitter Follow](https://img.shields.io/twitter/follow/yourusername?style=social)](https://twitter.com/yourusername)
+[![GitHub stars](https://img.shields.io/github/stars/Crewjah/ai-resume-analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer).
 
 </div>
