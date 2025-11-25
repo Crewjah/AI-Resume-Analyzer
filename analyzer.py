@@ -3,6 +3,15 @@ Resume analysis engine with skills detection and scoring
 """
 import re
 from typing import Dict, List, Any
+import io
+try:
+    import PyPDF2
+except ImportError:
+    PyPDF2 = None
+try:
+    from docx import Document
+except ImportError:
+    Document = None
 
 class ResumeAnalyzer:
     def __init__(self):
@@ -29,7 +38,9 @@ class ResumeAnalyzer:
             if uploaded_file.type == "text/plain":
                 return str(uploaded_file.read(), "utf-8")
             elif uploaded_file.type == "application/pdf":
-                return "PDF parsing requires additional setup. Please use TXT files for now."
+                return self._extract_pdf_text(uploaded_file)
+            elif uploaded_file.type == "application/vnd.openxmlformats-officedocument.wordprocessingml.document":
+                return self._extract_docx_text(uploaded_file)
             else:
                 return uploaded_file.read().decode('utf-8', errors='ignore')
         except Exception as e:
@@ -168,7 +179,7 @@ class ResumeAnalyzer:
         
         return {
             'match_score': match_score,
-            'matching_keywords': matching_keywords[:15],  # Top 15
+            'matched_keywords': matching_keywords[:15],  # Top 15
             'missing_keywords': missing_keywords[:15],    # Top 15
             'total_job_keywords': len(job_keywords)
         }
@@ -230,11 +241,15 @@ class ResumeAnalyzer:
         # Job matching
         job_analysis = self.analyze_job_match(resume_text, job_description)
         
+        # Extract professional keywords
+        keywords = self._extract_keywords(resume_text)
+        
         # Compile results
         results = {
             'word_count': word_count,
-            'skills': skills[:20],  # Top 20 skills
+            'skills': self._format_skills_for_display(skills[:20]),  # Top 20 skills
             'skill_count': len(skills),
+            'keywords': keywords,
             'ats_score': ats_score,
             'experience_years': experience_years,
             'job_analysis': job_analysis if job_description else None
@@ -244,3 +259,67 @@ class ResumeAnalyzer:
         results['recommendations'] = self.generate_recommendations(results)
         
         return results
+    
+    def _extract_keywords(self, text: str) -> List[str]:
+        """Extract professional keywords from text"""
+        professional_keywords = [
+            "leadership", "management", "communication", "problem-solving", "teamwork",
+            "project management", "strategic planning", "budget management", "training",
+            "analysis", "research", "development", "implementation", "optimization",
+            "collaboration", "mentoring", "negotiation", "presentation", "documentation"
+        ]
+        
+        found_keywords = []
+        text_lower = text.lower()
+        
+        for keyword in professional_keywords:
+            if keyword in text_lower:
+                found_keywords.append(keyword.title())
+        
+        return found_keywords[:10]  # Top 10 keywords
+    
+    def _format_skills_for_display(self, skills: List[Dict]) -> Dict[str, List[str]]:
+        """Format skills data for UI display"""
+        formatted_skills = {}
+        
+        for skill in skills:
+            category = skill.get('category', 'Other')
+            if category not in formatted_skills:
+                formatted_skills[category] = []
+            formatted_skills[category].append(skill['name'])
+        
+        return formatted_skills
+    
+    def _extract_pdf_text(self, uploaded_file) -> str:
+        """Extract text from PDF file"""
+        if PyPDF2 is None:
+            return "PDF processing requires PyPDF2 library. Please install it or use TXT files."
+        
+        try:
+            pdf_reader = PyPDF2.PdfReader(io.BytesIO(uploaded_file.read()))
+            text = ""
+            
+            for page in pdf_reader.pages:
+                text += page.extract_text() + "\n"
+            
+            return text.strip()
+            
+        except Exception as e:
+            return f"Error reading PDF file: {str(e)}. Please try a different file or format."
+    
+    def _extract_docx_text(self, uploaded_file) -> str:
+        """Extract text from DOCX file"""
+        if Document is None:
+            return "DOCX processing requires python-docx library. Please install it or use TXT files."
+        
+        try:
+            doc = Document(io.BytesIO(uploaded_file.read()))
+            text = ""
+            
+            for paragraph in doc.paragraphs:
+                text += paragraph.text + "\n"
+            
+            return text.strip()
+            
+        except Exception as e:
+            return f"Error reading DOCX file: {str(e)}. Please try a different file or format."
