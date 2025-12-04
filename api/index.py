@@ -21,7 +21,7 @@ HTML_TEMPLATE = """
         <div class="header">
             <h1 class="title">AI Resume Analyzer</h1>
             <p style="color: #9fb0c8; font-size: 1rem; margin-top: 6px;">
-                Accurate resume parsing • ATS-friendly guidance • PDF/DOCX/TXT
+                Clean, accurate resume parsing — PDF, DOCX, TXT
             </p>
         </div>
         
@@ -33,12 +33,12 @@ HTML_TEMPLATE = """
                 <p style="color: #9fb0c8; margin-bottom: 12px; font-size: 0.95rem;">
                     Supported formats: <strong>PDF, DOCX, TXT</strong>. Files must contain resume content.
                 </p>
-                <p style="color: #9fb0c8; margin-top: 4px; font-size: 0.85rem;">Recommendation: upload a resume with at least <strong>2 KB</strong> of content.</p>
+                <p style="color: #9fb0c8; margin-top: 4px; font-size: 0.85rem;">Tip: upload a complete resume (recommended &gt;2 KB).</p>
                 <form id="uploadForm" enctype="multipart/form-data">
                     <input type="file" id="resumeFile" name="file" accept=".txt,.pdf,.docx" required>
                     <br>
                     <button type="submit" class="analyze-btn">
-                        Analyze Resume
+                        Analyze
                     </button>
                 </form>
                 <div id="fileWarning" style="display:none; margin-top:10px; color: #ff6b6b; font-size:0.95rem;"></div>
@@ -48,7 +48,7 @@ HTML_TEMPLATE = """
         <div class="loading" id="loading">
             <div class="spinner"></div>
             <p style="color: #cfe6ff; font-size: 1.05rem;" class="pulse-text">
-                Processing your file — this typically takes a few seconds.
+                Processing — a few seconds.
             </p>
         </div>
         
