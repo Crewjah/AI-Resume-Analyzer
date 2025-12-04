@@ -1,6 +1,142 @@
-# ⚡ AI Resume Nexus - Ultra-Modern Resume Analyzer
+"""
+AI-Resume-Analyzer
 
-A cutting-edge cyberpunk-themed web application for AI-powered resume analysis. Experience next-generation neural intelligence for career advancement with stunning visual design.
+Small, practical resume analysis service that parses resumes (PDF, DOCX, TXT) and returns structured results: detected skills, ATS compatibility score, experience years, and concise recommendations.
+
+This repository contains:
+- `src/` — canonical analyzer implementation
+- `api/` — Flask app and simple static UI
+- `app.py` — optional Streamlit UI
+- `tests/` — pytest unit and integration tests
+- `Dockerfile`, `docker-compose.yml` — container run instructions
+
+Quick start (local)
+
+1. Create virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+2. Run the Flask app (development):
+
+```bash
+export PYTHONPATH=.
+python api/index.py
+# Open http://127.0.0.1:5000
+```
+
+3. Run tests:
+
+```bash
+pytest -q
+```
+
+Docker
+
+```bash
+# build
+docker build -t ai-resume-analyzer:local .
+
+# run (maps host 5000 -> container 8000)
+docker run -d --name ai-resume-container -p 5000:8000 ai-resume-analyzer:local
+
+# verify
+curl http://127.0.0.1:5000/health
+```
+
+CI
+
+- The repository includes `.github/workflows/ci.yml` which starts the service with `gunicorn` and waits for `/health` before running tests.
+
+Design decisions
+
+- Core parsing/analysis logic lives under `src/` to avoid duplication and enable reuse by other frontends.
+- The API validates uploads and returns clear 400 responses for invalid/too-small files (no random outputs).
+- UI is intentionally minimal and professional (concise copy, no excessive decorations).
+
+Contributing
+
+- Run tests locally and open PRs. See `tests/` for examples.
+
+License
+
+- This project is open-source; add/choose a license file if you plan to publish.
+
+"""
+
+"""
+AI-Resume-Analyzer
+
+Small, practical resume analysis service that parses resumes (PDF, DOCX, TXT) and returns structured results: detected skills, ATS compatibility score, experience years, and concise recommendations.
+
+This repository contains:
+- `src/` — canonical analyzer implementation
+- `api/` — Flask app and simple static UI
+- `app.py` — optional Streamlit UI
+- `tests/` — pytest unit and integration tests
+- `Dockerfile`, `docker-compose.yml` — container run instructions
+
+Quick start (local)
+
+1. Create virtual environment and install dependencies:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+2. Run the Flask app (development):
+
+```bash
+export PYTHONPATH=.
+python api/index.py
+# Open http://127.0.0.1:5000
+```
+
+3. Run tests:
+
+```bash
+pytest -q
+```
+
+Docker
+
+```bash
+# build
+docker build -t ai-resume-analyzer:local .
+
+# run (maps host 5000 -> container 8000)
+docker run -d --name ai-resume-container -p 5000:8000 ai-resume-analyzer:local
+
+# verify
+curl http://127.0.0.1:5000/health
+```
+
+CI
+
+- The repository includes `.github/workflows/ci.yml` which starts the service with `gunicorn` and waits for `/health` before running tests.
+
+Design decisions
+
+- Core parsing/analysis logic lives under `src/` to avoid duplication and enable reuse by other frontends.
+- The API validates uploads and returns clear 400 responses for invalid/too-small files (no random outputs).
+- UI is intentionally minimal and professional (concise copy, no excessive decorations).
+
+Contributing
+
+- Run tests locally and open PRs. See `tests/` for examples.
+
+License
+
+- This project is open-source; add/choose a license file if you plan to publish.
+
+"""
 
 ## 🚀 Features
 
