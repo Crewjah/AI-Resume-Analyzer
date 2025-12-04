@@ -24,7 +24,18 @@ cd AI-Resume-Analyzer
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Run the website (two options):
+
+- Option A — Run the Flask webapp (API + static UI):
+```bash
+# Start with the built-in server for development:
+python api/index.py
+
+# Or run with gunicorn (production):
+gunicorn api.index:app --bind 0.0.0.0:8000
+```
+
+- Option B — Run the Streamlit frontend (alternative UI):
 ```bash
 streamlit run app.py
 ```
@@ -45,6 +56,30 @@ streamlit run app.py
 ```bash
 # Start the development server
 streamlit run app.py
+```
+
+### Docker (recommended for reproducible deployment)
+
+Build and run the application in Docker locally:
+
+```bash
+# Build the Docker image (from project root)
+docker build -t ai-resume-analyzer:local .
+
+# Run the container exposing port 5000
+docker run --rm -p 5000:5000 ai-resume-analyzer:local
+
+# Then open http://127.0.0.1:5000
+```
+
+If you prefer docker-compose (included), start services with:
+
+```bash
+docker-compose up --build
+```
+
+Note: If your environment does not support Docker, you can still run the Flask app directly as described above.
+
 
 # Access at http://localhost:8501
 ```
@@ -106,13 +141,19 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ```
 ai-resume-analyzer/
-├── app.py                 # Main Streamlit application
-├── resume_analyzer.py     # Core NLP and ML analysis
-├── ui_components.py       # Beautiful UI components and charts
-├── config.py             # Configuration and settings
-├── requirements.txt      # Python dependencies
-├── README.md            # This file
-└── assets/              # Static assets (if any)
+├── app.py                 # Main Streamlit application (optional UI)
+├── api/                   # Flask API and server-side web UI
+│   ├── index.py           # Flask app entrypoint (serves site and /analyze)
+│   └── analyzer.py        # thin wrapper (re-exports centralized analyzer)
+├── src/                   # Shared code (analyzer, config)
+│   ├── analyzer.py        # Canonical ResumeAnalyzer implementation
+│   └── config.py          # Centralized configuration
+├── ui_components.py       # Streamlit UI building blocks
+├── requirements.txt       # Python dependencies
+├── Procfile               # Production entry (Heroku / platform)
+├── vercel.json            # Vercel configuration (optional)
+├── README.md              # This file
+└── assets/                # Static assets (if any)
 ```
 
 ## 🛠️ Tech Stack

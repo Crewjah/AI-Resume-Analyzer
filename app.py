@@ -8,7 +8,7 @@ import time
 from datetime import datetime
 
 # Import custom modules
-from analyzer import ResumeAnalyzer
+from src.analyzer import ResumeAnalyzer
 from ui_components import (
     load_css, create_hero_header, create_metric_card, create_glass_card,
     display_skills_showcase, display_keywords_showcase, create_progress_bar,
@@ -16,12 +16,12 @@ from ui_components import (
     create_upload_zone, create_feature_showcase, create_success_message, 
     create_error_message
 )
-from config import APP_CONFIG, SUPPORTED_FILE_TYPES, SCORING_THRESHOLDS
+from src.config import APP_CONFIG, SUPPORTED_FILE_TYPES, SCORING_THRESHOLDS
 
 # Configure page
 st.set_page_config(
     page_title=APP_CONFIG['title'],
-    page_icon="📄",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -43,17 +43,12 @@ def main():
         
         st.markdown("---")
         st.markdown("""
-        <div style="text-align: center; color: white; margin-top: 2rem; padding: 1.5rem; 
-         background: linear-gradient(145deg, rgba(0,245,255,0.1), rgba(191,0,255,0.1)); 
-         border-radius: 16px; border: 1px solid rgba(0,245,255,0.3);">
-            <h4 style="color: var(--neon-cyan); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">
-                📡 NEURAL FILE FORMATS
+        <div style="text-align: center; color: white; margin-top: 2rem; padding: 1rem; 
+         border-radius: 8px;">
+            <h4 style="color: #cfe6ff; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.6px;">
+                Supported file formats
             </h4>
-            <p style="color: rgba(255,255,255,0.9); font-family: 'JetBrains Mono', monospace;">
-                <span style="color: var(--neon-green);">◉</span> TXT files<br>
-                <span style="color: var(--neon-purple);">◉</span> PDF files<br>
-                <span style="color: var(--neon-pink);">◉</span> DOCX files
-            </p>
+            <p style="color: #9fb0c8;">TXT, PDF, DOCX</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -64,19 +59,12 @@ def main():
         # File upload section with modern design
         create_glass_card(
             content="""
-            <div style="text-align: center; padding: 2rem 1rem;">
-                <div style="font-size: 4rem; margin-bottom: 1.5rem;">📡</div>
-                <h4 style="color: var(--neon-cyan); font-size: 1.4rem; font-weight: 700; 
-                 margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px; 
-                 text-shadow: 0 0 20px var(--neon-cyan);">INITIALIZE NEURAL UPLOAD</h4>
-                <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem; line-height: 1.6; margin: 0;">
-                    Upload your career data matrix for advanced <br>
-                    <span style="color: var(--neon-purple); font-weight: 600;">quantum analysis</span> and 
-                    <span style="color: var(--neon-pink); font-weight: 600;">holographic processing</span>
-                </p>
+            <div style="text-align: center; padding: 1rem 0.5rem;">
+                <h4 style="color: #cfe6ff; font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem;">Upload resume</h4>
+                <p style="color: #9fb0c8; font-size: 0.98rem; margin: 0;">Provide your resume file to begin analysis.</p>
             </div>
             """,
-            title="🚀 Neural Resume Processing Hub"
+            title="Upload"
         )
         
         uploaded_file = st.file_uploader(
@@ -108,38 +96,34 @@ def main():
         )
         
         job_description = st.text_area(
-            "Neural Job Matrix Input",
+            "Job description (optional)",
             height=160,
-            placeholder="⚡ NEURAL INTERFACE ACTIVE \n\nPaste complete job description here to initialize:\n• Quantum compatibility algorithms\n• Holographic keyword matching\n• Advanced neural analysis protocols\n\nSystem ready for data input...",
+            placeholder="Paste the job description to get a role-specific match (optional).",
             label_visibility="collapsed",
             key="quantum_job_matrix"
         )
     
     with col2:
         # Status panel with modern design
-        if uploaded_file:
+            if uploaded_file:
             file_size = len(uploaded_file.getvalue()) / 1024  # KB
             create_status_badge("File Uploaded Successfully", "success")
             
             create_glass_card(
                 content=f"""
                 <div style="text-align: center; padding: 2rem 1rem;">
-                    <div style="font-size: 4rem; margin-bottom: 1.5rem;">📄</div>
-                    <h4 style="color: var(--neon-green); font-size: 1.3rem; font-weight: 700; 
-                     margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; 
-                     text-shadow: 0 0 20px var(--neon-green);">FILE ACQUIRED</h4>
+                    <h4 style="color: #cfe6ff; font-size: 1.05rem; font-weight: 600; margin-bottom: 0.6rem;">File details</h4>
                     <div style="background: rgba(0,245,255,0.15); padding: 1.5rem; border-radius: 16px; 
                      border: 1px solid rgba(0,245,255,0.4); margin-bottom: 1.5rem;">
-                        <p style="color: var(--neon-cyan); font-family: 'JetBrains Mono', monospace; 
-                         font-size: 1.1rem; margin: 0; word-break: break-all; font-weight: 600;">{uploaded_file.name}</p>
+                        <p style="color: #cfe6ff; font-family: 'JetBrains Mono', monospace; 
+                         font-size: 1rem; margin: 0; word-break: break-all; font-weight: 600;">{uploaded_file.name}</p>
                     </div>
                     <div style="text-align: center;">
-                        <div style="color: rgba(255,255,255,0.9); font-size: 1.1rem; margin-bottom: 1rem;">
-                            📏 Size: <span style="color: var(--neon-green); font-weight: 700;">{file_size:.1f} KB</span>
+                        <div style="color: #9fb0c8; font-size: 0.98rem; margin-bottom: 1rem;">
+                            Size: <span style="color: #cfe6ff; font-weight: 600;">{file_size:.1f} KB</span>
                         </div>
-                        <div style="color: var(--neon-green); font-weight: 700; font-size: 1.2rem; 
-                         text-transform: uppercase; letter-spacing: 2px;">
-                            ✅ READY FOR NEURAL ANALYSIS
+                        <div style="color: #9fb0c8; font-weight: 600; font-size: 0.98rem;">
+                            Ready for analysis
                         </div>
                     </div>
                 </div>
@@ -148,32 +132,26 @@ def main():
             )
             
             if job_description:
-                st.info("🎯 Job description provided - enhanced matching available")
+                st.info("Job description provided — role-specific matching enabled")
             else:
-                st.warning("💡 Add job description for better insights")
+                st.info("No job description — generic analysis will be provided")
         else:
-            create_status_badge("Waiting for Resume Upload", "warning")
+            create_status_badge("Waiting for resume", "warning")
             
             create_glass_card(
                 content="""
-                <div style="text-align: center; padding: 3rem 1rem;">
-                    <div style="font-size: 5rem; margin-bottom: 2rem; opacity: 0.8;">📤</div>
-                    <h4 style="color: var(--neon-orange); font-size: 1.4rem; font-weight: 700; 
-                     margin-bottom: 1.5rem; text-transform: uppercase; letter-spacing: 2px; 
-                     text-shadow: 0 0 20px var(--neon-orange);">AWAITING NEURAL INPUT</h4>
-                    <p style="color: rgba(255,255,255,0.9); font-size: 1.2rem; line-height: 1.6; margin: 0;">
-                        Initialize career matrix upload to begin <br>
-                        <span style="color: var(--neon-cyan); font-weight: 700; text-shadow: 0 0 15px var(--neon-cyan);">quantum analysis protocols</span>
-                    </p>
+                <div style="text-align: center; padding: 2rem 1rem;">
+                    <h4 style="color: #cfe6ff; font-size: 1.05rem; margin-bottom: 0.5rem;">Waiting for resume</h4>
+                    <p style="color: #9fb0c8;">Upload a resume file to see results and recommendations.</p>
                 </div>
                 """,
-                title="📊 System Status"
+                title="System Status"
             )
     
     # Analysis section with modern button
     if uploaded_file:
         st.markdown("<br>", unsafe_allow_html=True)
-        if st.button("🚀 Analyze Resume", type="primary", use_container_width=True, key="neural_analyze_button"):
+        if st.button("Analyze", type="primary", use_container_width=True, key="neural_analyze_button"):
             analyze_resume(analyzer, uploaded_file, job_description)
 
 def analyze_resume(analyzer, uploaded_file, job_description):
@@ -182,27 +160,27 @@ def analyze_resume(analyzer, uploaded_file, job_description):
     # Show loading animation
     loading_placeholder = st.empty()
     with loading_placeholder:
-        show_loading_animation("🔍 Analyzing your resume...")
+        show_loading_animation("Analyzing your resume...")
         time.sleep(1)  # Brief pause for animation effect
     
     try:
         # Extract text from file
         resume_text = analyzer.extract_text_from_file(uploaded_file)
         
-        # Check if text extraction was successful
-        if resume_text.startswith("Error reading file") or "requires additional setup" in resume_text:
-            loading_placeholder.empty()
-            create_error_message(resume_text)
-            return
-        
         # Perform analysis
         results = analyzer.analyze_resume(resume_text, job_description)
+
+        # If analyzer determined the text is invalid, show error and return
+        if isinstance(results, dict) and results.get('valid') is False:
+            loading_placeholder.empty()
+            create_error_message(results.get('message', 'Invalid resume content'))
+            return
         
         # Clear loading animation
         loading_placeholder.empty()
         
         # Display success message
-        create_success_message("Analysis Completed Successfully!")
+        create_success_message("Analysis completed")
         
         # Display results with modern UI
         display_modern_results(results)
@@ -394,17 +372,19 @@ def display_job_matching(results):
     else:
         st.error("❌ Low match. Consider significant improvements for this specific role.")
     
-    # Display keywords
-    display_keywords(job_analysis['matching_keywords'], job_analysis['missing_keywords'])
+    # Display keywords (standardized key: 'matched_keywords')
+    matched = job_analysis.get('matched_keywords') or job_analysis.get('matching_keywords') or []
+    missing = job_analysis.get('missing_keywords', [])
+    display_keywords(matched, missing)
     
     # Statistics
     col1, col2, col3 = st.columns(3)
     with col1:
         st.metric("Total Job Keywords", job_analysis['total_job_keywords'])
     with col2:
-        st.metric("Matching Keywords", len(job_analysis['matching_keywords']))
+        st.metric("Matching Keywords", len(matched))
     with col3:
-        st.metric("Missing Keywords", len(job_analysis['missing_keywords']))
+        st.metric("Missing Keywords", len(missing))
 
 if __name__ == "__main__":
     main()

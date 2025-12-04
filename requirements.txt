@@ -1,4 +1,9 @@
 flask==2.3.3
+streamlit
+pandas
+numpy
 PyPDF2==3.0.1
 python-docx==1.1.0
 gunicorn==21.2.0
+pytest
+requests
