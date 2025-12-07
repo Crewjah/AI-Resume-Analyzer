@@ -1,8 +1,9 @@
 flask==2.3.3
-streamlit
+flask-cors==3.0.10
+streamlit==1.26.0
 pandas
 numpy
-PyPDF2==3.0.1
+pypdf==3.15.0
 python-docx==1.1.0
 gunicorn==21.2.0
 pytest

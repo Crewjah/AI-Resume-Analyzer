@@ -5,10 +5,20 @@ import re
 from typing import Dict, List, Any
 import io
 
+# Prefer the modern `pypdf` package, fall back to legacy `PyPDF2` if needed
 try:
-    import PyPDF2
-except ImportError:
-    PyPDF2 = None
+    from pypdf import PdfReader as _PdfReader
+    PDF_LIB = 'pypdf'
+except Exception:
+    try:
+        import PyPDF2
+
+        # PyPDF2 exposes PdfReader class
+        _PdfReader = PyPDF2.PdfReader
+        PDF_LIB = 'PyPDF2'
+    except Exception:
+        _PdfReader = None
+        PDF_LIB = None
 
 try:
     from docx import Document
@@ -379,15 +389,22 @@ class ResumeAnalyzer:
 
     def _extract_pdf_text(self, uploaded_file) -> str:
         """Extract text from PDF file"""
-        if PyPDF2 is None:
-            return "PDF processing requires PyPDF2 library. Please install it or use TXT files."
+        if _PdfReader is None:
+            return "PDF processing requires the 'pypdf' or 'PyPDF2' library. Please install one or use TXT files."
 
         try:
-            pdf_reader = PyPDF2.PdfReader(io.BytesIO(uploaded_file.read()))
+            data = uploaded_file.read()
+            pdf_reader = _PdfReader(io.BytesIO(data))
             text = ""
 
-            for page in pdf_reader.pages:
-                text += page.extract_text() + "\n"
+            # Both pypdf and PyPDF2 provide a .pages iterable and page.extract_text()
+            for page in getattr(pdf_reader, 'pages', []):
+                try:
+                    page_text = page.extract_text() or ""
+                except Exception:
+                    # Older versions/variants might differ; ignore page on failure
+                    page_text = ""
+                text += page_text + "\n"
 
             return text.strip()
 

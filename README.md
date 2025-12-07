@@ -1,405 +1,51 @@
-"""
-AI-Resume-Analyzer
-
-Small, practical resume analysis service that parses resumes (PDF, DOCX, TXT) and returns structured results: detected skills, ATS compatibility score, experience years, and concise recommendations.
-
-This repository contains:
-- `src/` — canonical analyzer implementation
-- `api/` — Flask app and simple static UI
-- `app.py` — optional Streamlit UI
-- `tests/` — pytest unit and integration tests
-- `Dockerfile`, `docker-compose.yml` — container run instructions
-
-Quick start (local)
-
-1. Create virtual environment and install dependencies:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-2. Run the Flask app (development):
-
-```bash
-export PYTHONPATH=.
-python api/index.py
-# Open http://127.0.0.1:5000
-```
-
-3. Run tests:
-
-```bash
-pytest -q
-```
-
-Docker
-
-```bash
-# build
 docker build -t ai-resume-analyzer:local .
-
-# run (maps host 5000 -> container 8000)
 docker run -d --name ai-resume-container -p 5000:8000 ai-resume-analyzer:local
-
-# verify
-curl http://127.0.0.1:5000/health
-```
-
-CI
-
-- The repository includes `.github/workflows/ci.yml` which starts the service with `gunicorn` and waits for `/health` before running tests.
-
-Design decisions
-
-- Core parsing/analysis logic lives under `src/` to avoid duplication and enable reuse by other frontends.
-- The API validates uploads and returns clear 400 responses for invalid/too-small files (no random outputs).
-- UI is intentionally minimal and professional (concise copy, no excessive decorations).
-
-Contributing
-
-- Run tests locally and open PRs. See `tests/` for examples.
-
-License
-
-- This project is open-source; add/choose a license file if you plan to publish.
-
-"""
-
-"""
-AI-Resume-Analyzer
-
-Small, practical resume analysis service that parses resumes (PDF, DOCX, TXT) and returns structured results: detected skills, ATS compatibility score, experience years, and concise recommendations.
-
-This repository contains:
-- `src/` — canonical analyzer implementation
-- `api/` — Flask app and simple static UI
-- `app.py` — optional Streamlit UI
-- `tests/` — pytest unit and integration tests
-- `Dockerfile`, `docker-compose.yml` — container run instructions
-
-Quick start (local)
-
-1. Create virtual environment and install dependencies:
-
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install --upgrade pip
-pip install -r requirements.txt
-```
-
-2. Run the Flask app (development):
-
-```bash
-export PYTHONPATH=.
-python api/index.py
-# Open http://127.0.0.1:5000
-```
-
-3. Run tests:
-
-```bash
-pytest -q
-```
-
-Docker
-
-```bash
-# build
 docker build -t ai-resume-analyzer:local .
-
-# run (maps host 5000 -> container 8000)
 docker run -d --name ai-resume-container -p 5000:8000 ai-resume-analyzer:local
-
-# verify
-curl http://127.0.0.1:5000/health
-```
-
-CI
-
-- The repository includes `.github/workflows/ci.yml` which starts the service with `gunicorn` and waits for `/health` before running tests.
-
-Design decisions
-
-- Core parsing/analysis logic lives under `src/` to avoid duplication and enable reuse by other frontends.
-- The API validates uploads and returns clear 400 responses for invalid/too-small files (no random outputs).
-- UI is intentionally minimal and professional (concise copy, no excessive decorations).
-
-Contributing
-
-- Run tests locally and open PRs. See `tests/` for examples.
-
-License
-
-- This project is open-source; add/choose a license file if you plan to publish.
-
-"""
-
-## 🚀 Features
-
-- **⚡ Quantum ATS Analysis**: Neural network compatibility scoring with holographic visualization
-- **🧠 AI Skills Mapping**: Advanced technology detection across 50+ programming languages and frameworks  
-- **🎯 Holographic Job Matching**: Real-time compatibility analysis with job descriptions
-- **🌟 Neural Recommendations**: Personalized career acceleration suggestions
-- **📱 Multi-Format Support**: TXT, PDF, and DOCX file processing
-- **🎨 Cyberpunk UI**: Ultra-modern design with neon animations and glass morphism
-
-## 🛠️ Installation
-
-1. Clone the repository:
-```bash
 git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
-cd AI-Resume-Analyzer
-```
-
-2. Install dependencies:
-```bash
-pip install -r requirements.txt
-```
-
-3. Run the website (two options):
-
-- Option A — Run the Flask webapp (API + static UI):
-```bash
-# Start with the built-in server for development:
-python api/index.py
-
-# Or run with gunicorn (production):
-gunicorn api.index:app --bind 0.0.0.0:8000
-```
-
-- Option B — Run the Streamlit frontend (alternative UI):
-```bash
-streamlit run app.py
-```
-
-## 🌐 Deployment
-
-### Vercel Deployment (Recommended)
-
-1. Push your code to GitHub
-2. Connect your GitHub repository to Vercel
-3. Vercel will automatically detect the Streamlit app
-4. Deploy with these settings:
-   - Build Command: `pip install -r requirements.txt`
-   - Output Directory: `.`
-   - Install Command: `pip install -r requirements.txt`
-
-### Local Development
-```bash
-# Start the development server
-streamlit run app.py
-```
-
-### Docker (recommended for reproducible deployment)
-
-Build and run the application in Docker locally:
-
-```bash
-# Build the Docker image (from project root)
 docker build -t ai-resume-analyzer:local .
-
-# Run the container exposing port 5000
 docker run --rm -p 5000:5000 ai-resume-analyzer:local
-
-# Then open http://127.0.0.1:5000
-```
-
-If you prefer docker-compose (included), start services with:
-
-```bash
 docker-compose up --build
-```
-
-Note: If your environment does not support Docker, you can still run the Flask app directly as described above.
-
-
-# Access at http://localhost:8501
-```
-
-## 🎨 Cyberpunk Design System
-
-### Neon Color Palette
-- **Neon Cyan**: #00f5ff (Primary accent)
-- **Neon Purple**: #bf00ff (Secondary accent)  
-- **Neon Pink**: #ff0080 (Highlight color)
-- **Neon Green**: #39ff14 (Success indicators)
-- **Dark Matrix**: Deep space gradients with grid patterns
-
-### Advanced Animations
-- **Holographic text effects** with color shifting
-- **Quantum shimmer animations** for data streams
-- **Morphic floating effects** for cards
-- **Neural pulse animations** for interactive elements
-
-## 🔧 Technical Stack
-
-- **Frontend**: Streamlit with custom CSS/HTML
-- **Backend**: Python with advanced NLP processing
-- **File Processing**: PyPDF2, python-docx
-- **Design**: Custom cyberpunk UI with CSS animations
-- **Deployment**: Vercel-ready configuration
-
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch: `git checkout -b feature/amazing-feature`
-3. Commit changes: `git commit -m 'Add amazing feature'`
-4. Push to branch: `git push origin feature/amazing-feature`
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🌟 Acknowledgments
-
-- Built with cutting-edge 2025 design trends
-- Inspired by cyberpunk aesthetics and neural networks
-- Powered by advanced AI algorithms for career optimization
-
----
-
-**⚡ Welcome to the future of resume analysis! ⚡**
-- **Hover transformations** for interactive elements
-
-### Interactive Components
-- **Animated progress bars** during analysis
-- **Real-time gauges** for scores
-- **Radar charts** for skill visualization
-- **Responsive cards** with hover effects
-
-## 📁 Project Structure
-
-```
 ai-resume-analyzer/
-├── app.py                 # Main Streamlit application (optional UI)
-├── api/                   # Flask API and server-side web UI
-│   ├── index.py           # Flask app entrypoint (serves site and /analyze)
-│   └── analyzer.py        # thin wrapper (re-exports centralized analyzer)
-├── src/                   # Shared code (analyzer, config)
-│   ├── analyzer.py        # Canonical ResumeAnalyzer implementation
-│   └── config.py          # Centralized configuration
-├── ui_components.py       # Streamlit UI building blocks
-├── requirements.txt       # Python dependencies
-├── Procfile               # Production entry (Heroku / platform)
-├── vercel.json            # Vercel configuration (optional)
-├── README.md              # This file
-└── assets/                # Static assets (if any)
+AI Resume Analyzer — clean split frontend and backend
+====================================================
+
+Static frontend (Vercel-ready) + Flask backend API. Upload a resume (PDF/DOCX/TXT), optional job description, get ATS score, skills, keywords, and recommendations.
+
+Project layout
+- `frontend/` – static site (HTML/JS/CSS). Deploy to Vercel or any static host.
+- `backend/` – Flask API (`/analyze`, `/health`). Deploy to Render/Railway/Fly/Heroku.
+- `src/` – core analyzer logic (shared).
+- `tests/` – pytest suite; auto-starts backend on port 5000 during tests.
+- `archive/legacy/` – archived old files; safe to ignore.
+
+Quick start (local)
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+python backend/app.py  # runs on http://localhost:5000
+
+# Serve frontend (simple static)
+python -m http.server 8000 -d frontend
+# Open http://localhost:8000 and ensure API_BASE points to backend (see frontend/assets/js/config.js)
 ```
 
-## 🛠️ Tech Stack
-
-### Backend
-- **Python 3.8+** - Core programming language
-- **Streamlit** - Web framework for rapid development
-- **spaCy** - Advanced NLP processing
-- **scikit-learn** - Machine learning algorithms
-- **Pandas/NumPy** - Data manipulation and analysis
-
-### Frontend & Visualization
-- **Plotly** - Interactive charts and graphs
-- **Custom CSS** - Modern styling with animations
-- **Google Fonts** - Beautiful typography (Poppins)
-- **Responsive Design** - Mobile-friendly interface
-
-### NLP & AI Features
-- **TextBlob** - Sentiment analysis and text processing
-- **TF-IDF Vectorization** - Document similarity matching
-- **Cosine Similarity** - Job description matching
-- **Regex Patterns** - Information extraction
-- **Keyword Density Analysis** - Content optimization
-
-## 📊 Analysis Features
-
-### Resume Parsing
-- Extracts text from PDF, DOCX, and TXT files
-- Identifies resume sections (Experience, Education, Skills, etc.)
-- Extracts contact information and personal details
-
-### Skill Analysis
-- **600+ Skills Database** across 6 categories
-- Confidence scoring based on frequency and context
-- Category-wise skill distribution analysis
-- Industry-specific skill recommendations
-
-### ATS Optimization
-- Keyword density analysis
-- Format compatibility checking
-- Section completeness evaluation
-- Contact information validation
-- Length and readability assessment
-
-### Job Matching
-- Semantic similarity analysis with job descriptions
-- Missing keyword identification
-- Matching keyword highlighting
-- Compatibility percentage calculation
-
-## 🎯 Usage Examples
-
-### Basic Analysis
-1. Upload your resume (PDF/DOCX/TXT)
-2. Select analysis type and depth
-3. Choose target industry
-4. Click "Analyze Resume"
-5. Review comprehensive results
-
-### Job Matching
-1. Upload resume
-2. Paste job description
-3. Run complete analysis
-4. See matching and missing keywords
-5. Get tailored recommendations
-
-### Skill Enhancement
-1. Review detected skills
-2. Check skill category distribution
-3. See confidence scores
-4. Follow improvement suggestions
-5. Re-analyze updated resume
-
-## 🔧 Configuration
-
-### Analysis Settings
-- **Depth Levels**: 1-5 (affects recommendation detail)
-- **Industry Focus**: Technology, Finance, Healthcare, etc.
-- **File Size Limit**: 10MB maximum
-- **Text Length**: 100-50,000 characters
-
-### UI Customization
-- Modify colors in `config.py`
-- Adjust chart settings
-- Configure animation timing
-- Set theme preferences
-
-## 🤝 Contributing
-
-We welcome contributions! Here's how you can help:
-
-1. **Fork the repository**
-2. **Create feature branch** (`git checkout -b feature/AmazingFeature`)
-3. **Commit changes** (`git commit -m 'Add AmazingFeature'`)
-4. **Push to branch** (`git push origin feature/AmazingFeature`)
-5. **Open Pull Request**
-
-### Development Setup
+Testing
 ```bash
-# Install development dependencies
-pip install -r requirements.txt
-pip install pytest black flake8
+pytest -q
+```
+Tests spin up the backend automatically on 127.0.0.1:5000.
 
-# Run tests
-pytest
+Deployment (short)
+- Backend (Render example): Build `pip install -r requirements.txt`; start `gunicorn backend.app:app --bind 0.0.0.0:$PORT`.
+- Frontend (Vercel): Set `window.API_BASE` in `frontend/assets/js/config.js` to your backend URL; deploy static folder `frontend/`.
+See `docs/DEPLOYMENT.md` for detailed steps.
 
-# Format code
-black .
-
-# Check code quality
+Notes
+- PDF parsing prefers `pypdf` with `PyPDF2` fallback.
+- CORS is enabled in the backend for cross-origin frontend calls.
+- Analyzer lives in `src/analyzer.py`; API is a thin wrapper in `backend/app.py`.
 flake8 .
 ```
 

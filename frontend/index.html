@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AI Resume Analyzer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./assets/css/style.css" />
+</head>
+<body>
+  <div class="page">
+    <header class="hero">
+      <div class="hero__badge">ATS-ready</div>
+      <h1 class="hero__title">AI Resume Analyzer</h1>
+      <p class="hero__lead">Upload a resume, optionally add a job description, and get skills, ATS score, and recommendations.</p>
+      <div class="hero__pill">PDF · DOCX · TXT</div>
+    </header>
+
+    <main class="layout">
+      <section class="panel panel--input">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Step 1</p>
+            <h2>Upload resume</h2>
+            <p class="muted">Supported formats: PDF, DOCX, TXT. Size limit: 10 MB.</p>
+          </div>
+          <div class="pill pill--ghost" id="backend-pill">Backend: <span id="backend-url">detecting…</span></div>
+        </div>
+
+        <form id="analyze-form" class="form" enctype="multipart/form-data">
+          <label class="dropzone" id="dropzone">
+            <input type="file" id="file" name="file" accept=".pdf,.docx,.txt" required />
+            <div class="dropzone__copy">
+              <div class="dropzone__icon">⬆️</div>
+              <div>
+                <p class="dropzone__title">Drop your resume here or click to browse</p>
+                <p class="muted">We process on the server; nothing is stored.</p>
+              </div>
+            </div>
+          </label>
+
+          <label class="field">
+            <div class="field__header">
+              <span>Job description (optional)</span>
+              <span class="muted">Improves job match score</span>
+            </div>
+            <textarea id="job_description" name="job_description" rows="4" placeholder="Paste the job description here"></textarea>
+          </label>
+
+          <button type="submit" class="btn" id="submit-btn">Analyze</button>
+          <p class="muted tiny">By submitting, you agree to process the file for analysis only.</p>
+        </form>
+      </section>
+
+      <section class="panel panel--results" id="results-panel">
+        <div class="panel__header">
+          <div>
+            <p class="eyebrow">Step 2</p>
+            <h2>Results</h2>
+            <p class="muted">See ATS score, skills, keywords, and recommendations.</p>
+          </div>
+          <div class="status" id="status-chip">Waiting for upload</div>
+        </div>
+
+        <div id="results">
+          <div class="placeholder">
+            <p class="muted">Upload a resume to see analysis.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="./assets/js/config.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>
