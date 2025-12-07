@@ -1,4 +1,3 @@
-// Set your API base URL here. For Vercel static hosting, point to your backend host
-// e.g., https://your-backend.onrender.com
-// If left undefined, it falls back to the same origin (useful for local dev with `backend` on 5000).
-window.API_BASE = window.API_BASE || (typeof location !== 'undefined' ? `${location.origin.replace(/\/$/, '')}` : 'http://localhost:5000');
+// Set your API base URL here. For local dev we default to the backend on 5000; for prod set to your live backend URL.
+// Example for prod: window.API_BASE = 'https://your-backend.onrender.com';
+window.API_BASE = window.API_BASE || 'http://localhost:5000';

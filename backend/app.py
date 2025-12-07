@@ -1,4 +1,5 @@
 import os
+import sys
 import tempfile
 from flask import Flask, request, jsonify
 
@@ -7,6 +8,11 @@ try:
     from flask_cors import CORS  # type: ignore
 except Exception:  # pragma: no cover - optional dependency
     CORS = None
+
+# Ensure the repo root is on the path when run directly (e.g., `python backend/app.py`)
+ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
 
 from src.analyzer import ResumeAnalyzer
 
