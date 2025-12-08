@@ -1,5 +1,4 @@
-/* global API_BASE */
-
+// DOM elements
 const form = document.getElementById('analyze-form');
 const fileInput = document.getElementById('file');
 const jobInput = document.getElementById('job_description');
@@ -8,8 +7,20 @@ const statusChip = document.getElementById('status-chip');
 const submitBtn = document.getElementById('submit-btn');
 const backendUrlLabel = document.getElementById('backend-url');
 
-const API = (typeof window !== 'undefined' && window.API_BASE) ? window.API_BASE : 'http://localhost:5000';
-backendUrlLabel.textContent = API;
+// API configuration - loaded from config.js
+// Fallback: auto-detect from current window location if API_BASE not set
+let API = window.API_BASE;
+if (!API) {
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
+  API = `${protocol}//${hostname}:5000`;
+}
+
+// Display backend URL
+if (backendUrlLabel) {
+  backendUrlLabel.textContent = API;
+  console.log('API Base URL:', API);
+}
 
 function setStatus(text, tone = 'idle') {
   statusChip.textContent = text;
@@ -82,40 +93,80 @@ function renderResults(data) {
 
 async function analyze(event) {
   event.preventDefault();
-  if (!fileInput.files.length) {
-    alert('Please select a file.');
+  
+  // Validate file selection
+  if (!fileInput.files || fileInput.files.length === 0) {
+    setStatus('No file selected', 'error');
+    resultsPanel.innerHTML = '<div class="alert alert--error">Please select a file to analyze.</div>';
     return;
   }
 
-  const fd = new FormData();
-  fd.append('file', fileInput.files[0]);
-  if (jobInput.value.trim()) {
-    fd.append('job_description', jobInput.value.trim());
+  const file = fileInput.files[0];
+  const validExtensions = ['pdf', 'docx', 'txt'];
+  const fileExt = file.name.split('.').pop().toLowerCase();
+  
+  if (!validExtensions.includes(fileExt)) {
+    setStatus('Invalid file', 'error');
+    resultsPanel.innerHTML = `<div class="alert alert--error">Only PDF, DOCX, and TXT files are supported. You uploaded: ${fileExt}</div>`;
+    return;
   }
 
+  // Prepare form data
+  const formData = new FormData();
+  formData.append('file', file);
+  
+  const jobDesc = jobInput.value.trim();
+  if (jobDesc) {
+    formData.append('job_description', jobDesc);
+  }
+
+  // Update UI
   setStatus('Analyzing…', 'info');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Analyzing…';
 
   try {
-    const res = await fetch(`${API}/analyze`, {
+    // Make request to backend
+    const analyzeUrl = `${API}/analyze`;
+    console.log('Sending request to:', analyzeUrl);
+    
+    const response = await fetch(analyzeUrl, {
       method: 'POST',
-      body: fd,
+      body: formData,
+      headers: {
+        'Accept': 'application/json',
+      }
     });
 
-    const payload = await res.json();
+    console.log('Response status:', response.status);
 
-    if (!res.ok || payload.error) {
-      setStatus(payload.error || 'Failed', 'error');
-      resultsPanel.innerHTML = `<div class="alert alert--error">${payload.error || 'Something went wrong.'}</div>`;
+    // Parse JSON response
+    let data;
+    try {
+      data = await response.json();
+    } catch (parseErr) {
+      console.error('Failed to parse JSON:', parseErr);
+      throw new Error('Invalid response from server');
+    }
+
+    // Check for errors
+    if (!response.ok) {
+      const errorMsg = data?.error || response.statusText || 'Unknown error';
+      console.error('Backend error:', errorMsg);
+      setStatus('Failed', 'error');
+      resultsPanel.innerHTML = `<div class="alert alert--error">${errorMsg}</div>`;
       return;
     }
 
+    // Success
     setStatus('Complete', 'success');
-    renderResults(payload);
-  } catch (err) {
+    renderResults(data);
+    
+  } catch (error) {
+    console.error('Fetch error:', error);
+    const errorMsg = error?.message || 'Failed to connect to server';
     setStatus('Network error', 'error');
-    resultsPanel.innerHTML = `<div class="alert alert--error">${err?.message || 'Request failed.'}</div>`;
+    resultsPanel.innerHTML = `<div class="alert alert--error"><strong>Error:</strong> ${errorMsg}<br><small>Backend URL: ${API}</small></div>`;
   } finally {
     submitBtn.disabled = false;
     submitBtn.textContent = 'Analyze';

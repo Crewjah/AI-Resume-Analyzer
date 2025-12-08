@@ -1,3 +1,18 @@
-// Set your API base URL here. For local dev we default to the backend on 5000; for prod set to your live backend URL.
-// Example for prod: window.API_BASE = 'https://your-backend.onrender.com';
-window.API_BASE = window.API_BASE || 'http://localhost:5000';
+// API Configuration - Auto-detect backend URL
+// Force IPv4 (127.0.0.1) to avoid IPv6 connection issues
+
+function getBackendUrl() {
+  // Get current window location
+  const host = window.location.hostname;
+  const protocol = window.location.protocol;
+  
+  // Force IPv4 for localhost to avoid IPv6 issues
+  if (host === 'localhost') {
+    return `${protocol}//127.0.0.1:5000`;
+  }
+  
+  // If already an IP or domain, use it as-is
+  return `${protocol}//${host}:5000`;
+}
+
+window.API_BASE = getBackendUrl();
