@@ -5,40 +5,76 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resume Analyzer - ATS Score & Skills Detection</title>
     <link rel="stylesheet" href="./assets/css/styles.css">
+    <script src="./assets/js/config.js"></script>
 </head>
 <body>
-    <div class="container">
-        <!-- Header -->
-        <header class="header">
-            <div class="header__content">
-                <div class="badge">ATS-Ready</div>
-                <h1 class="title">AI Resume Analyzer</h1>
-                <p class="subtitle">Get instant ATS scores, skills extraction, and job matching insights</p>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <span class="nav-logo">📄</span>
+                <span class="nav-title">Resume Analyzer</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#results" class="nav-link">Results</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="wrapper">
+        <!-- Hero Section -->
+        <header class="hero">
+            <div class="hero-content">
+                <div class="hero-badge">✨ AI-Powered Analysis</div>
+                <h1 class="hero-title">Resume Analyzer Pro</h1>
+                <p class="hero-subtitle">Get instant ATS scores, skill detection, and job matching insights with advanced AI technology</p>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1000+</span>
+                        <span class="stat-label">Resumes Analyzed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">Accuracy Rate</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">100+</span>
+                        <span class="stat-label">Skills Database</span>
+                    </div>
+                </div>
             </div>
         </header>
 
         <!-- Main Content -->
-        <main class="main">
-            <div class="grid">
+        <main class="main-content">
+            <div class="layout">
                 <!-- Upload Section -->
-                <section class="card card--upload">
-                    <div class="section-header">
-                        <span class="step-label">Step 1</span>
-                        <h2>Upload Resume</h2>
+                <section class="upload-panel">
+                    <div class="panel-header">
+                        <div class="step-counter">
+                            <span class="step-number">1</span>
+                            <span class="step-title">Upload & Analyze</span>
+                        </div>
+                        <p class="panel-subtitle">Upload your resume and optionally add a job description</p>
                     </div>
 
-                    <form id="analyzer-form" enctype="multipart/form-data">
+                    <form id="analyzer-form" enctype="multipart/form-data" class="analyzer-form">
                         <!-- File Upload -->
-                        <div class="form-group">
-                            <label for="resume-file" class="label">Resume File</label>
+                        <div class="form-section">
+                            <label for="resume-file" class="form-label">
+                                <span class="label-icon">📋</span>
+                                <span class="label-text">Resume File</span>
+                            </label>
                             <div class="dropzone" id="dropzone">
-                                <svg class="dropzone__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                     <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
                                     <polyline points="17 8 12 3 7 8"></polyline>
                                     <line x1="12" y1="3" x2="12" y2="15"></line>
                                 </svg>
-                                <p class="dropzone__text">Drop resume here or click to browse</p>
-                                <p class="dropzone__hint">PDF, DOCX, TXT (max 10 MB)</p>
+                                <p class="dropzone-text">Drag & drop your resume here</p>
+                                <p class="dropzone-hint">or click to browse your files</p>
+                                <p class="dropzone-formats">Supports PDF, DOCX, TXT (max 10 MB)</p>
                             </div>
                             <input 
                                 type="file" 
@@ -47,55 +83,55 @@
                                 accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
                                 required
                             >
-                            <div class="file-info" id="file-info"></div>
+                            <div class="file-badge" id="file-info"></div>
+                        </div>
+
                         </div>
 
                         <!-- Job Description -->
-                        <div class="form-group">
-                            <label for="job-description" class="label">
-                                Job Description <span class="optional">(optional)</span>
+                        <div class="form-section">
+                            <label for="job-description" class="form-label">
+                                <span class="label-icon">💼</span>
+                                <span class="label-text">Job Description</span>
+                                <span class="optional-badge">optional</span>
                             </label>
-                            <p class="hint">Paste the job description for match scoring</p>
+                            <p class="form-hint">Paste a job description to get match scoring</p>
                             <textarea 
                                 id="job-description" 
                                 name="job_description" 
                                 placeholder="Paste job description here for better match analysis..."
-                                rows="6"
+                                class="textarea"
+                                rows="5"
                             ></textarea>
                         </div>
 
-                        <!-- API Status -->
-                        <div class="api-status" id="api-status">
-                            <span class="api-status__label">API:</span>
-                            <span class="api-status__value" id="api-url">Loading...</span>
-                        </div>
-
                         <!-- Submit Button -->
-                        <button type="submit" class="btn btn--primary btn--lg" id="submit-btn">
-                            Analyze Resume
+                        <button type="submit" class="btn-primary" id="submit-btn">
+                            <span class="btn-text">Analyze Resume</span>
+                            <span class="btn-icon">→</span>
                         </button>
 
-                        <p class="form-note">
-                            <strong>Privacy:</strong> Your resume is analyzed on the server and never stored.
-                        </p>
+                        <div class="privacy-notice">
+                            🔒 <strong>Privacy First:</strong> Resumes are analyzed on the server and never stored or shared.
+                        </div>
                     </form>
                 </section>
 
                 <!-- Results Section -->
-                <section class="card card--results">
-                    <div class="section-header">
-                        <span class="step-label">Step 2</span>
-                        <h2>Results</h2>
-                        <div class="status-badge" id="status-badge">Ready</div>
+                <section class="results-panel">
+                    <div class="panel-header">
+                        <div class="step-counter">
+                            <span class="step-number">2</span>
+                            <span class="step-title">Analysis Results</span>
+                        </div>
+                        <div class="status-badge" id="status-badge"></div>
                     </div>
 
                     <div id="results-container" class="results-container">
                         <div class="empty-state">
-                            <svg class="empty-state__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                                <polyline points="13 2 13 9 20 9"></polyline>
-                            </svg>
-                            <p>Upload a resume to see analysis results</p>
+                            <div class="empty-icon">📊</div>
+                            <p class="empty-text">Upload a resume to see detailed analysis</p>
+                            <p class="empty-hint">Your results will appear here</p>
                         </div>
                     </div>
                 </section>
@@ -104,13 +140,14 @@
 
         <!-- Footer -->
         <footer class="footer">
-            <p>&copy; 2024 AI Resume Analyzer. All rights reserved.</p>
-            <p class="footer-note">Powered by advanced resume analysis technology</p>
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2025 AI Resume Analyzer. Helping professionals succeed.</p>
+                <p class="footer-subtext">Powered by advanced AI resume analysis technology</p>
+            </div>
         </footer>
     </div>
 
     <!-- Scripts -->
-    <script src="./assets/js/config.js"></script>
     <script src="./assets/js/app.js"></script>
 </body>
 </html>

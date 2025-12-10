@@ -299,9 +299,10 @@ class ResumeAnalyzer:
             score += 5
         
         # 3. Professional Keywords (20 points max)
+        text_lower = text.lower()
         keyword_matches = sum(
             1 for keyword in self.professional_keywords
-            if keyword in text_lower := text.lower()
+            if keyword in text_lower
         )
         score += min(20, keyword_matches * 2)
         

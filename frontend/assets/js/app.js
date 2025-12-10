@@ -125,7 +125,8 @@ async function handleFormSubmit(e) {
     setStatus('Analyzing…', 'loading');
 
     try {
-        console.log('Sending request to:', window.API_ENDPOINT);
+        console.log('📤 Sending request to:', window.API_ENDPOINT);
+        console.log('📋 File:', file.name, '(' + (file.size / 1024).toFixed(2) + ' KB)');
         
         const response = await fetch(window.API_ENDPOINT, {
             method: 'POST',
@@ -135,23 +136,24 @@ async function handleFormSubmit(e) {
             }
         });
 
-        console.log('Response status:', response.status);
+        console.log('📥 Response status:', response.status);
 
         // Parse response
         let data;
         try {
             data = await response.json();
+            console.log('✅ Response data:', data);
         } catch (parseErr) {
-            console.error('JSON parse error:', parseErr);
+            console.error('❌ JSON parse error:', parseErr);
             const text = await response.text();
-            console.error('Raw response:', text?.slice(0, 500));
-            throw new Error('Invalid response format from server');
+            console.error('❌ Raw response:', text?.slice(0, 500));
+            throw new Error('Invalid response format from server. ' + (text ? text.slice(0, 100) : 'Empty response'));
         }
 
         // Handle errors
         if (!response.ok) {
-            const errorMsg = data?.error || `HTTP ${response.status}`;
-            console.error('API error:', errorMsg);
+            const errorMsg = data?.error || data?.message || `HTTP ${response.status}`;
+            console.error('❌ API error:', errorMsg);
             setStatus('Analysis failed', 'error');
             showError(`Server error: ${errorMsg}`);
             return;
@@ -169,12 +171,19 @@ async function handleFormSubmit(e) {
         renderResults(data);
 
     } catch (error) {
-        console.error('Request error:', error);
+        console.error('❌ Request error:', error);
         setStatus('Connection error', 'error');
-        showError(`Error: ${error.message}`);
+        
+        // Provide helpful error message
+        let errorMsg = error.message;
+        if (error.message.includes('Failed to fetch')) {
+            errorMsg = `Cannot connect to API at ${window.API_ENDPOINT}. Make sure the backend server is running on port 5000.`;
+        }
+        
+        showError(errorMsg);
     } finally {
         submitBtn.disabled = false;
-        submitBtn.textContent = 'Analyze Resume';
+        submitBtn.innerHTML = '<span class="btn-text">Analyze Resume</span><span class="btn-icon">→</span>';
     }
 }
 
