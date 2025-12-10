@@ -6,15 +6,14 @@ git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
 docker build -t ai-resume-analyzer:local .
 docker run --rm -p 5000:5000 ai-resume-analyzer:local
 docker-compose up --build
-ai-resume-analyzer/
 AI Resume Analyzer — clean split frontend and backend
 ====================================================
 
-Static frontend (Vercel-ready) + Flask backend API. Upload a resume (PDF/DOCX/TXT), optional job description, get ATS score, skills, keywords, and recommendations.
+Static frontend + Flask backend API. Upload a resume (PDF/DOCX/TXT), optional job description, get ATS score, skills, keywords, and recommendations.
 
 Project layout
 - `frontend/` – static site (HTML/JS/CSS). Deploy to Vercel or any static host.
-- `backend/` – Flask API (`/analyze`, `/health`). Deploy to Render/Railway/Fly/Heroku.
+- `backend/` – Flask API (`/analyze`, `/health`). Deploy to Render/Railway/Fly/Heroku/Fly.io.
 - `src/` – core analyzer logic (shared).
 - `tests/` – pytest suite; auto-starts backend on port 5000 during tests.
 - `archive/legacy/` – archived old files; safe to ignore.
@@ -24,39 +23,30 @@ Quick start (local)
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
-python backend/app.py  # runs on http://localhost:5000
 
-# Serve frontend (simple static)
-python -m http.server 8000 -d frontend
-# Open http://localhost:8000 and ensure API_BASE points to backend (see frontend/assets/js/config.js)
+# Backend
+python backend/app.py        # http://127.0.0.1:5000
+
+# Frontend (simple static server)
+python -m http.server 8000 -d frontend   # http://127.0.0.1:8000
+# In browser, ensure API_BASE points to the backend (see frontend/assets/js/config.js)
 ```
 
 Testing
 ```bash
 pytest -q
 ```
-Tests spin up the backend automatically on 127.0.0.1:5000.
+Tests auto-start the backend on 127.0.0.1:5000.
 
-Deployment (short)
-- Backend (Render example): Build `pip install -r requirements.txt`; start `gunicorn backend.app:app --bind 0.0.0.0:$PORT`.
-- Frontend (Vercel): Set `window.API_BASE` in `frontend/assets/js/config.js` to your backend URL; deploy static folder `frontend/`.
-See `docs/DEPLOYMENT.md` for detailed steps.
+Deployment (concise)
+- Backend (Render example): build `pip install -r requirements.txt`; start `gunicorn backend.app:app --bind 0.0.0.0:$PORT`.
+- Frontend (Vercel): deploy the `frontend/` folder. Configure `window.API_BASE` (or inject via env/script) to your live backend URL. Current default is `https://www.crewjah.tech` (no port) for production and `http://127.0.0.1:5000` locally. Update `frontend/assets/js/config.js` if your backend URL changes.
+See `docs/DEPLOYMENT.md` for more detail.
 
 Notes
 - PDF parsing prefers `pypdf` with `PyPDF2` fallback.
 - CORS is enabled in the backend for cross-origin frontend calls.
 - Analyzer lives in `src/analyzer.py`; API is a thin wrapper in `backend/app.py`.
-flake8 .
-```
-
-## 📈 Roadmap
-
-### Upcoming Features
-- [ ] **Multi-language Support** - Resume analysis in multiple languages
-- [ ] **PDF Report Generation** - Downloadable analysis reports
-- [ ] **Resume Builder** - AI-powered resume creation tool
-- [ ] **Batch Processing** - Analyze multiple resumes at once
-- [ ] **API Integration** - REST API for external applications
 - [ ] **Advanced ML Models** - Integration with transformer models
 - [ ] **Resume Templates** - Industry-specific resume templates
 - [ ] **Performance Tracking** - Historical analysis and improvement tracking
