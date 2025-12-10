@@ -1,52 +1,42 @@
-// API Configuration with easy overrides
-// Precedence (highest to lowest):
-// 1) URL query param: ?api=https://your-backend
-// 2) localStorage:    localStorage.API_BASE
-// 3) window.API_BASE: injected via script/env
-// 4) Local dev:       http://127.0.0.1:5000
-// 5) Production:      PROD_API_BASE (no port)
+/**
+ * AI Resume Analyzer - Frontend Configuration
+ * Manages API endpoint detection with override support
+ */
 
-const PROD_API_BASE = 'https://www.crewjah.tech';
-
-function getQueryApiOverride() {
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const api = params.get('api');
-    return api || null;
-  } catch (_) {
-    return null;
-  }
-}
-
-function getStoredApiOverride() {
-  try {
-    return localStorage.getItem('API_BASE');
-  } catch (_) {
-    return null;
-  }
-}
-
-function getBackendUrl() {
-  const queryApi = getQueryApiOverride();
-  if (queryApi) {
-    try { localStorage.setItem('API_BASE', queryApi); } catch (_) {}
-    return queryApi;
-  }
-
-  const storedApi = getStoredApiOverride();
-  if (storedApi) return storedApi;
-
-  if (window.API_BASE && typeof window.API_BASE === 'string') {
-    return window.API_BASE;
-  }
-
-  const host = window.location.hostname;
-
-  if (host === 'localhost' || host === '127.0.0.1') {
-    return 'http://127.0.0.1:5000';
-  }
-
-  return PROD_API_BASE || `${window.location.protocol}//${host}`;
-}
-
-window.API_BASE = getBackendUrl();
+(function () {
+    // Default production API endpoint
+    const DEFAULT_API = '/api/analyze';
+    const LOCAL_API = 'http://127.0.0.1:5000/analyze';
+    
+    // Try to detect if we're on Vercel or local
+    function getApiEndpoint() {
+        const hostname = window.location.hostname;
+        
+        // Check for query parameter override
+        const params = new URLSearchParams(window.location.search);
+        const apiOverride = params.get('api');
+        if (apiOverride) {
+            try {
+                localStorage.setItem('API_OVERRIDE', apiOverride);
+            } catch (e) {}
+            return apiOverride;
+        }
+        
+        // Check for localStorage override
+        try {
+            const stored = localStorage.getItem('API_OVERRIDE');
+            if (stored) return stored;
+        } catch (e) {}
+        
+        // If running locally, use local API
+        if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '0.0.0.0') {
+            return LOCAL_API;
+        }
+        
+        // Default to Vercel API (same domain as frontend)
+        return DEFAULT_API;
+    }
+    
+    window.API_ENDPOINT = getApiEndpoint();
+    console.log('API Endpoint:', window.API_ENDPOINT);
+})();

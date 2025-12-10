@@ -2,13 +2,31 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/analyze.py",
+      "use": "@vercel/python"
+    },
+    {
       "src": "frontend/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/assets/(.*)", "dest": "/frontend/assets/$1" },
-    { "src": "/test.html", "dest": "/frontend/test.html" },
-    { "src": "/(.*)", "dest": "/frontend/index.html" }
+    {
+      "src": "/api/analyze",
+      "dest": "/api/analyze.py",
+      "methods": ["POST", "OPTIONS"]
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/assets/$1"
+    },
+    {
+      "src": "/(.*\\..*)",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/index.html"
+    }
   ]
 }
