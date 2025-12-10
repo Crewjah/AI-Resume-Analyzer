@@ -140,15 +140,20 @@ async function analyze(event) {
 
     console.log('Response status:', response.status);
 
-    // Try JSON first; if it fails, read text to surface HTML/error pages
+    // Try JSON first; use a clone so we can safely fall back to text once
     let data = null;
     try {
-      data = await response.json();
+      data = await response.clone().json();
     } catch (parseErr) {
       console.warn('Failed to parse JSON, falling back to text:', parseErr);
-      const text = await response.text();
-      console.warn('Raw response body:', text?.slice(0, 500));
-      data = { error: text || 'Invalid response from server' };
+      try {
+        const text = await response.text();
+        console.warn('Raw response body:', text?.slice(0, 500));
+        data = { error: text || 'Invalid response from server' };
+      } catch (textErr) {
+        console.warn('Failed to read response text:', textErr);
+        data = { error: 'Invalid response from server' };
+      }
     }
 
     if (!response.ok) {
