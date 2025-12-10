@@ -2,18 +2,13 @@
   "version": 2,
   "builds": [
     {
-      "src": "api/index.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
+      "src": "frontend/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
-    { "src": "/", "dest": "/index.html" },
-    { "src": "/api", "dest": "/api/index.py" },
-    { "src": "/api/", "dest": "/api/index.py" },
-    { "src": "/api/(.*)", "dest": "/api/index.py" }
+    { "src": "/assets/(.*)", "dest": "/frontend/assets/$1" },
+    { "src": "/test.html", "dest": "/frontend/test.html" },
+    { "src": "/(.*)", "dest": "/frontend/index.html" }
   ]
 }
