@@ -1,25 +1,30 @@
+#!/usr/bin/env python3
 """
-Resume analysis engine with skills detection and scoring (centralized)
+Resume Analysis Engine
+Comprehensive resume analysis with ATS scoring, skills detection, and job matching.
+
+Classes:
+    ResumeAnalyzer: Main analyzer class with resume processing and analysis methods
 """
+
 import re
-from typing import Dict, List, Any
-import io
+from io import BytesIO
+from typing import Dict, List, Tuple, Any, Optional
+from pathlib import Path
 
-# Prefer the modern `pypdf` package, fall back to legacy `PyPDF2` if needed
+# PDF support
 try:
-    from pypdf import PdfReader as _PdfReader
-    PDF_LIB = 'pypdf'
-except Exception:
+    from pypdf import PdfReader
+    PDF_LIBRARY = 'pypdf'
+except ImportError:
     try:
-        import PyPDF2
+        from PyPDF2 import PdfReader
+        PDF_LIBRARY = 'PyPDF2'
+    except ImportError:
+        PdfReader = None
+        PDF_LIBRARY = None
 
-        # PyPDF2 exposes PdfReader class
-        _PdfReader = PyPDF2.PdfReader
-        PDF_LIB = 'PyPDF2'
-    except Exception:
-        _PdfReader = None
-        PDF_LIB = None
-
+# DOCX support
 try:
     from docx import Document
 except ImportError:
@@ -27,182 +32,330 @@ except ImportError:
 
 
 class ResumeAnalyzer:
+    """
+    Comprehensive resume analyzer for ATS scores, skills extraction, and job matching.
+    
+    Attributes:
+        skills_database (List[str]): Comprehensive list of detectable skills
+        skill_categories (Dict[str, List[str]]): Skills grouped by category
+        min_word_count (int): Minimum words for valid resume
+        professional_keywords (List[str]): Action words and professional terms
+    """
+    
     def __init__(self):
+        """Initialize the analyzer with skills database and configuration."""
+        # Comprehensive skills database
         self.skills_database = [
             # Programming Languages
-            "Python", "Java", "JavaScript", "TypeScript", "C++", "C#", "PHP", "Ruby", "Go", "Swift", "Kotlin", "Rust",
+            "Python", "Java", "JavaScript", "TypeScript", "C++", "C#", ".NET",
+            "PHP", "Ruby", "Go", "Rust", "Swift", "Kotlin", "Scala", "Groovy",
+            "R", "MATLAB", "Objective-C", "Perl", "Haskell", "Clojure", "Erlang",
+            
             # Web Technologies
-            "HTML", "CSS", "React", "Angular", "Vue.js", "Node.js", "Express", "Django", "Flask", "FastAPI", "Laravel",
-            # Databases
-            "SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis", "SQLite", "Oracle", "Cassandra", "DynamoDB",
-            # Cloud & DevOps
-            "AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Jenkins", "Git", "GitHub", "GitLab", "CI/CD",
-            # Data Science & AI
-            "Machine Learning", "Data Analysis", "Pandas", "NumPy", "TensorFlow", "PyTorch", "Scikit-learn",
+            "HTML", "CSS", "SCSS", "LESS", "React", "Angular", "Vue.js", "Svelte",
+            "Next.js", "Nuxt.js", "Gatsby", "Node.js", "Express", "Django", "Flask",
+            "FastAPI", "Spring", "Laravel", "Symfony", "ASP.NET", "Ruby on Rails",
+            "GraphQL", "REST API", "WebSocket", "AJAX",
+            
             # Mobile Development
-            "React Native", "Flutter", "Android", "iOS", "Xamarin",
+            "React Native", "Flutter", "Android", "iOS", "Xamarin", "Swift",
+            "Kotlin", "Java Mobile", "PhoneGap", "Ionic",
+            
+            # Databases & Data
+            "SQL", "MySQL", "PostgreSQL", "MongoDB", "Firebase", "Firestore",
+            "Redis", "SQLite", "Oracle", "SQL Server", "MariaDB", "Cassandra",
+            "DynamoDB", "CosmosDB", "Elasticsearch", "Neo4j", "Memcached",
+            "Data Warehouse", "Data Lake", "Hadoop", "Spark", "Hive",
+            
+            # Cloud & DevOps
+            "AWS", "Azure", "Google Cloud", "DigitalOcean", "Heroku", "Vercel",
+            "Netlify", "Docker", "Kubernetes", "Jenkins", "GitLab CI", "GitHub Actions",
+            "CircleCI", "Travis CI", "Terraform", "CloudFormation", "Ansible",
+            "Prometheus", "Grafana", "ELK Stack", "DataDog", "New Relic",
+            
+            # Version Control
+            "Git", "GitHub", "GitLab", "Bitbucket", "Mercurial", "SVN",
+            
+            # Data Science & AI/ML
+            "Machine Learning", "Deep Learning", "Neural Networks", "TensorFlow",
+            "PyTorch", "Scikit-learn", "Keras", "Pandas", "NumPy", "SciPy",
+            "Matplotlib", "Seaborn", "Plotly", "Data Analysis", "Statistical Analysis",
+            "Natural Language Processing", "NLP", "Computer Vision", "OpenCV",
+            "Jupyter", "Anaconda", "Apache Spark", "Big Data",
+            
+            # Testing & QA
+            "Unit Testing", "Integration Testing", "JUnit", "Pytest", "Jest",
+            "Mocha", "Jasmine", "Selenium", "TestNG", "Cucumber", "BDD",
+            "TDD", "Automated Testing", "QA", "Bug Tracking",
+            
             # Other Technologies
-            "Linux", "REST API", "GraphQL", "Microservices", "Agile", "Scrum", "Apache", "Nginx"
+            "Linux", "Windows", "macOS", "Unix", "Shell Script", "Bash",
+            "PowerShell", "YAML", "JSON", "XML", "Regex", "API Design",
+            "Microservices", "Agile", "Scrum", "Kanban", "Waterfall",
+            "OAuth", "JWT", "Security", "Encryption", "SSL/TLS",
+            "Apache", "Nginx", "IIS", "Load Balancing", "Caching",
+            "Message Queues", "RabbitMQ", "Kafka", "AWS SQS", "WebRTC"
         ]
-        # Minimum number of words to consider a file a valid resume
-        self.MIN_WORD_COUNT = 50
-
-    def extract_text_from_file(self, uploaded_file) -> str:
-        """Extract text from uploaded file"""
+        
+        # Skill categories for organized output
+        self.skill_categories = {
+            'Programming Languages': [
+                "Python", "Java", "JavaScript", "TypeScript", "C++", "C#", ".NET",
+                "PHP", "Ruby", "Go", "Rust", "Swift", "Kotlin", "Scala"
+            ],
+            'Web Technologies': [
+                "HTML", "CSS", "React", "Angular", "Vue.js", "Node.js", "Express",
+                "Django", "Flask", "FastAPI", "GraphQL", "REST API"
+            ],
+            'Databases': [
+                "SQL", "MySQL", "PostgreSQL", "MongoDB", "Firebase", "Redis",
+                "Oracle", "SQLite", "DynamoDB", "Elasticsearch"
+            ],
+            'Cloud & DevOps': [
+                "AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Jenkins",
+                "GitLab CI", "GitHub Actions", "Terraform", "Ansible"
+            ],
+            'Data Science & AI': [
+                "Machine Learning", "TensorFlow", "PyTorch", "Pandas", "NumPy",
+                "Scikit-learn", "Deep Learning", "NLP", "Data Analysis"
+            ],
+            'Mobile Development': [
+                "React Native", "Flutter", "Android", "iOS", "Swift", "Kotlin"
+            ],
+            'Other': []  # Fallback category
+        }
+        
+        # Professional action words and keywords
+        self.professional_keywords = [
+            "led", "managed", "developed", "implemented", "designed", "created",
+            "achieved", "improved", "increased", "optimized", "enhanced", "designed",
+            "built", "architected", "directed", "coordinated", "collaborated",
+            "contributed", "facilitated", "executed", "delivered", "maintained",
+            "mentored", "trained", "supervised", "oversaw", "responsible",
+            "spearheaded", "pioneered", "investigated", "analyzed", "evaluated",
+            "demonstrated", "established", "initiated", "introduced", "launched",
+            "streamlined", "reduced", "decreased", "automated", "accelerated",
+            "communicated", "negotiated", "presented", "resolved", "identified",
+            "solved", "strategic", "tactical", "leadership", "innovation"
+        ]
+        
+        # Configuration
+        self.min_word_count = 50
+        self.max_experience_years = 60  # Reasonable max experience
+    
+    # ========== File Extraction Methods ==========
+    
+    def extract_text_from_file(self, file_path: str) -> str:
+        """
+        Extract text from various file formats (PDF, DOCX, TXT).
+        
+        Args:
+            file_path: Path to the resume file
+            
+        Returns:
+            Extracted text from the file
+        """
         try:
-            # Support: file path (str), Flask FileStorage (.content_type), Streamlit UploadedFile (.type), or file-like
-            if isinstance(uploaded_file, str):
-                with open(uploaded_file, 'rb') as f:
-                    data = f.read()
-                if uploaded_file.lower().endswith('.pdf'):
-                    return self._extract_pdf_text(io.BytesIO(data))
-                elif uploaded_file.lower().endswith('.docx'):
-                    return self._extract_docx_text(io.BytesIO(data))
-                else:
-                    return data.decode('utf-8', errors='ignore')
-
-            content_type = getattr(uploaded_file, 'content_type', None) or getattr(uploaded_file, 'type', None)
-
-            raw = None
-            try:
-                raw = uploaded_file.read()
-            except Exception:
-                stream = getattr(uploaded_file, 'stream', None)
-                if stream:
-                    raw = stream.read()
-
-            if raw is None:
-                return ''
-
-            if isinstance(raw, bytes):
-                b = io.BytesIO(raw)
+            path = Path(file_path)
+            
+            if path.suffix.lower() == '.pdf':
+                return self._extract_pdf_text(file_path)
+            elif path.suffix.lower() == '.docx':
+                return self._extract_docx_text(file_path)
+            elif path.suffix.lower() == '.txt':
+                return self._extract_text_file(file_path)
             else:
-                return str(raw)
-
-            if content_type and 'pdf' in content_type:
-                return self._extract_pdf_text(b)
-            if content_type and ('word' in content_type or 'officedocument' in content_type or 'docx' in content_type):
-                return self._extract_docx_text(b)
-
-            filename = getattr(uploaded_file, 'name', '') or getattr(uploaded_file, 'filename', '')
-            if isinstance(filename, str):
-                if filename.lower().endswith('.pdf'):
-                    return self._extract_pdf_text(b)
-                if filename.lower().endswith('.docx'):
-                    return self._extract_docx_text(b)
-
-            try:
-                return b.getvalue().decode('utf-8', errors='ignore')
-            except Exception:
-                return ''
-
+                # Try to read as text
+                return self._extract_text_file(file_path)
+        
         except Exception as e:
-            return f"Error reading file: {str(e)}"
-
+            return f""
+    
+    def _extract_pdf_text(self, file_path: str) -> str:
+        """Extract text from PDF file."""
+        if PdfReader is None:
+            return ""
+        
+        try:
+            with open(file_path, 'rb') as file:
+                pdf = PdfReader(file)
+                text = ""
+                
+                for page in pdf.pages:
+                    try:
+                        page_text = page.extract_text()
+                        if page_text:
+                            text += page_text + "\n"
+                    except Exception:
+                        continue
+                
+                return text.strip()
+        
+        except Exception:
+            return ""
+    
+    def _extract_docx_text(self, file_path: str) -> str:
+        """Extract text from DOCX file."""
+        if Document is None:
+            return ""
+        
+        try:
+            doc = Document(file_path)
+            text = ""
+            
+            for paragraph in doc.paragraphs:
+                if paragraph.text.strip():
+                    text += paragraph.text + "\n"
+            
+            return text.strip()
+        
+        except Exception:
+            return ""
+    
+    def _extract_text_file(self, file_path: str) -> str:
+        """Extract text from plain text file."""
+        try:
+            with open(file_path, 'r', encoding='utf-8') as file:
+                return file.read().strip()
+        except Exception:
+            return ""
+    
+    # ========== Text Analysis Methods ==========
+    
     def detect_skills(self, text: str) -> List[Dict[str, Any]]:
-        """Detect skills mentioned in the text"""
+        """
+        Detect skills mentioned in resume text.
+        
+        Args:
+            text: Resume text to analyze
+            
+        Returns:
+            List of detected skills with metadata, sorted by frequency
+        """
         found_skills = []
-        # Use word-boundary aware matching to avoid substring false positives
+        text_lower = text.lower()
+        
         for skill in self.skills_database:
-            try:
-                # Escape skill for regex and allow variations like dots or +
-                pattern = r"\b" + re.escape(skill) + r"\b"
-                matches = re.findall(pattern, text, flags=re.IGNORECASE)
-                count = len(matches)
-            except Exception:
-                # Fallback to simple in-check
-                count = text.lower().count(skill.lower())
-
-            if count:
+            # Case-insensitive word boundary matching
+            pattern = r'\b' + re.escape(skill) + r'\b'
+            matches = re.findall(pattern, text, re.IGNORECASE)
+            
+            if matches:
                 found_skills.append({
                     'name': skill,
-                    'count': count,
-                    'category': self._get_skill_category(skill)
+                    'count': len(matches),
+                    'category': self._categorize_skill(skill)
                 })
-
-        # Sort by frequency
+        
+        # Sort by frequency (most mentioned first)
         found_skills.sort(key=lambda x: x['count'], reverse=True)
         return found_skills
-
-    def _get_skill_category(self, skill: str) -> str:
-        """Categorize skills"""
-        programming_langs = ["Python", "Java", "JavaScript", "TypeScript", "C++", "C#", "PHP", "Ruby", "Go", "Swift"]
-        web_tech = ["HTML", "CSS", "React", "Angular", "Vue.js", "Node.js", "Express", "Django", "Flask"]
-        databases = ["SQL", "MySQL", "PostgreSQL", "MongoDB", "Redis", "SQLite"]
-        cloud_devops = ["AWS", "Azure", "Google Cloud", "Docker", "Kubernetes", "Jenkins", "Git"]
-
-        if skill in programming_langs:
-            return "Programming"
-        elif skill in web_tech:
-            return "Web Technologies"
-        elif skill in databases:
-            return "Databases"
-        elif skill in cloud_devops:
-            return "Cloud & DevOps"
-        else:
-            return "Other"
-
-    def calculate_ats_score(self, text: str, skills: List[Dict]) -> int:
-        """Calculate ATS compatibility score"""
+    
+    def _categorize_skill(self, skill: str) -> str:
+        """Categorize a skill based on predefined categories."""
+        for category, skills in self.skill_categories.items():
+            if skill in skills:
+                return category
+        return 'Other'
+    
+    def calculate_ats_score(self, text: str, detected_skills: List[Dict]) -> int:
+        """
+        Calculate ATS (Applicant Tracking System) compatibility score.
+        
+        Args:
+            text: Resume text
+            detected_skills: List of detected skills
+            
+        Returns:
+            ATS score (0-100)
+        """
         score = 0
-        word_count = len(text.split())
-
-        # Skills diversity (40 points)
-        skill_count = len(skills)
-        if skill_count >= 10:
+        words = text.split()
+        word_count = len(words)
+        
+        # 1. Skills Diversity (40 points max)
+        skill_count = len(detected_skills)
+        if skill_count >= 15:
             score += 40
-        elif skill_count >= 6:
-            score += 30
-        elif skill_count >= 3:
+        elif skill_count >= 10:
+            score += 35
+        elif skill_count >= 7:
+            score += 28
+        elif skill_count >= 4:
             score += 20
-        else:
+        elif skill_count >= 2:
             score += 10
-
-        # Content length (20 points)
+        else:
+            score += 5
+        
+        # 2. Content Length (20 points max)
         if 300 <= word_count <= 800:
             score += 20
-        elif 200 <= word_count <= 1000:
+        elif 200 <= word_count <= 1200:
             score += 15
-        else:
+        elif word_count >= 100:
             score += 10
-
-        # Professional keywords (20 points)
-        professional_keywords = [
-            "experience", "responsible", "managed", "developed", "implemented",
-            "achieved", "improved", "led", "created", "designed", "collaborated"
-        ]
-        keyword_count = sum(1 for keyword in professional_keywords if keyword in text.lower())
-        score += min(20, keyword_count * 2)
-
-        # Contact information (10 points)
-        if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', text):
+        else:
             score += 5
-        if re.search(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', text):
+        
+        # 3. Professional Keywords (20 points max)
+        keyword_matches = sum(
+            1 for keyword in self.professional_keywords
+            if keyword in text_lower := text.lower()
+        )
+        score += min(20, keyword_matches * 2)
+        
+        # 4. Contact Information (10 points max)
+        email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b'
+        phone_pattern = r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b'
+        
+        if re.search(email_pattern, text):
             score += 5
-
-        # Structure indicators (10 points)
-        sections = ["experience", "education", "skills", "summary", "objective"]
-        section_count = sum(1 for section in sections if section in text.lower())
-        score += min(10, section_count * 2)
-
-        return min(100, score)
-
+        if re.search(phone_pattern, text):
+            score += 5
+        
+        # 5. Structure Indicators (10 points max)
+        sections = ['experience', 'education', 'skills', 'summary', 'objective',
+                   'projects', 'certifications', 'languages']
+        section_count = sum(1 for section in sections if section in text_lower)
+        score += min(10, section_count)
+        
+        return min(100, max(0, score))
+    
     def extract_experience_years(self, text: str) -> int:
-        """Extract years of experience from text"""
+        """
+        Extract estimated years of experience from resume text.
+        
+        Args:
+            text: Resume text
+            
+        Returns:
+            Estimated years of experience
+        """
         patterns = [
-            r'(\d+)[\+\s]*(?:years?|yrs?)[\s]*(?:of\s*)?(?:experience|exp)',
-            r'(\d+)[\+\s]*(?:year|yr)[\s]*(?:of\s*)?(?:experience|exp)',
+            r'(\d+)\s*(?:\+)?\s*(?:years?|yrs?)\s+(?:of\s+)?(?:experience|exp)',
+            r'(\d+)\s+(?:years?|yrs?)\s+(?:of\s+)?(?:professional\s+)?(?:experience|exp)',
         ]
-
+        
         for pattern in patterns:
             match = re.search(pattern, text, re.IGNORECASE)
             if match:
-                return int(match.group(1))
-
+                years = int(match.group(1))
+                return min(years, self.max_experience_years)
+        
         return 0
-
+    
     def analyze_job_match(self, resume_text: str, job_description: str) -> Dict[str, Any]:
-        """Analyze how well resume matches job description"""
+        """
+        Analyze resume match against job description.
+        
+        Args:
+            resume_text: Resume text
+            job_description: Job description text
+            
+        Returns:
+            Job matching analysis with scores and keyword comparisons
+        """
         if not job_description.strip():
             return {
                 'match_score': 0,
@@ -210,220 +363,195 @@ class ResumeAnalyzer:
                 'missing_keywords': [],
                 'total_job_keywords': 0
             }
-
-        # Clean and tokenize text
-        resume_words = set(word.lower() for word in resume_text.split() if word.isalpha() and len(word) > 3)
-        job_words = set(word.lower() for word in job_description.split() if word.isalpha() and len(word) > 3)
-
-        # Filter relevant keywords (avoid common words)
+        
+        # Tokenize and filter
+        resume_words = set(
+            word.lower() for word in resume_text.split()
+            if word.isalpha() and len(word) > 3
+        )
+        job_words = set(
+            word.lower() for word in job_description.split()
+            if word.isalpha() and len(word) > 3
+        )
+        
+        # Remove common words
         common_words = {
-            'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had', 'her', 'was', 'one', 'our',
-            'out', 'day', 'get', 'has', 'him', 'his', 'how', 'its', 'may', 'new', 'now', 'old', 'see', 'two',
-            'who', 'boy', 'did', 'does', 'let', 'put', 'say', 'she', 'too', 'use', 'will', 'work', 'team',
-            'company', 'role', 'position', 'candidate', 'must', 'should', 'able', 'with', 'have', 'this',
-            'that', 'they', 'from', 'would', 'there', 'been', 'many', 'some', 'time', 'very', 'when', 'come',
-            'here', 'just', 'like', 'long', 'make', 'over', 'such', 'take', 'than', 'them', 'well', 'were'
+            'the', 'and', 'for', 'are', 'but', 'not', 'you', 'all', 'can', 'had',
+            'her', 'was', 'one', 'our', 'out', 'day', 'get', 'has', 'him', 'his',
+            'how', 'its', 'may', 'new', 'now', 'old', 'see', 'two', 'who', 'boy',
+            'did', 'does', 'let', 'put', 'say', 'she', 'too', 'use', 'will', 'work',
+            'team', 'company', 'role', 'position', 'candidate', 'must', 'should',
+            'able', 'with', 'have', 'this', 'that', 'they', 'from', 'would',
+            'there', 'been', 'many', 'some', 'time', 'very', 'when', 'come',
+            'here', 'just', 'like', 'long', 'make', 'over', 'such', 'take', 'than',
+            'them', 'well', 'were'
         }
-
+        
         job_keywords = job_words - common_words
-
-        # Find matches
-        matching_keywords = list(resume_words.intersection(job_keywords))
-        missing_keywords = list(job_keywords - resume_words)
-
+        matched = list(resume_words.intersection(job_keywords))[:15]
+        missing = list(job_keywords - resume_words)[:15]
+        
         # Calculate match score
-        if job_keywords:
-            match_score = int((len(matching_keywords) / len(job_keywords)) * 100)
-        else:
-            match_score = 0
-
+        match_score = int((len(matched) / len(job_keywords)) * 100) if job_keywords else 0
+        
         return {
-            'match_score': match_score,
-            'matched_keywords': matching_keywords[:15],  # Top 15
-            'missing_keywords': missing_keywords[:15],    # Top 15
+            'match_score': min(100, match_score),
+            'matched_keywords': matched,
+            'missing_keywords': missing,
             'total_job_keywords': len(job_keywords)
         }
-
-    def validate_resume_text(self, text: str) -> Dict[str, Any]:
-        """Validate extracted text to determine if it's a likely resume.
-
-        Returns a dict: { 'valid': bool, 'reason': str }
+    
+    def extract_keywords(self, text: str) -> List[str]:
+        """
+        Extract important professional keywords from resume.
+        
+        Args:
+            text: Resume text
+            
+        Returns:
+            List of extracted keywords
+        """
+        keywords = []
+        text_lower = text.lower()
+        
+        for keyword in self.professional_keywords:
+            if keyword in text_lower:
+                keywords.append(keyword.title())
+        
+        return list(set(keywords))[:10]  # Return unique, max 10
+    
+    def validate_resume(self, text: str) -> Tuple[bool, str]:
+        """
+        Validate that extracted text is a legitimate resume.
+        
+        Args:
+            text: Extracted resume text
+            
+        Returns:
+            (is_valid, error_message)
         """
         if not text or not isinstance(text, str):
-            return {'valid': False, 'reason': 'No text extracted from file.'}
-
-        # If extractor returned an error message, treat as invalid
-        lowered = text.strip().lower()
-        if lowered.startswith('error') or ('requires' in lowered and ('py' in lowered or 'library' in lowered)):
-            return {'valid': False, 'reason': 'File could not be processed or required libraries are missing.'}
-
-        # Count words
-        words = [w for w in re.findall(r"[A-Za-z0-9]+", text) if len(w) > 1]
-        word_count = len(words)
-        if word_count < self.MIN_WORD_COUNT:
-            return {'valid': False, 'reason': f'Content too short ({word_count} words); not a valid resume.'}
-
-        return {'valid': True, 'reason': ''}
-
-    def generate_recommendations(self, analysis_results: Dict[str, Any]) -> List[str]:
-        """Generate improvement recommendations based on analysis"""
+            return False, 'No text extracted from file'
+        
+        word_count = len(text.split())
+        
+        if word_count < self.min_word_count:
+            return False, f'Resume too short ({word_count} words). Minimum {self.min_word_count} required.'
+        
+        return True, ''
+    
+    def generate_recommendations(self, analysis: Dict[str, Any]) -> List[str]:
+        """
+        Generate actionable recommendations to improve resume.
+        
+        Args:
+            analysis: Analysis results dictionary
+            
+        Returns:
+            List of recommendations
+        """
         recommendations = []
-
-        # ATS Score recommendations
-        if analysis_results['ats_score'] < 60:
-            recommendations.append("Improve ATS compatibility by adding more relevant technical skills and keywords")
-
+        
+        # ATS score recommendations
+        ats = analysis.get('ats_score', 0)
+        if ats < 50:
+            recommendations.append('Add more relevant technical skills and certifications to improve ATS score')
+        if ats < 70:
+            recommendations.append('Include more action verbs and quantifiable achievements')
+        
         # Skills recommendations
-        skill_count = len(analysis_results['skills'])
+        skill_count = analysis.get('skill_count', 0)
         if skill_count < 5:
-            recommendations.append("Add more technical skills relevant to your target role")
-        elif skill_count < 8:
-            recommendations.append("Consider adding more diverse skills to strengthen your profile")
-
-        # Content length recommendations
-        word_count = analysis_results['word_count']
-        if word_count < 200:
-            recommendations.append("Expand your resume with more detailed job descriptions and achievements")
-        elif word_count > 1000:
-            recommendations.append("Consider condensing your resume for better readability")
-
-        # Job matching recommendations
-        if 'job_analysis' in analysis_results and analysis_results['job_analysis']:
-            match_score = analysis_results['job_analysis']['match_score']
-            if match_score < 40:
-                recommendations.append("Incorporate more keywords from the job description to improve relevance")
-            elif match_score < 60:
-                recommendations.append("Add some missing keywords naturally into your experience descriptions")
-
-        # Experience recommendations
-        if analysis_results['experience_years'] == 0:
-            recommendations.append("Clearly mention your years of experience in your summary or job titles")
-
+            recommendations.append('Add 3-5 more relevant technical skills to your profile')
+        elif skill_count > 20:
+            recommendations.append('Focus on top 10-15 most relevant skills; trim less important ones')
+        
+        # Content length
+        words = analysis.get('word_count', 0)
+        if words < 200:
+            recommendations.append('Expand your resume with more detailed job descriptions and achievements')
+        elif words > 1000:
+            recommendations.append('Condense your resume to 1 page; focus on most relevant experience')
+        
+        # Job matching
+        job_match = analysis.get('job_analysis', {})
+        if job_match:
+            match_score = job_match.get('match_score', 0)
+            missing = job_match.get('missing_keywords', [])
+            
+            if match_score < 50 and missing:
+                recommendations.append(f'Add keywords from job description: {", ".join(missing[:3])}')
+            elif match_score < 70:
+                recommendations.append('Incorporate more job-specific keywords naturally in your descriptions')
+        
+        # Experience
+        if analysis.get('experience_years', 0) == 0:
+            recommendations.append('Clearly state your years of professional experience')
+        
         # Default positive message
         if not recommendations:
-            recommendations.append("Your resume looks well-structured! Keep it updated with recent skills and achievements")
-
+            recommendations.append('Your resume looks well-structured! Keep it updated with latest skills')
+        
         return recommendations
-
-    def analyze_resume(self, resume_text: str, job_description: str = "") -> Dict[str, Any]:
-        """Perform comprehensive resume analysis"""
-        # Validate resume text
-        validation = self.validate_resume_text(resume_text)
-        if not validation.get('valid'):
+    
+    # ========== Main Analysis Method ==========
+    
+    def analyze_resume(self, resume_text: str, job_description: str = '') -> Dict[str, Any]:
+        """
+        Perform comprehensive resume analysis.
+        
+        Args:
+            resume_text: Extracted resume text
+            job_description: Optional job description for matching
+            
+        Returns:
+            Complete analysis results with all metrics
+        """
+        # Validate resume
+        is_valid, error_msg = self.validate_resume(resume_text)
+        
+        if not is_valid:
             return {
                 'valid': False,
-                'message': validation.get('reason', 'Invalid resume content'),
+                'message': error_msg,
                 'word_count': len(resume_text.split()),
-                'skills': {},
-                'skill_count': 0,
-                'keywords': [],
                 'ats_score': 0,
+                'skill_count': 0,
                 'experience_years': 0,
                 'job_analysis': None,
-                'recommendations': ["Please upload a valid resume (PDF, DOCX, or plain text) with more content."]
+                'skills': {},
+                'keywords': [],
+                'recommendations': [error_msg]
             }
-
-        # Basic metrics
+        
+        # Analyze
         word_count = len(resume_text.split())
-
-        # Skills analysis
-        skills = self.detect_skills(resume_text)
-
-        # ATS score
-        ats_score = self.calculate_ats_score(resume_text, skills)
-
-        # Experience extraction
+        detected_skills = self.detect_skills(resume_text)
+        ats_score = self.calculate_ats_score(resume_text, detected_skills)
         experience_years = self.extract_experience_years(resume_text)
-
-        # Job matching
-        job_analysis = self.analyze_job_match(resume_text, job_description)
-
-        # Extract professional keywords
-        keywords = self._extract_keywords(resume_text)
-
+        job_analysis = self.analyze_job_match(resume_text, job_description) if job_description else None
+        keywords = self.extract_keywords(resume_text)
+        
+        # Format skills by category
+        skills_by_category = {}
+        for skill in detected_skills[:20]:  # Top 20 skills
+            cat = skill['category']
+            if cat not in skills_by_category:
+                skills_by_category[cat] = []
+            skills_by_category[cat].append(skill['name'])
+        
         # Compile results
         results = {
             'word_count': word_count,
-            'skills': self._format_skills_for_display(skills[:20]),  # Top 20 skills
-            'skill_count': len(skills),
-            'keywords': keywords,
             'ats_score': ats_score,
+            'skill_count': len(detected_skills),
+            'skills': skills_by_category,
+            'keywords': keywords,
             'experience_years': experience_years,
-            'job_analysis': job_analysis if job_description else None
+            'job_analysis': job_analysis
         }
-
+        
         # Generate recommendations
         results['recommendations'] = self.generate_recommendations(results)
-
+        
         return results
-
-    def _extract_keywords(self, text: str) -> List[str]:
-        """Extract professional keywords from text"""
-        professional_keywords = [
-            "leadership", "management", "communication", "problem-solving", "teamwork",
-            "project management", "strategic planning", "budget management", "training",
-            "analysis", "research", "development", "implementation", "optimization",
-            "collaboration", "mentoring", "negotiation", "presentation", "documentation"
-        ]
-
-        found_keywords = []
-        text_lower = text.lower()
-
-        for keyword in professional_keywords:
-            if keyword in text_lower:
-                found_keywords.append(keyword.title())
-
-        return found_keywords[:10]  # Top 10 keywords
-
-    def _format_skills_for_display(self, skills: List[Dict]) -> Dict[str, List[str]]:
-        """Format skills data for UI display"""
-        formatted_skills = {}
-
-        for skill in skills:
-            category = skill.get('category', 'Other')
-            if category not in formatted_skills:
-                formatted_skills[category] = []
-            formatted_skills[category].append(skill['name'])
-
-        return formatted_skills
-
-    def _extract_pdf_text(self, uploaded_file) -> str:
-        """Extract text from PDF file"""
-        if _PdfReader is None:
-            return "PDF processing requires the 'pypdf' or 'PyPDF2' library. Please install one or use TXT files."
-
-        try:
-            data = uploaded_file.read()
-            pdf_reader = _PdfReader(io.BytesIO(data))
-            text = ""
-
-            # Both pypdf and PyPDF2 provide a .pages iterable and page.extract_text()
-            for page in getattr(pdf_reader, 'pages', []):
-                try:
-                    page_text = page.extract_text() or ""
-                except Exception:
-                    # Older versions/variants might differ; ignore page on failure
-                    page_text = ""
-                text += page_text + "\n"
-
-            return text.strip()
-
-        except Exception as e:
-            return f"Error reading PDF file: {str(e)}. Please try a different file or format."
-
-    def _extract_docx_text(self, uploaded_file) -> str:
-        """Extract text from DOCX file"""
-        if Document is None:
-            return "DOCX processing requires python-docx library. Please install it or use TXT files."
-
-        try:
-            doc = Document(io.BytesIO(uploaded_file.read()))
-            text = ""
-
-            for paragraph in doc.paragraphs:
-                text += paragraph.text + "\n"
-
-            return text.strip()
-
-        except Exception as e:
-            return f"Error reading DOCX file: {str(e)}. Please try a different file or format."
