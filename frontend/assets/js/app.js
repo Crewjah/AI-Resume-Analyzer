@@ -140,21 +140,22 @@ async function analyze(event) {
 
     console.log('Response status:', response.status);
 
-    // Parse JSON response
-    let data;
+    // Try JSON first; if it fails, read text to surface HTML/error pages
+    let data = null;
     try {
       data = await response.json();
     } catch (parseErr) {
-      console.error('Failed to parse JSON:', parseErr);
-      throw new Error('Invalid response from server');
+      console.warn('Failed to parse JSON, falling back to text:', parseErr);
+      const text = await response.text();
+      console.warn('Raw response body:', text?.slice(0, 500));
+      data = { error: text || 'Invalid response from server' };
     }
 
-    // Check for errors
     if (!response.ok) {
-      const errorMsg = data?.error || response.statusText || 'Unknown error';
+      const errorMsg = data?.error || response.statusText || `HTTP ${response.status}`;
       console.error('Backend error:', errorMsg);
       setStatus('Failed', 'error');
-      resultsPanel.innerHTML = `<div class="alert alert--error">${errorMsg}</div>`;
+      resultsPanel.innerHTML = `<div class="alert alert--error">${errorMsg}<br><small>Backend URL: ${API}</small></div>`;
       return;
     }
 
