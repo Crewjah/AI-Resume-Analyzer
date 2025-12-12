@@ -540,24 +540,3 @@ if st.session_state.analyzed and st.session_state.results:
 
 # Footer
 st.markdown("---")
-st.markdown("""
-<div style="text-align: center; padding: 3rem 0 2rem 0;">
-    <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                padding: 0.5rem 2rem; border-radius: 50px; margin-bottom: 1rem;">
-        <span style="color: white; font-weight: 600; font-size: 1rem;">AI Resume Analyzer</span>
-    </div>
-    <p style="color: #666; font-size: 0.9rem; margin: 1rem 0;">
-        Empowering careers with AI-driven insights
-    </p>
-    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap;">
-        <a href="https://github.com/Crewjah/AI-Resume-Analyzer" target="_blank" 
-           style="color: #667eea; text-decoration: none; font-weight: 500; transition: all 0.3s;">
-            GitHub
-        </a>
-        <span style="color: #667eea; font-weight: 500;">•</span>
-        <span style="color: #888;">SWOC 2026</span>
-        <span style="color: #667eea; font-weight: 500;">•</span>
-        <span style="color: #888;">Open Source</span>
-    </div>
-</div>
-""", unsafe_allow_html=True)
