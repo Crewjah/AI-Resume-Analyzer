@@ -140,6 +140,12 @@ st.markdown("""
         box-shadow: inset 0 0 30px rgba(102, 126, 234, 0.1) !important;
     }
     
+    [data-testid="stFileUploader"] label {
+        color: white !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
+    }
+    
     [data-testid="stFileUploader"]:hover {
         border-color: #764ba2 !important;
         background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
@@ -155,6 +161,10 @@ st.markdown("""
         transition: all 0.3s ease !important;
         background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
         color: white !important;
+    }
+    
+    .stTextArea textarea::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
     }
     
     .stTextArea textarea:focus {
@@ -488,7 +498,17 @@ st.markdown("""
     }
     
     p, span, label {
-        color: rgba(255, 255, 255, 0.85) !important;
+        color: rgba(255, 255, 255, 0.9) !important;
+    }
+    
+    /* Markdown heading styling */
+    .stMarkdown h3 {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+    }
+    
+    .stMarkdown p {
+        color: rgba(255, 255, 255, 0.9) !important;
     }
     
     /* Expander styling */
@@ -522,7 +542,9 @@ st.markdown("""
     /* Textarea label styling */
     .stTextArea label {
         color: white !important;
-        font-weight: 600 !important;
+        font-weight: 700 !important;
+        font-size: 1rem !important;
+        margin-bottom: 0.5rem !important;
     }
     
     /* Scrollbar styling */
@@ -548,6 +570,36 @@ st.markdown("""
     
     /* Strong text in boxes */
     .warning-box strong, .success-box strong, .info-box strong {
+        color: white !important;
+    }
+    
+    /* Global input field styling */
+    input[type="text"],
+    input[type="email"],
+    input[type="number"],
+    input[type="password"],
+    input[type="date"],
+    input[type="search"],
+    textarea {
+        color: white !important;
+    }
+    
+    input::placeholder {
+        color: rgba(255, 255, 255, 0.6) !important;
+    }
+    
+    /* All labels should be visible */
+    .stNumberInput label,
+    .stSelectbox label,
+    .stMultiSelect label,
+    .stCheckbox label,
+    .stRadio label {
+        color: white !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Streamlit default label text */
+    [class*="stLabel"] {
         color: white !important;
     }
 </style>
