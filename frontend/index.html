@@ -3,151 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Resume Analyzer - ATS Score & Skills Detection</title>
+    <title>AI Resume Analyzer - Professional Resume Scoring</title>
     <link rel="stylesheet" href="./assets/css/styles.css">
     <script src="./assets/js/config.js"></script>
 </head>
 <body>
-    <!-- Navigation Bar -->
+    <!-- Modern Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
-            <div class="nav-brand">
-                <span class="nav-logo">📄</span>
-                <span class="nav-title">Resume Analyzer</span>
+        <div class="nav-wrapper">
+            <div class="nav-logo">
+                <span class="logo-icon">⚡</span>
+                <span class="logo-text">ResumAI</span>
             </div>
-            <div class="nav-links">
-                <a href="#features" class="nav-link">Features</a>
-                <a href="#results" class="nav-link">Results</a>
-            </div>
+            <div class="nav-badge">Pro Analytics</div>
         </div>
     </nav>
 
-    <div class="wrapper">
+    <main class="app-container">
         <!-- Hero Section -->
-        <header class="hero">
+        <section class="hero-section">
             <div class="hero-content">
-                <div class="hero-badge">✨ AI-Powered Analysis</div>
-                <h1 class="hero-title">Resume Analyzer Pro</h1>
-                <p class="hero-subtitle">Get instant ATS scores, skill detection, and job matching insights with advanced AI technology</p>
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <span class="stat-number">1000+</span>
-                        <span class="stat-label">Resumes Analyzed</span>
+                <h1 class="hero-title">
+                    <span class="gradient-text">Professional Resume</span>
+                    <span class="highlight">Analysis</span>
+                </h1>
+                <p class="hero-desc">Get instant ATS compatibility scores, skill insights & job matching powered by advanced AI</p>
+                
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">1000+</div>
+                        <div class="stat-label">Resumes Processed</div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number">95%</span>
-                        <span class="stat-label">Accuracy Rate</span>
+                    <div class="stat-card">
+                        <div class="stat-value">98%</div>
+                        <div class="stat-label">Accuracy</div>
                     </div>
-                    <div class="stat-item">
-                        <span class="stat-number">100+</span>
-                        <span class="stat-label">Skills Database</span>
+                    <div class="stat-card">
+                        <div class="stat-value">177+</div>
+                        <div class="stat-label">Skills Database</div>
                     </div>
                 </div>
             </div>
-        </header>
+        </section>
 
         <!-- Main Content -->
-        <main class="main-content">
-            <div class="layout">
-                <!-- Upload Section -->
-                <section class="upload-panel">
-                    <div class="panel-header">
-                        <div class="step-counter">
-                            <span class="step-number">1</span>
-                            <span class="step-title">Upload & Analyze</span>
-                        </div>
-                        <p class="panel-subtitle">Upload your resume and optionally add a job description</p>
-                    </div>
+        <section class="main-grid">
+            <!-- Upload Panel -->
+            <div class="upload-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="step-badge">1</span>
+                        Upload Resume
+                    </h2>
+                    <p class="card-subtitle">Support for PDF, DOCX & TXT formats</p>
+                </div>
 
-                    <form id="analyzer-form" enctype="multipart/form-data" class="analyzer-form">
-                        <!-- File Upload -->
-                        <div class="form-section">
-                            <label for="resume-file" class="form-label">
-                                <span class="label-icon">📋</span>
-                                <span class="label-text">Resume File</span>
-                            </label>
-                            <div class="dropzone" id="dropzone">
-                                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                                    <polyline points="17 8 12 3 7 8"></polyline>
-                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                <form id="analyzer-form" class="upload-form">
+                    <!-- File Dropzone -->
+                    <div class="upload-group">
+                        <label class="upload-label">Resume File</label>
+                        <div class="dropzone-wrapper" id="dropzone">
+                            <div class="dropzone-content">
+                                <svg class="dropzone-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12" stroke-width="2" stroke-linecap="round"/>
                                 </svg>
-                                <p class="dropzone-text">Drag & drop your resume here</p>
-                                <p class="dropzone-hint">or click to browse your files</p>
-                                <p class="dropzone-formats">Supports PDF, DOCX, TXT (max 10 MB)</p>
+                                <p class="dropzone-title">Drop your resume here</p>
+                                <p class="dropzone-subtitle">or click to browse</p>
+                                <p class="dropzone-hint">PDF, DOCX, TXT • Max 10MB</p>
                             </div>
-                            <input 
-                                type="file" 
-                                id="resume-file" 
-                                name="file" 
-                                accept=".pdf,.docx,.txt,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,text/plain"
-                                required
-                            >
-                            <div class="file-badge" id="file-info"></div>
                         </div>
-
-                        </div>
-
-                        <!-- Job Description -->
-                        <div class="form-section">
-                            <label for="job-description" class="form-label">
-                                <span class="label-icon">💼</span>
-                                <span class="label-text">Job Description</span>
-                                <span class="optional-badge">optional</span>
-                            </label>
-                            <p class="form-hint">Paste a job description to get match scoring</p>
-                            <textarea 
-                                id="job-description" 
-                                name="job_description" 
-                                placeholder="Paste job description here for better match analysis..."
-                                class="textarea"
-                                rows="5"
-                            ></textarea>
-                        </div>
-
-                        <!-- Submit Button -->
-                        <button type="submit" class="btn-primary" id="submit-btn">
-                            <span class="btn-text">Analyze Resume</span>
-                            <span class="btn-icon">→</span>
-                        </button>
-
-                        <div class="privacy-notice">
-                            🔒 <strong>Privacy First:</strong> Resumes are analyzed on the server and never stored or shared.
-                        </div>
-                    </form>
-                </section>
-
-                <!-- Results Section -->
-                <section class="results-panel">
-                    <div class="panel-header">
-                        <div class="step-counter">
-                            <span class="step-number">2</span>
-                            <span class="step-title">Analysis Results</span>
-                        </div>
-                        <div class="status-badge" id="status-badge"></div>
+                        <input type="file" id="resume-file" name="file" accept=".pdf,.docx,.txt" hidden>
+                        <div class="file-indicator" id="file-info"></div>
                     </div>
 
-                    <div id="results-container" class="results-container">
-                        <div class="empty-state">
-                            <div class="empty-icon">📊</div>
-                            <p class="empty-text">Upload a resume to see detailed analysis</p>
-                            <p class="empty-hint">Your results will appear here</p>
-                        </div>
+                    <!-- Job Description -->
+                    <div class="upload-group">
+                        <label class="upload-label">
+                            Job Description
+                            <span class="label-badge">Optional</span>
+                        </label>
+                        <textarea id="job-description" class="textarea-input" placeholder="Paste job description for better matching..." rows="5"></textarea>
+                        <p class="hint-text">We'll match your skills against job requirements</p>
                     </div>
-                </section>
-            </div>
-        </main>
 
-        <!-- Footer -->
-        <footer class="footer">
-            <div class="footer-content">
-                <p class="footer-text">&copy; 2025 AI Resume Analyzer. Helping professionals succeed.</p>
-                <p class="footer-subtext">Powered by advanced AI resume analysis technology</p>
-            </div>
-        </footer>
-    </div>
+                    <!-- Submit Button -->
+                    <button type="submit" class="submit-btn" id="submit-btn">
+                        <span class="btn-label">Analyze Now</span>
+                        <span class="btn-arrow">→</span>
+                    </button>
 
-    <!-- Scripts -->
+                    <!-- Privacy Notice -->
+                    <div class="privacy-box">
+                        <svg class="privacy-icon" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4z"/>
+                        </svg>
+                        <p>Your data is processed securely and never stored</p>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="results-card">
+                <div class="card-header">
+                    <h2 class="card-title">
+                        <span class="step-badge">2</span>
+                        Analysis Results
+                    </h2>
+                    <div class="status-indicator" id="status-badge"></div>
+                </div>
+
+                <div class="results-content" id="results-container">
+                    <div class="empty-state">
+                        <div class="empty-icon">📊</div>
+                        <p class="empty-title">No analysis yet</p>
+                        <p class="empty-text">Upload a resume to get started</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p class="footer-text">© 2025 ResumAI • Professional Resume Analysis</p>
+    </footer>
+
     <script src="./assets/js/app.js"></script>
 </body>
 </html>

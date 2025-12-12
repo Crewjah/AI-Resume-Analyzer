@@ -113,7 +113,7 @@ def validate_upload(file) -> Tuple[bool, str]:
     return True, ''
 
 
-@app.route('/health', methods=['GET'])
+@app.route('/api/health', methods=['GET'])
 def health() -> Tuple[Dict[str, Any], int]:
     """
     Health check endpoint.
@@ -129,7 +129,7 @@ def health() -> Tuple[Dict[str, Any], int]:
     }), 200
 
 
-@app.route('/analyze', methods=['POST', 'OPTIONS'])
+@app.route('/api/analyze', methods=['POST', 'OPTIONS'])
 def analyze() -> Tuple[Dict[str, Any], int]:
     """
     Analyze a resume and return detailed insights.
