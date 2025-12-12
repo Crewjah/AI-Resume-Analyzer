@@ -1,5 +1,4 @@
 import re
-import spacy
 from collections import Counter
 from typing import Dict, List, Any
 import string
@@ -12,12 +11,6 @@ class ResumeAnalyzer:
     
     def __init__(self):
         """Initialize the analyzer with NLP model."""
-        try:
-            self.nlp = spacy.load("en_core_web_sm")
-        except:
-            # Fallback if model not loaded
-            self.nlp = None
-        
         # Common skills database
         self.technical_skills = {
             'python', 'java', 'javascript', 'c++', 'c#', 'ruby', 'php', 'swift', 'kotlin',
