@@ -138,16 +138,23 @@ async function handleFormSubmit(e) {
 
         console.log('📥 Response status:', response.status);
 
-        // Parse response
-        let data;
+        // Parse response - get text first to avoid stream issues
+        let responseText = '';
+        let data = {};
+        
         try {
-            data = await response.json();
-            console.log('✅ Response data:', data);
+            responseText = await response.text();
+            console.log('📄 Raw response:', responseText.slice(0, 500));
+            
+            // Try to parse as JSON
+            if (responseText) {
+                data = JSON.parse(responseText);
+                console.log('✅ Response data:', data);
+            }
         } catch (parseErr) {
             console.error('❌ JSON parse error:', parseErr);
-            const text = await response.text();
-            console.error('❌ Raw response:', text?.slice(0, 500));
-            throw new Error('Invalid response format from server. ' + (text ? text.slice(0, 100) : 'Empty response'));
+            console.error('❌ Response text:', responseText?.slice(0, 500));
+            throw new Error('Invalid response format from server. ' + (responseText ? responseText.slice(0, 100) : 'Empty response'));
         }
 
         // Handle errors
