@@ -286,41 +286,52 @@ st.markdown("""
         letter-spacing: -2px;
     }
     
-    /* Info boxes */
+    /* Info boxes - Dark theme */
     .info-box {
-        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%);
         padding: 1.5rem;
         border-radius: 18px;
-        border-left: 6px solid #2196F3;
+        border-left: 6px solid #4facfe;
+        border: 1px solid rgba(79, 172, 254, 0.3);
         margin: 1.2rem 0;
         animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(33, 150, 243, 0.15);
+        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        color: rgba(255,255,255,0.9);
     }
     
     .success-box {
-        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
         padding: 1.5rem;
         border-radius: 18px;
-        border-left: 6px solid #4CAF50;
+        border-left: 6px solid #4caf50;
+        border: 1px solid rgba(76, 175, 80, 0.3);
         margin: 1.2rem 0;
         animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15);
+        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        color: rgba(255,255,255,0.9);
     }
     
     .warning-box {
-        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.2) 0%, rgba(255, 152, 0, 0.1) 100%);
         padding: 1.5rem;
         border-radius: 18px;
-        border-left: 6px solid #FF9800;
+        border-left: 6px solid #ff9800;
+        border: 1px solid rgba(255, 152, 0, 0.3);
         margin: 1.2rem 0;
         animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.15);
+        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        color: rgba(255,255,255,0.9);
         transition: all 0.3s ease;
     }
     
     .warning-box:hover {
         transform: translateX(8px);
-        box-shadow: 0 12px 35px rgba(255, 152, 0, 0.25);
+        box-shadow: 0 12px 35px rgba(255, 152, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
+        border-color: rgba(255, 152, 0, 0.6);
+        background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 152, 0, 0.2) 100%);
     }
     
     /* Animation keyframes */
@@ -421,18 +432,39 @@ st.markdown("""
         }
     }
     
-    /* Plotly chart styling */
+    /* Plotly chart styling - Dark theme */
     [data-testid="stPlotlyChart"] {
         border-radius: 20px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+        border: 1px solid rgba(255,255,255,0.1);
+        padding: 1rem;
+        animation: fadeInScale 0.7s ease-out;
+        backdrop-filter: blur(10px);
     }
     
-    /* Dataframe styling */
+    /* Dataframe styling - Dark theme */
     [data-testid="stDataFrame"] {
         border-radius: 18px;
         overflow: hidden;
-        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
+        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        backdrop-filter: blur(10px);
+    }
+    
+    [data-testid="stDataFrame"] table {
+        background: transparent !important;
+        color: white !important;
+    }
+    
+    [data-testid="stDataFrame"] thead {
+        background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.2) 100%) !important;
+    }
+    
+    [data-testid="stDataFrame"] tbody tr:hover {
+        background: rgba(102, 126, 234, 0.15) !important;
     }
     
     /* Column layout */
@@ -477,6 +509,46 @@ st.markdown("""
     
     .stAlert {
         border-radius: 15px !important;
+        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%) !important;
+        border: 1px solid rgba(255,255,255,0.15) !important;
+        color: white !important;
+    }
+    
+    /* File input text styling */
+    [data-testid="stFileUploader"] label {
+        color: white !important;
+    }
+    
+    /* Textarea label styling */
+    .stTextArea label {
+        color: white !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+    
+    ::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 10px;
+    }
+    
+    ::-webkit-scrollbar-thumb {
+        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        border-radius: 10px;
+        border: 2px solid rgba(102, 126, 234, 0.2);
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(180deg, #764ba2 0%, #f093fb 100%);
+        box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+    }
+    
+    /* Strong text in boxes */
+    .warning-box strong, .success-box strong, .info-box strong {
+        color: white !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -627,12 +699,17 @@ if st.session_state.analyzed and st.session_state.results:
                 y=list(keywords.values())[:10],
                 labels={'x': 'Keyword', 'y': 'Frequency'},
                 color=list(keywords.values())[:10],
-                color_continuous_scale='Viridis'
+                color_continuous_scale='Plasma'
             )
             fig.update_layout(
                 showlegend=False,
                 height=300,
-                margin=dict(l=0, r=0, t=30, b=0)
+                margin=dict(l=0, r=0, t=30, b=0),
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='white'),
+                xaxis=dict(showgrid=False, color='rgba(255,255,255,0.5)'),
+                yaxis=dict(showgrid=True, gridcolor='rgba(102,126,234,0.2)', color='rgba(255,255,255,0.5)')
             )
             st.plotly_chart(fig, use_container_width=True)
     
@@ -678,11 +755,21 @@ if st.session_state.analyzed and st.session_state.results:
         polar=dict(
             radialaxis=dict(
                 visible=True,
-                range=[0, 100]
-            )
+                range=[0, 100],
+                gridcolor='rgba(102, 126, 234, 0.2)',
+                tickcolor='rgba(255,255,255,0.5)'
+            ),
+            angularaxis=dict(
+                gridcolor='rgba(102, 126, 234, 0.2)',
+                tickcolor='rgba(255,255,255,0.5)'
+            ),
+            bgcolor='rgba(0,0,0,0)'
         ),
         showlegend=False,
-        height=400
+        height=400,
+        plot_bgcolor='rgba(0,0,0,0)',
+        paper_bgcolor='rgba(0,0,0,0)',
+        font=dict(color='white')
     )
     
     st.plotly_chart(fig, use_container_width=True)
