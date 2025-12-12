@@ -126,7 +126,7 @@ The application evaluates resumes across multiple dimensions:
 
 ## Contributing
 
-We welcome contributions from the community! This project is part of Social Winter of Code 2024.
+We welcome contributions from the community! This project is part of Social Winter of Code 2026.
 
 ### How to Contribute
 
@@ -200,7 +200,7 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Social Winter of Code 2024 for the opportunity
+- Social Winter of Code 2026 for the opportunity
 - SpaCy and Hugging Face for NLP models
 - Streamlit for the amazing framework
 - All contributors and supporters
@@ -221,4 +221,4 @@ If you find this project helpful, please consider:
 
 ---
 
-Made with Python and Streamlit | Social Winter of Code 2024
+Made with Python and Streamlit | Social Winter of Code 2026

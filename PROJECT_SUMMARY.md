@@ -242,7 +242,7 @@ See [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md) for guidelines.
 
 ---
 
-**Project Created**: December 2024  
+**Project Created**: December 2026  
 **Framework**: Streamlit  
 **Language**: Python  
 **License**: MIT  
