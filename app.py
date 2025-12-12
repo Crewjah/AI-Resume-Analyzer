@@ -20,75 +20,135 @@ st.markdown("""
 <style>
     /* Main theme colors */
     :root {
-        --primary-color: #6C63FF;
-        --secondary-color: #4CAF50;
-        --accent-color: #FF6B6B;
-        --background-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        --success-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        --card-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
     }
     
-    /* Header styling */
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* Header styling with enhanced animation */
     .main-header {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        padding: 2rem;
-        border-radius: 15px;
+        padding: 3rem 2rem;
+        border-radius: 20px;
         text-align: center;
         color: white;
         margin-bottom: 2rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-        animation: fadeIn 1s ease-in;
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+        animation: slideDown 0.8s ease-out;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .main-header::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+        animation: rotate 20s linear infinite;
     }
     
     .main-header h1 {
-        font-size: 3rem;
-        font-weight: 700;
+        font-size: 3.5rem;
+        font-weight: 800;
         margin: 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.3);
+        position: relative;
+        z-index: 1;
+        letter-spacing: -1px;
     }
     
     .main-header p {
-        font-size: 1.2rem;
-        margin-top: 0.5rem;
-        opacity: 0.9;
+        font-size: 1.3rem;
+        margin-top: 0.8rem;
+        opacity: 0.95;
+        position: relative;
+        z-index: 1;
+        font-weight: 300;
     }
     
-    /* Card styling */
+    /* Enhanced card styling */
     .metric-card {
         background: white;
-        padding: 1.5rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-        margin: 1rem 0;
-        border-left: 5px solid #6C63FF;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        margin: 1.5rem 0;
+        border-left: 5px solid transparent;
+        border-image: linear-gradient(135deg, #667eea, #764ba2) 1;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .metric-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.05), transparent);
+        transition: left 0.5s;
     }
     
     .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+        transform: translateY(-8px);
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.15);
     }
     
-    /* Score display */
+    .metric-card:hover::before {
+        left: 100%;
+    }
+    
+    /* Score display with pulse animation */
     .score-container {
         text-align: center;
-        padding: 2rem;
+        padding: 2.5rem;
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 15px;
+        border-radius: 20px;
         color: white;
-        animation: slideIn 0.5s ease-out;
+        animation: fadeInScale 0.6s ease-out;
+        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.3);
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .score-container::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        transform: translate(-50%, -50%);
+        animation: ripple 2s infinite;
     }
     
     .score-value {
-        font-size: 4rem;
-        font-weight: 700;
+        font-size: 5rem;
+        font-weight: 900;
         margin: 1rem 0;
-        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        text-shadow: 3px 3px 10px rgba(0, 0, 0, 0.3);
+        animation: countUp 1s ease-out;
+        position: relative;
+        z-index: 1;
     }
     
-    /* Animations */
-    @keyframes fadeIn {
+    /* Enhanced animations */
+    @keyframes slideDown {
         from {
             opacity: 0;
-            transform: translateY(-20px);
+            transform: translateY(-50px);
         }
         to {
             opacity: 1;
@@ -96,75 +156,187 @@ st.markdown("""
         }
     }
     
-    @keyframes slideIn {
+    @keyframes fadeInScale {
         from {
             opacity: 0;
-            transform: translateX(-50px);
+            transform: scale(0.9);
         }
         to {
             opacity: 1;
-            transform: translateX(0);
+            transform: scale(1);
         }
     }
     
-    /* Upload section */
-    .upload-section {
-        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        padding: 2rem;
-        border-radius: 15px;
-        margin: 1rem 0;
+    @keyframes countUp {
+        from {
+            opacity: 0;
+            transform: scale(0.5);
+        }
+        to {
+            opacity: 1;
+            transform: scale(1);
+        }
     }
     
-    /* Button styling */
+    @keyframes ripple {
+        0% {
+            width: 0;
+            height: 0;
+            opacity: 0.5;
+        }
+        100% {
+            width: 400px;
+            height: 400px;
+            opacity: 0;
+        }
+    }
+    
+    @keyframes rotate {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
+    /* Upload section with gradient border */
+    .upload-section {
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        padding: 2.5rem;
+        border-radius: 20px;
+        margin: 1.5rem 0;
+        border: 2px solid transparent;
+        background-clip: padding-box;
+        position: relative;
+    }
+    
+    .upload-section::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        border-radius: 20px;
+        padding: 2px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+        -webkit-mask-composite: xor;
+        mask-composite: exclude;
+    }
+    
+    /* Enhanced button styling */
     .stButton>button {
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         color: white;
         border: none;
-        border-radius: 10px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        border-radius: 12px;
+        padding: 0.9rem 2.5rem;
+        font-weight: 700;
+        font-size: 1.1rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
     }
     
     .stButton>button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        transform: translateY(-3px);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.6);
+        background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
     }
     
-    /* Progress bar */
+    .stButton>button:active {
+        transform: translateY(-1px);
+    }
+    
+    /* Progress bar enhancement */
     .stProgress > div > div > div > div {
         background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+        animation: pulse 2s infinite;
     }
     
-    /* Sidebar styling */
-    .css-1d391kg {
-        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    /* Sidebar enhancement */
+    [data-testid="stSidebar"] {
+        background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
     }
     
-    /* Info boxes */
+    /* Info boxes with modern design */
     .info-box {
-        background: #e3f2fd;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #2196F3;
+        background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+        padding: 1.2rem;
+        border-radius: 12px;
+        border-left: 5px solid #2196F3;
         margin: 1rem 0;
+        animation: fadeInScale 0.5s ease-out;
     }
     
     .success-box {
-        background: #e8f5e9;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #4CAF50;
+        background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+        padding: 1.2rem;
+        border-radius: 12px;
+        border-left: 5px solid #4CAF50;
         margin: 1rem 0;
+        animation: fadeInScale 0.5s ease-out;
     }
     
     .warning-box {
-        background: #fff3e0;
-        padding: 1rem;
-        border-radius: 10px;
-        border-left: 4px solid #FF9800;
+        background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
+        padding: 1.2rem;
+        border-radius: 12px;
+        border-left: 5px solid #FF9800;
         margin: 1rem 0;
+        animation: fadeInScale 0.5s ease-out;
+        transition: all 0.3s ease;
+    }
+    
+    .warning-box:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 20px rgba(255, 152, 0, 0.2);
+    }
+    
+    /* File uploader styling */
+    [data-testid="stFileUploader"] {
+        border: 2px dashed #667eea;
+        border-radius: 15px;
+        padding: 2rem;
+        background: linear-gradient(135deg, #fafbff 0%, #f0f2ff 100%);
+        transition: all 0.3s ease;
+    }
+    
+    [data-testid="stFileUploader"]:hover {
+        border-color: #764ba2;
+        background: linear-gradient(135deg, #f0f2ff 0%, #e8ebff 100%);
+        transform: scale(1.01);
+    }
+    
+    /* Text area enhancement */
+    .stTextArea textarea {
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextArea textarea:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    /* Dataframe styling */
+    [data-testid="stDataFrame"] {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.08);
     }
 </style>
 """, unsafe_allow_html=True)
@@ -172,8 +344,8 @@ st.markdown("""
 # Header
 st.markdown("""
 <div class="main-header">
-    <h1>📄 AI Resume Analyzer</h1>
-    <p>Enhance your resume with AI-powered insights and recommendations</p>
+    <h1>AI Resume Analyzer</h1>
+    <p>Transform Your Resume with AI-Powered Intelligence</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -185,32 +357,44 @@ if 'results' not in st.session_state:
 
 # Sidebar
 with st.sidebar:
-    st.markdown("### 🎯 About")
     st.markdown("""
-    This AI-powered tool analyzes your resume to:
-    - Extract and evaluate key skills
-    - Calculate keyword match with job descriptions
-    - Provide compatibility scores
-    - Offer improvement suggestions
-    """)
+    <div style="text-align: center; padding: 1rem 0;">
+        <h2 style="color: #667eea; margin: 0;">AI Resume Analyzer</h2>
+        <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">Powered by Advanced NLP</p>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
-    st.markdown("### 📊 Analysis Features")
+    
+    # Quick Stats/Info Cards
     st.markdown("""
-    - **Skill Extraction**: NLP-based skill identification
-    - **Keyword Matching**: Match with job requirements
-    - **ATS Compatibility**: Check ATS friendliness
-    - **Detailed Feedback**: Actionable recommendations
-    """)
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
+        <div style="font-size: 2rem; font-weight: bold; text-align: center;">5+</div>
+        <div style="text-align: center; font-size: 0.9rem;">Analysis Metrics</div>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
+                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
+        <div style="font-size: 2rem; font-weight: bold; text-align: center;">50+</div>
+        <div style="text-align: center; font-size: 0.9rem;">Skills Database</div>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
+                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
+        <div style="font-size: 2rem; font-weight: bold; text-align: center;">100%</div>
+        <div style="text-align: center; font-size: 0.9rem;">ATS Compatible</div>
+    </div>
+    """, unsafe_allow_html=True)
     
     st.markdown("---")
-    st.markdown("### 🛠️ Tech Stack")
+    
     st.markdown("""
-    - Python & Streamlit
-    - SpaCy & Transformers
-    - Scikit-learn
-    - Natural Language Processing
-    """)
+    <div style="text-align: center; padding: 1rem 0; color: #666;">
+        <p style="font-size: 0.85rem; margin: 0;">Open Source Project</p>
+        <p style="font-size: 0.85rem; margin: 0.5rem 0 0 0;">SWOC 2026</p>
+    </div>
+    """, unsafe_allow_html=True)
 
 # Main content
 col1, col2 = st.columns([2, 1])
@@ -394,8 +578,23 @@ if st.session_state.analyzed and st.session_state.results:
 # Footer
 st.markdown("---")
 st.markdown("""
-<div style="text-align: center; color: #666; padding: 2rem 0;">
-    <p>Made with Streamlit | AI Resume Analyzer | Open Source Project</p>
-    <p>Social Winter of Code 2026</p>
+<div style="text-align: center; padding: 3rem 0 2rem 0;">
+    <div style="display: inline-block; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+                padding: 0.5rem 2rem; border-radius: 50px; margin-bottom: 1rem;">
+        <span style="color: white; font-weight: 600; font-size: 1rem;">AI Resume Analyzer</span>
+    </div>
+    <p style="color: #666; font-size: 0.9rem; margin: 1rem 0;">
+        Empowering careers with AI-driven insights
+    </p>
+    <div style="display: flex; justify-content: center; gap: 2rem; margin-top: 1.5rem; flex-wrap: wrap;">
+        <a href="https://github.com/Crewjah/AI-Resume-Analyzer" target="_blank" 
+           style="color: #667eea; text-decoration: none; font-weight: 500; transition: all 0.3s;">
+            GitHub
+        </a>
+        <span style="color: #667eea; font-weight: 500;">•</span>
+        <span style="color: #888;">SWOC 2026</span>
+        <span style="color: #667eea; font-weight: 500;">•</span>
+        <span style="color: #888;">Open Source</span>
+    </div>
 </div>
 """, unsafe_allow_html=True)
