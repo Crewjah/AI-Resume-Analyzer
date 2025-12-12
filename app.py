@@ -355,46 +355,9 @@ if 'analyzed' not in st.session_state:
 if 'results' not in st.session_state:
     st.session_state.results = None
 
-# Sidebar
+# Sidebar (minimal)
 with st.sidebar:
-    st.markdown("""
-    <div style="text-align: center; padding: 1rem 0;">
-        <h2 style="color: #667eea; margin: 0;">AI Resume Analyzer</h2>
-        <p style="color: #888; font-size: 0.9rem; margin-top: 0.5rem;">Powered by Advanced NLP</p>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    # Quick Stats/Info Cards
-    st.markdown("""
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
-        <div style="font-size: 2rem; font-weight: bold; text-align: center;">5+</div>
-        <div style="text-align: center; font-size: 0.9rem;">Analysis Metrics</div>
-    </div>
-    
-    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); 
-                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
-        <div style="font-size: 2rem; font-weight: bold; text-align: center;">50+</div>
-        <div style="text-align: center; font-size: 0.9rem;">Skills Database</div>
-    </div>
-    
-    <div style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%); 
-                padding: 1rem; border-radius: 10px; margin: 1rem 0; color: white;">
-        <div style="font-size: 2rem; font-weight: bold; text-align: center;">100%</div>
-        <div style="text-align: center; font-size: 0.9rem;">ATS Compatible</div>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    st.markdown("---")
-    
-    st.markdown("""
-    <div style="text-align: center; padding: 1rem 0; color: #666;">
-        <p style="font-size: 0.85rem; margin: 0;">Open Source Project</p>
-        <p style="font-size: 0.85rem; margin: 0.5rem 0 0 0;">SWOC 2026</p>
-    </div>
-    """, unsafe_allow_html=True)
+    pass
 
 # Main content
 col1, col2 = st.columns([2, 1])
