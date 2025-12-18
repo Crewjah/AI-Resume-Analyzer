@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Resume Analyzer</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { color-scheme: light dark; }
+    body { font-family: 'Inter', system-ui, -apple-system, Segoe UI, Roboto, 'Helvetica Neue', Arial, 'Noto Sans', 'Apple Color Emoji', 'Segoe UI Emoji'; }
+    .glass { background: rgba(255,255,255,0.08); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.12); }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-cyan-900 via-slate-900 to-teal-900 text-slate-100">
+  <header class="max-w-5xl mx-auto px-6 pt-12">
+    <h1 class="text-3xl md:text-4xl font-bold">AI Resume Analyzer</h1>
+    <p class="mt-2 text-slate-300">Upload your resume and get instant insights, scores, and recommendations.</p>
+  </header>
+
+  <main class="max-w-5xl mx-auto px-6 py-8 space-y-6">
+    <!-- Upload Card -->
+    <section class="glass rounded-xl p-6">
+      <form id="analyze-form" class="grid gap-4 md:grid-cols-2">
+        <div class="md:col-span-1">
+          <label class="block text-sm font-medium mb-2">Resume (PDF or TXT)</label>
+          <input id="file" name="file" type="file" accept=".pdf,.txt" required class="block w-full text-sm text-slate-200 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-cyan-600 file:text-white hover:file:bg-cyan-500" />
+          <p class="mt-2 text-xs text-slate-400">We process files in your browser session; nothing is stored.</p>
+        </div>
+        <div class="md:col-span-1">
+          <label class="block text-sm font-medium mb-2">Job Description (optional)</label>
+          <textarea id="job" name="job_description" rows="5" placeholder="Paste a target job description to tailor insights" class="w-full rounded-md bg-slate-800/60 border border-slate-700 px-3 py-2 text-sm placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-500"></textarea>
+        </div>
+        <div class="md:col-span-2 flex items-center gap-3">
+          <button id="analyze-btn" type="submit" class="inline-flex items-center gap-2 rounded-md bg-cyan-600 px-4 py-2 text-sm font-medium text-white hover:bg-cyan-500 disabled:opacity-50">
+            <span>Analyze Resume</span>
+          </button>
+          <span id="status" class="text-sm text-slate-300"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Results -->
+    <section id="results" class="hidden grid gap-6">
+      <div class="grid md:grid-cols-4 gap-4">
+        <div class="glass rounded-lg p-4"><div class="text-xs text-slate-400">Overall Score</div><div id="overall" class="text-2xl font-semibold">-</div></div>
+        <div class="glass rounded-lg p-4"><div class="text-xs text-slate-400">Content</div><div id="content" class="text-2xl font-semibold">-</div></div>
+        <div class="glass rounded-lg p-4"><div class="text-xs text-slate-400">Keywords</div><div id="keyword" class="text-2xl font-semibold">-</div></div>
+        <div class="glass rounded-lg p-4"><div class="text-xs text-slate-400">ATS</div><div id="ats" class="text-2xl font-semibold">-</div></div>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="glass rounded-lg p-5">
+          <h2 class="text-lg font-semibold mb-3">Top Keywords</h2>
+          <ul id="keywords" class="text-sm text-slate-200 grid grid-cols-2 gap-y-1"></ul>
+        </div>
+        <div class="glass rounded-lg p-5">
+          <h2 class="text-lg font-semibold mb-3">Detected Skills</h2>
+          <div id="skills" class="flex flex-wrap gap-2"></div>
+        </div>
+      </div>
+
+      <div class="glass rounded-lg p-5">
+        <h2 class="text-lg font-semibold mb-3">Recommendations</h2>
+        <ul id="recs" class="list-disc pl-5 space-y-2 text-slate-200"></ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="max-w-5xl mx-auto px-6 pb-12 text-xs text-slate-400">
+    Built for Vercel serverless limits — lightweight API + static UI.
+  </footer>
+
+  <script>
+    const form = document.getElementById('analyze-form');
+    const statusEl = document.getElementById('status');
+    const btn = document.getElementById('analyze-btn');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const fileInput = document.getElementById('file');
+      if (!fileInput.files.length) return;
+
+      const data = new FormData(form);
+      statusEl.textContent = 'Analyzing…';
+      btn.disabled = true;
+
+      try {
+        const apiBase = (location.hostname === 'localhost' && location.port !== '8000') ? 'http://localhost:8000' : '';
+        const res = await fetch(`${apiBase}/api/analyze`, { method: 'POST', body: data });
+        const json = await res.json();
+        if (!json.ok) throw new Error(json.error || 'Analysis failed');
+        const d = json.data;
+
+        // Reveal results
+        document.getElementById('results').classList.remove('hidden');
+        document.getElementById('overall').textContent = d.overall_score;
+        document.getElementById('content').textContent = d.content_score;
+        document.getElementById('keyword').textContent = d.keyword_score;
+        document.getElementById('ats').textContent = d.ats_score;
+
+        // Keywords
+        const kw = document.getElementById('keywords');
+        kw.innerHTML = '';
+        Object.entries(d.keywords || {}).forEach(([k, v]) => {
+          const li = document.createElement('li');
+          li.textContent = `${k} — ${v}`;
+          kw.appendChild(li);
+        });
+
+        // Skills
+        const skills = document.getElementById('skills');
+        skills.innerHTML = '';
+        (d.skills || []).forEach(s => {
+          const chip = document.createElement('span');
+          chip.className = 'inline-flex items-center rounded-full bg-teal-700/50 px-2.5 py-1 text-xs';
+          chip.textContent = s;
+          skills.appendChild(chip);
+        });
+
+        // Recommendations
+        const recs = document.getElementById('recs');
+        recs.innerHTML = '';
+        (d.recommendations || []).forEach(r => {
+          const li = document.createElement('li');
+          li.textContent = r;
+          recs.appendChild(li);
+        });
+
+        statusEl.textContent = 'Done';
+      } catch (err) {
+        statusEl.textContent = err.message || 'Something went wrong';
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

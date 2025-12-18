@@ -45,35 +45,49 @@ Streamlit Cloud is the easiest way to deploy Streamlit applications.
 
 Changes pushed to your GitHub repository will automatically redeploy the app.
 
-## Vercel
+## Vercel (Static + FastAPI)
 
-Note: Vercel primarily supports serverless functions. For full Streamlit apps, Streamlit Cloud is recommended. However, you can deploy static components.
+Vercel’s 250 MB unzipped limit makes full Streamlit serverless functions impractical. This project deploys a lightweight static UI with a Python (FastAPI) serverless endpoint that stays well under the limit.
 
-### For Streamlit on Vercel (Alternative Approach)
+### What’s deployed
+- Static UI: `index.html` (served by Vercel as static files)
+- API Function: `api/analyze.py` (FastAPI, handles file upload + analysis)
+- Minimal deps: `fastapi`, `uvicorn`, `python-multipart`, `PyPDF2`
 
-1. **Install Vercel CLI**
-   ```bash
-   npm install -g vercel
-   ```
+### One-time setup
+1. Ensure these files exist:
+   - `index.html`
+   - `api/analyze.py`
+   - `requirements.txt` contains only the minimal API deps (no Streamlit)
+2. Remove any `vercel.json` that forces `app.py` (Zero-config is used).
+3. Push to GitHub and connect the repo to Vercel.
 
-2. **Login to Vercel**
-   ```bash
-   vercel login
-   ```
+### Deploy steps
+- Push to `main`. Vercel will:
+  - Serve `index.html` and static assets from the repo root
+  - Build a Python serverless function from `api/analyze.py`
+  - Install `requirements.txt` into the function (small footprint)
 
-3. **Deploy**
-   ```bash
-   vercel --prod
-   ```
+### Local development
+```bash
+# 1) Install local/dev deps (Streamlit optional for local only)
+pip install -r requirements-dev.txt
 
-### Note on Limitations
+# 2) Run the API on 8000
+uvicorn api.analyze:app --reload --port 8000
 
-Vercel has limitations with Streamlit due to:
-- Serverless architecture vs Streamlit's stateful nature
-- Execution time limits
-- Memory constraints
+# 3) Serve the static UI on 8080 (or open index.html via a live server)
+python -m http.server 8080
+# Open http://localhost:8080
+```
+The UI auto-targets `http://localhost:8000` during local dev; in production it calls `/api/analyze` on the same origin.
 
-**Recommendation**: Use Streamlit Cloud for best results.
+### Streamlit note
+Streamlit is kept for local experimentation but is not deployed on Vercel. To run locally:
+```bash
+pip install -r requirements-dev.txt
+streamlit run app.py
+```
 
 ## Heroku
 
