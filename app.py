@@ -15,7 +15,7 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# Hide sidebar completely
+# Hide sidebar
 st.markdown("""
     <style>
         [data-testid="stSidebar"] {
@@ -24,583 +24,301 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# Custom CSS for modern UI
+# Modern CSS Theme - Cyan/Blue Fresh Design
 st.markdown("""
 <style>
-    /* Remove padding and make fullscreen */
+    /* Base & Layout */
     .main {
         padding: 0 !important;
-        margin: 0 !important;
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #2a2f4a 100%);
+        min-height: 100vh;
     }
     
     .block-container {
         max-width: 100% !important;
-        padding: 2rem !important;
-        padding-top: 1rem !important;
+        padding: 2.5rem 3rem !important;
     }
     
-    /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    #MainMenu, footer, header {visibility: hidden;}
     
-    /* Smooth scrolling */
-    html {
-        scroll-behavior: smooth;
-    }
+    html {scroll-behavior: smooth;}
     
-    /* Header styling with enhanced animation */
+    /* Glassmorphism Header */
     .main-header {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%, #f093fb 100%);
-        padding: 4rem 3rem;
-        border-radius: 30px;
+        background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%);
+        padding: 2.5rem 2rem;
+        border-radius: 20px;
         text-align: center;
-        color: white;
-        margin: 0 0 3rem 0;
-        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.4);
-        animation: slideDown 0.9s cubic-bezier(0.34, 1.56, 0.64, 1);
+        margin: 0 0 2rem 0;
+        box-shadow: 0 8px 32px rgba(14, 165, 233, 0.3);
         position: relative;
         overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.2);
     }
     
     .main-header::before {
         content: '';
         position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 70%);
-        animation: rotate 25s linear infinite;
-        z-index: 0;
+        inset: 0;
+        background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+        animation: slide 3s ease-in-out infinite;
     }
     
     .main-header h1 {
-        font-size: 4rem;
-        font-weight: 900;
+        font-size: 3rem;
+        font-weight: 700;
         margin: 0;
-        text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+        color: white;
         position: relative;
         z-index: 1;
-        letter-spacing: -1px;
-        animation: fadeInDown 0.8s ease-out;
     }
     
     .main-header p {
-        font-size: 1.4rem;
-        margin-top: 1rem;
-        opacity: 0.95;
+        font-size: 1.1rem;
+        margin-top: 0.5rem;
+        color: rgba(255,255,255,0.9);
         position: relative;
         z-index: 1;
-        font-weight: 300;
-        letter-spacing: 0.5px;
-        animation: fadeInUp 0.8s ease-out 0.2s backwards;
     }
     
-    /* Content sections */
+    /* Cards */
     .content-card {
-        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%);
-        padding: 2.5rem;
-        border-radius: 25px;
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 2rem;
         margin: 1.5rem 0;
-        box-shadow: 0 15px 50px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255,255,255,0.1);
-        border: 1px solid rgba(255,255,255,0.15);
-        backdrop-filter: blur(20px);
-        animation: fadeInScale 0.7s ease-out;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
     }
     
     .content-card:hover {
-        box-shadow: 0 25px 70px rgba(102, 126, 234, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
-        transform: translateY(-5px);
-        border: 1px solid rgba(102, 126, 234, 0.4);
-        background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.06) 100%);
+        border-color: rgba(14, 165, 233, 0.3);
+        box-shadow: 0 8px 32px rgba(14, 165, 233, 0.2);
+        transform: translateY(-2px);
     }
     
     .content-card h3 {
-        color: #ffffff;
-        font-size: 1.8rem;
-        margin: 0 0 1.5rem 0;
-        font-weight: 700;
-        animation: slideInLeft 0.6s ease-out;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        color: #0ea5e9;
+        font-size: 1.4rem;
+        margin: 0 0 1rem 0;
+        font-weight: 600;
     }
     
-    /* Upload and input styling */
+    /* Inputs */
     [data-testid="stFileUploader"] {
-        border: 3px dashed #667eea !important;
-        border-radius: 20px !important;
-        padding: 2.5rem !important;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
+        border: 2px dashed rgba(14, 165, 233, 0.5) !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        background: rgba(14, 165, 233, 0.05) !important;
         transition: all 0.3s ease !important;
-        box-shadow: inset 0 0 30px rgba(102, 126, 234, 0.1) !important;
-    }
-    
-    [data-testid="stFileUploader"] label {
-        color: white !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
     }
     
     [data-testid="stFileUploader"]:hover {
-        border-color: #764ba2 !important;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.25) 0%, rgba(118, 75, 162, 0.25) 100%) !important;
-        transform: scale(1.02) !important;
-        box-shadow: 0 10px 40px rgba(102, 126, 234, 0.3), inset 0 0 30px rgba(102, 126, 234, 0.15) !important;
+        border-color: #0ea5e9 !important;
+        background: rgba(14, 165, 233, 0.1) !important;
+    }
+    
+    [data-testid="stFileUploader"] label {
+        color: #0ea5e9 !important;
+        font-weight: 600 !important;
     }
     
     .stTextArea textarea {
-        border: 2px solid rgba(102, 126, 234, 0.3) !important;
-        border-radius: 15px !important;
-        padding: 1.5rem !important;
-        font-size: 1rem !important;
-        transition: all 0.3s ease !important;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%) !important;
+        background: rgba(14, 165, 233, 0.05) !important;
+        border: 1px solid rgba(14, 165, 233, 0.3) !important;
+        border-radius: 12px !important;
         color: white !important;
+        padding: 1rem !important;
+        transition: all 0.3s ease !important;
     }
     
     .stTextArea textarea::placeholder {
-        color: rgba(255, 255, 255, 0.6) !important;
+        color: rgba(255, 255, 255, 0.4) !important;
     }
     
     .stTextArea textarea:focus {
-        border-color: #667eea !important;
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.15) 0%, rgba(118, 75, 162, 0.15) 100%) !important;
-        box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2), 0 0 20px rgba(102, 126, 234, 0.3) !important;
+        border-color: #0ea5e9 !important;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2) !important;
     }
     
-    /* Button styling */
+    .stTextArea label {
+        color: #0ea5e9 !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Button */
     .stButton>button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #0ea5e9 0%, #06b6d4 100%) !important;
         color: white !important;
         border: none !important;
-        border-radius: 15px !important;
-        padding: 1.2rem 3rem !important;
-        font-weight: 700 !important;
-        font-size: 1.2rem !important;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-        box-shadow: 0 10px 35px rgba(102, 126, 234, 0.4) !important;
-        letter-spacing: 0.5px !important;
-        text-transform: uppercase !important;
-        position: relative !important;
-        overflow: hidden !important;
-    }
-    
-    .stButton>button::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: rgba(255, 255, 255, 0.2);
-        transition: left 0.5s ease;
-        z-index: -1;
+        border-radius: 10px !important;
+        padding: 0.8rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4) !important;
     }
     
     .stButton>button:hover {
-        transform: translateY(-4px) scale(1.02);
-        box-shadow: 0 15px 50px rgba(102, 126, 234, 0.6);
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(14, 165, 233, 0.5) !important;
     }
     
-    .stButton>button:hover::before {
-        left: 100%;
-    }
-    
-    .stButton>button:active {
-        transform: translateY(-2px) scale(0.98);
-    }
-    
-    /* Progress bar */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        animation: pulse 2s infinite;
-    }
-    
-    /* Metric card styling */
-    .metric-card {
-        background: linear-gradient(135deg, rgba(79, 172, 254, 0.15) 0%, rgba(0, 242, 254, 0.15) 100%);
+    /* Score Containers */
+    .score-container {
+        background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(6, 182, 212, 0.15));
+        border: 1px solid rgba(14, 165, 233, 0.3);
+        border-radius: 16px;
         padding: 2rem;
-        border-radius: 20px;
-        box-shadow: 0 15px 40px rgba(79, 172, 254, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
-        margin: 1.5rem 0;
-        border: 1px solid rgba(79, 172, 254, 0.3);
-        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-        overflow: hidden;
-        animation: fadeInScale 0.6s ease-out;
+        text-align: center;
+        box-shadow: 0 4px 16px rgba(14, 165, 233, 0.2);
         backdrop-filter: blur(10px);
     }
     
-    .metric-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
-        transition: left 0.6s;
-    }
-    
-    .metric-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 25px 60px rgba(79, 172, 254, 0.4), inset 0 1px 0 rgba(255,255,255,0.1);
-        border-color: rgba(0, 242, 254, 0.6);
-        background: linear-gradient(135deg, rgba(79, 172, 254, 0.25) 0%, rgba(0, 242, 254, 0.25) 100%);
-    }
-    
-    .metric-card:hover::before {
-        left: 100%;
-    }
-    
-    /* Score container */
-    .score-container {
-        text-align: center;
-        padding: 3rem;
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        border-radius: 25px;
-        color: white;
-        animation: fadeInScale 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
-        box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
-        position: relative;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-    }
-    
-    .score-container::after {
-        content: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        border-radius: 50%;
-        background: rgba(255, 255, 255, 0.2);
-        transform: translate(-50%, -50%);
-        animation: ripple 2s infinite;
+    .score-container h3 {
+        color: #0ea5e9;
+        margin: 0 0 1rem 0;
+        font-size: 1.2rem;
     }
     
     .score-value {
-        font-size: 5.5rem;
-        font-weight: 900;
-        margin: 1rem 0;
-        text-shadow: 4px 4px 12px rgba(0, 0, 0, 0.3);
-        animation: countUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1);
-        position: relative;
-        z-index: 1;
-        letter-spacing: -2px;
+        font-size: 3.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #0ea5e9, #06b6d4);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
     }
     
-    /* Info boxes - Dark theme */
-    .info-box {
-        background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%);
+    /* Metric Cards */
+    .metric-card {
+        background: rgba(14, 165, 233, 0.08);
+        border: 1px solid rgba(14, 165, 233, 0.2);
+        border-radius: 12px;
         padding: 1.5rem;
-        border-radius: 18px;
-        border-left: 6px solid #4facfe;
-        border: 1px solid rgba(79, 172, 254, 0.3);
-        margin: 1.2rem 0;
-        animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(79, 172, 254, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        color: rgba(255,255,255,0.9);
+        margin: 1rem 0;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease;
+    }
+    
+    .metric-card:hover {
+        border-color: rgba(14, 165, 233, 0.4);
+        transform: translateY(-3px);
+    }
+    
+    /* Info Boxes */
+    .info-box {
+        background: rgba(59, 130, 246, 0.1);
+        border-left: 4px solid #3b82f6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: rgba(255, 255, 255, 0.9);
     }
     
     .success-box {
-        background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
-        padding: 1.5rem;
-        border-radius: 18px;
-        border-left: 6px solid #4caf50;
-        border: 1px solid rgba(76, 175, 80, 0.3);
-        margin: 1.2rem 0;
-        animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(76, 175, 80, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        color: rgba(255,255,255,0.9);
+        background: rgba(34, 197, 94, 0.1);
+        border-left: 4px solid #22c55e;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: rgba(255, 255, 255, 0.9);
     }
     
     .warning-box {
-        background: linear-gradient(135deg, rgba(255, 152, 0, 0.2) 0%, rgba(255, 152, 0, 0.1) 100%);
-        padding: 1.5rem;
-        border-radius: 18px;
-        border-left: 6px solid #ff9800;
-        border: 1px solid rgba(255, 152, 0, 0.3);
-        margin: 1.2rem 0;
-        animation: slideInLeft 0.6s ease-out;
-        box-shadow: 0 8px 25px rgba(255, 152, 0, 0.15), inset 0 1px 0 rgba(255,255,255,0.1);
-        backdrop-filter: blur(10px);
-        color: rgba(255,255,255,0.9);
+        background: rgba(251, 146, 60, 0.1);
+        border-left: 4px solid #fb923c;
+        border-radius: 8px;
+        padding: 1rem;
+        margin: 1rem 0;
+        color: rgba(255, 255, 255, 0.9);
         transition: all 0.3s ease;
     }
     
     .warning-box:hover {
-        transform: translateX(8px);
-        box-shadow: 0 12px 35px rgba(255, 152, 0, 0.25), inset 0 1px 0 rgba(255,255,255,0.1);
-        border-color: rgba(255, 152, 0, 0.6);
-        background: linear-gradient(135deg, rgba(255, 152, 0, 0.3) 0%, rgba(255, 152, 0, 0.2) 100%);
+        transform: translateX(5px);
     }
     
-    /* Animation keyframes */
-    @keyframes slideDown {
-        from {
-            opacity: 0;
-            transform: translateY(-60px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes slideInLeft {
-        from {
-            opacity: 0;
-            transform: translateX(-40px);
-        }
-        to {
-            opacity: 1;
-            transform: translateX(0);
-        }
-    }
-    
-    @keyframes fadeInDown {
-        from {
-            opacity: 0;
-            transform: translateY(-30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInUp {
-        from {
-            opacity: 0;
-            transform: translateY(30px);
-        }
-        to {
-            opacity: 1;
-            transform: translateY(0);
-        }
-    }
-    
-    @keyframes fadeInScale {
-        from {
-            opacity: 0;
-            transform: scale(0.92);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1);
-        }
-    }
-    
-    @keyframes countUp {
-        from {
-            opacity: 0;
-            transform: scale(0.5) rotateY(180deg);
-        }
-        to {
-            opacity: 1;
-            transform: scale(1) rotateY(0deg);
-        }
-    }
-    
-    @keyframes ripple {
-        0% {
-            width: 0;
-            height: 0;
-            opacity: 0.5;
-        }
-        100% {
-            width: 500px;
-            height: 500px;
-            opacity: 0;
-        }
-    }
-    
-    @keyframes rotate {
-        from {
-            transform: rotate(0deg);
-        }
-        to {
-            transform: rotate(360deg);
-        }
-    }
-    
-    @keyframes pulse {
-        0%, 100% {
-            transform: scaleY(1);
-        }
-        50% {
-            transform: scaleY(1.1);
-        }
-    }
-    
-    /* Plotly chart styling - Dark theme */
+    /* Charts */
     [data-testid="stPlotlyChart"] {
-        border-radius: 20px;
-        overflow: hidden;
-        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
-        background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
-        border: 1px solid rgba(255,255,255,0.1);
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
         padding: 1rem;
-        animation: fadeInScale 0.7s ease-out;
-        backdrop-filter: blur(10px);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
     }
     
-    /* Dataframe styling - Dark theme */
     [data-testid="stDataFrame"] {
-        border-radius: 18px;
-        overflow: hidden;
-        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.2), inset 0 1px 0 rgba(255,255,255,0.1);
-        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%) !important;
-        border: 1px solid rgba(255,255,255,0.15) !important;
-        backdrop-filter: blur(10px);
+        background: rgba(255, 255, 255, 0.03) !important;
+        border: 1px solid rgba(255, 255, 255, 0.08) !important;
+        border-radius: 12px !important;
     }
     
-    [data-testid="stDataFrame"] table {
-        background: transparent !important;
+    /* Text Colors */
+    h1, h2, h3, h4, h5, h6 {
         color: white !important;
     }
     
-    [data-testid="stDataFrame"] thead {
-        background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(118, 75, 162, 0.2) 100%) !important;
-    }
-    
-    [data-testid="stDataFrame"] tbody tr:hover {
-        background: rgba(102, 126, 234, 0.15) !important;
-    }
-    
-    /* Column layout */
-    [data-testid="column"] {
-        animation: fadeInScale 0.7s ease-out;
-    }
-    
-    /* Background gradient for main page */
-    [data-testid="stAppViewContainer"] {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%);
-        min-height: 100vh;
-    }
-    
-    body {
-        background: linear-gradient(135deg, #0f0c29 0%, #302b63 50%, #24243e 100%) !important;
-    }
-    
-    /* Enhanced dark theme colors for text */
-    h1, h2, h3, h4, h5, h6 {
-        color: #ffffff !important;
-    }
-    
     p, span, label {
-        color: rgba(255, 255, 255, 0.9) !important;
+        color: rgba(255, 255, 255, 0.85) !important;
     }
     
-    /* Markdown heading styling */
-    .stMarkdown h3 {
-        color: #ffffff !important;
-        font-weight: 700 !important;
+    .stMarkdown h3, .stMarkdown h4 {
+        color: #0ea5e9 !important;
+        font-weight: 600 !important;
     }
     
-    .stMarkdown p {
-        color: rgba(255, 255, 255, 0.9) !important;
+    /* Progress Bar */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #0ea5e9, #06b6d4) !important;
     }
     
-    /* Expander styling */
-    [data-testid="stExpander"] {
-        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%) !important;
-        border: 1px solid rgba(255,255,255,0.15) !important;
-        border-radius: 15px !important;
-    }
-    
-    /* Success messages */
+    /* Success Message */
     .stSuccess {
-        background: linear-gradient(135deg, rgba(79, 172, 254, 0.2) 0%, rgba(0, 242, 254, 0.2) 100%) !important;
-        border-left: 4px solid #4facfe !important;
-        border-radius: 15px !important;
-        padding: 1.2rem !important;
+        background: rgba(34, 197, 94, 0.15) !important;
+        border-left: 4px solid #22c55e !important;
         color: white !important;
     }
     
     .stAlert {
-        border-radius: 15px !important;
-        background: linear-gradient(135deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.03) 100%) !important;
-        border: 1px solid rgba(255,255,255,0.15) !important;
+        background: rgba(59, 130, 246, 0.15) !important;
+        border-left: 4px solid #3b82f6 !important;
         color: white !important;
     }
     
-    /* File input text styling */
-    [data-testid="stFileUploader"] label {
-        color: white !important;
-    }
-    
-    /* Textarea label styling */
-    .stTextArea label {
-        color: white !important;
-        font-weight: 700 !important;
-        font-size: 1rem !important;
-        margin-bottom: 0.5rem !important;
-    }
-    
-    /* Scrollbar styling */
+    /* Scrollbar */
     ::-webkit-scrollbar {
-        width: 12px;
+        width: 10px;
     }
     
     ::-webkit-scrollbar-track {
         background: rgba(255, 255, 255, 0.05);
-        border-radius: 10px;
     }
     
     ::-webkit-scrollbar-thumb {
-        background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(180deg, #0ea5e9, #06b6d4);
         border-radius: 10px;
-        border: 2px solid rgba(102, 126, 234, 0.2);
     }
     
     ::-webkit-scrollbar-thumb:hover {
-        background: linear-gradient(180deg, #764ba2 0%, #f093fb 100%);
-        box-shadow: 0 0 15px rgba(102, 126, 234, 0.5);
+        background: linear-gradient(180deg, #06b6d4, #0284c7);
     }
     
-    /* Strong text in boxes */
-    .warning-box strong, .success-box strong, .info-box strong {
-        color: white !important;
+    /* Animations */
+    @keyframes slide {
+        0%, 100% {transform: translateX(-100%);}
+        50% {transform: translateX(100%);}
     }
     
-    /* Global input field styling */
-    input[type="text"],
-    input[type="email"],
-    input[type="number"],
-    input[type="password"],
-    input[type="date"],
-    input[type="search"],
-    textarea {
-        color: white !important;
+    @keyframes fadeIn {
+        from {opacity: 0; transform: translateY(10px);}
+        to {opacity: 1; transform: translateY(0);}
     }
     
-    input::placeholder {
-        color: rgba(255, 255, 255, 0.6) !important;
-    }
-    
-    /* All labels should be visible */
-    .stNumberInput label,
-    .stSelectbox label,
-    .stMultiSelect label,
-    .stCheckbox label,
-    .stRadio label {
-        color: white !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Streamlit default label text */
-    [class*="stLabel"] {
-        color: white !important;
+    /* Apply fade animation */
+    .content-card, .score-container, .metric-card {
+        animation: fadeIn 0.5s ease-out;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -609,7 +327,7 @@ st.markdown("""
 st.markdown("""
 <div class="main-header">
     <h1>AI Resume Analyzer</h1>
-    <p>Transform Your Resume with AI-Powered Intelligence</p>
+    <p>Enhance Your Career with Intelligent Resume Analysis</p>
 </div>
 """, unsafe_allow_html=True)
 
@@ -751,7 +469,7 @@ if st.session_state.analyzed and st.session_state.results:
                 y=list(keywords.values())[:10],
                 labels={'x': 'Keyword', 'y': 'Frequency'},
                 color=list(keywords.values())[:10],
-                color_continuous_scale='Plasma'
+                color_continuous_scale='Teal'
             )
             fig.update_layout(
                 showlegend=False,
@@ -761,7 +479,7 @@ if st.session_state.analyzed and st.session_state.results:
                 paper_bgcolor='rgba(0,0,0,0)',
                 font=dict(color='white'),
                 xaxis=dict(showgrid=False, color='rgba(255,255,255,0.5)'),
-                yaxis=dict(showgrid=True, gridcolor='rgba(102,126,234,0.2)', color='rgba(255,255,255,0.5)')
+                yaxis=dict(showgrid=True, gridcolor='rgba(14,165,233,0.2)', color='rgba(255,255,255,0.5)')
             )
             st.plotly_chart(fig, use_container_width=True)
     
@@ -799,8 +517,8 @@ if st.session_state.analyzed and st.session_state.results:
         r=scores,
         theta=categories,
         fill='toself',
-        line=dict(color='#667eea', width=3),
-        fillcolor='rgba(102, 126, 234, 0.3)'
+        line=dict(color='#0ea5e9', width=2),
+        fillcolor='rgba(14, 165, 233, 0.25)'
     ))
     
     fig.update_layout(
@@ -808,11 +526,11 @@ if st.session_state.analyzed and st.session_state.results:
             radialaxis=dict(
                 visible=True,
                 range=[0, 100],
-                gridcolor='rgba(102, 126, 234, 0.2)',
+                gridcolor='rgba(14, 165, 233, 0.2)',
                 tickcolor='rgba(255,255,255,0.5)'
             ),
             angularaxis=dict(
-                gridcolor='rgba(102, 126, 234, 0.2)',
+                gridcolor='rgba(14, 165, 233, 0.2)',
                 tickcolor='rgba(255,255,255,0.5)'
             ),
             bgcolor='rgba(0,0,0,0)'
