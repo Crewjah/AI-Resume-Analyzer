@@ -146,8 +146,16 @@ st.markdown("""
         font-size: 1.5rem;
         font-weight: 700;
         margin-bottom: 1rem;
-        color: #00d4ff;
+        color: #ffffff;
+        text-shadow: 0 0 10px rgba(0,212,255,0.5);
         font-family: 'Poppins', sans-serif;
+    }
+    
+    .feature-description {
+        color: rgba(255,255,255,0.95);
+        font-size: 1rem;
+        line-height: 1.6;
+        text-shadow: 0 0 5px rgba(0,0,0,0.5);
     }
     
     .feature-description {
@@ -578,13 +586,14 @@ def main():
     uploaded_file = st.file_uploader(
         "Choose your resume file",
         type=['pdf', 'txt'],
-        help="Upload your resume in PDF or TXT format (Max 10MB)"
+        help="Upload your resume in PDF or TXT format (Max 200MB)",
+        accept_multiple_files=False
     )
     
     if uploaded_file is not None:
         # Show loading animation
         with st.spinner('🧞‍♂️ ResumeGenie is analyzing your resume...'):
-            time.sleep(2)  # Simulate processing time
+            time.sleep(1)  # Brief pause for UX
             
             try:
                 # Extract text from uploaded file
@@ -595,20 +604,33 @@ def main():
                     resume_text = str(uploaded_file.read(), "utf-8")
                     metadata = {"num_pages": 1}
                 
-                if not resume_text.strip():
-                    st.error("⚠️ Could not extract text from your resume. Please try a different file.")
+                if not resume_text or not resume_text.strip():
+                    st.error("⚠️ **Could not extract text from your resume.**")
+                    st.info("💡 **Please try:**")
+                    st.write("• Ensuring your PDF contains selectable text (not just images)")
+                    st.write("• Using a different file format (PDF or TXT)")
+                    st.write("• Checking that your file is not corrupted")
                     return
                 
                 # Success message
-                st.markdown("""
-                <div class="success-message">
-                    ✅ Resume uploaded and analyzed successfully!
-                </div>
-                """, unsafe_allow_html=True)
+                st.success("✅ Resume uploaded and analyzed successfully!")
                 
-                # Analyze resume
-                analyzer = ResumeAnalyzer()
-                analysis = analyzer.analyze(resume_text)
+                # Analyze resume with error handling
+                try:
+                    analyzer = ResumeAnalyzer()
+                    analysis = analyzer.analyze(resume_text)
+                    
+                    if not analysis or 'scores' not in analysis:
+                        st.error("❌ **Analysis failed.** Please try uploading your resume again.")
+                        return
+                        
+                except Exception as analysis_error:
+                    st.error(f"❌ **Analysis Error:** {str(analysis_error)}")
+                    st.info("💡 **This might help:**")
+                    st.write("• Try simplifying your resume format")
+                    st.write("• Remove special characters or unusual formatting")
+                    st.write("• Contact support if the issue persists")
+                    return
                 
                 # Display results container
                 st.markdown('<div class="results-container">', unsafe_allow_html=True)
@@ -694,7 +716,14 @@ def main():
                 st.markdown('</div>', unsafe_allow_html=True)  # Close results container
                 
             except Exception as e:
-                st.error(f"❌ Error analyzing resume: {str(e)}")
+                st.error(f"❌ **Unexpected Error:** {str(e)}")
+                st.info("💡 **Troubleshooting:**")
+                st.write("• Refresh the page and try again")
+                st.write("• Check your internet connection")
+                st.write("• Ensure your resume file is valid")
+                st.write("• Try a different file format (PDF or TXT)")
+                with st.expander("🔧 Technical Details", expanded=False):
+                    st.code(str(e), language="text")
     
     else:
         # Show upload instructions
@@ -715,9 +744,9 @@ def main():
     <div style="text-align: center; margin: 4rem 0 2rem 0; padding: 2rem; 
                 background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
                 border-radius: 20px; backdrop-filter: blur(10px);">
-        <h3 style="color: #00d4ff; margin-bottom: 1rem;">🚀 Ready to Land Your Dream Job?</h3>
-        <p style="color: rgba(255,255,255,0.8);">
-            ResumeGenie has helped 50,000+ professionals optimize their resumes and land interviews at top companies.
+        <h3 style="color: #00d4ff; margin-bottom: 1rem;">🚀 Ready to Optimize Your Resume?</h3>
+        <p style="color: rgba(255,255,255,0.9); font-size: 1.1rem;">
+            Get AI-powered insights to improve your resume and increase your chances of landing interviews.
         </p>
         <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem; margin-top: 2rem;">
             Made with ❤️ for Job Seekers Worldwide • Open Source • Privacy First • Always Free

@@ -103,12 +103,12 @@ class ResumeAnalyzer:
             'character_count': len(clean_text),
             'paragraph_count': len([p for p in clean_text.split('\n\n') if p.strip()]),
             'sentence_count': len([s for s in clean_text.split('.') if s.strip()]),
-            'technical_skills': self._extract_skills(clean_text, self.technical_skills),
-            'soft_skills': self._extract_skills(clean_text, self.soft_skills),
+            'technical_skills': self._extract_technical_skills(clean_text),
+            'soft_skills': self._extract_soft_skills(clean_text),
             'action_verbs': self._extract_action_verbs(clean_text),
             'action_verbs_count': len(self._extract_action_verbs(clean_text)),
             'word_frequency': self._get_word_frequency(clean_text),
-            'scores': self._calculate_enhanced_scores(clean_text),
+            'scores': self._calculate_enhanced_scores(clean_text, resume_text),
             'recommendations': self._generate_recommendations(clean_text),
             'readability_score': self._calculate_readability(clean_text),
             'keyword_density': self._calculate_keyword_density(clean_text),
@@ -119,15 +119,6 @@ class ResumeAnalyzer:
         }
         
         return analysis
-        skills = self._extract_skills(clean_text)
-        keywords = self._extract_keywords(clean_text)
-        
-        # Calculate individual scores with enhanced algorithms
-        content_score = self._calculate_content_score(clean_text, resume_text)
-        keyword_score = self._calculate_keyword_score(keywords, clean_text)
-        ats_score = self._calculate_ats_score(clean_text, resume_text)
-        structure_score = self._calculate_structure_score(clean_text, resume_text)
-        completeness_score = self._calculate_completeness_score(clean_text, resume_text)
         
         # Calculate weighted overall score
         overall_score = int(
@@ -176,6 +167,33 @@ class ResumeAnalyzer:
             'sections_detected': []
         }
     
+    def _calculate_enhanced_scores(self, clean_text: str, original_text: str = "") -> Dict[str, int]:
+        """Calculate all scores and return them as a dictionary."""
+        # Calculate individual scores
+        content_score = self._calculate_content_score(clean_text, original_text)
+        keyword_score = self._calculate_keyword_score(self._extract_keywords(clean_text), clean_text)
+        ats_score = self._calculate_ats_score(clean_text, original_text)
+        structure_score = self._calculate_structure_score(clean_text, original_text)
+        completeness_score = self._calculate_completeness_score(clean_text, original_text)
+        
+        # Calculate weighted overall score
+        overall_score = int(
+            content_score * 0.25 +
+            keyword_score * 0.20 +
+            ats_score * 0.25 +
+            structure_score * 0.15 +
+            completeness_score * 0.15
+        )
+        
+        return {
+            'overall_score': max(1, min(100, overall_score)),
+            'content_quality': max(1, min(100, content_score)),
+            'keyword_optimization': max(1, min(100, keyword_score)),
+            'ats_compatibility': max(1, min(100, ats_score)),
+            'structure_score': max(1, min(100, structure_score)),
+            'completeness': max(1, min(100, completeness_score))
+        }
+    
     def _clean_text(self, text: str) -> str:
         """Enhanced text cleaning and normalization."""
         # Remove extra whitespace and normalize
@@ -188,17 +206,27 @@ class ResumeAnalyzer:
     
     def _extract_skills(self, text: str) -> List[str]:
         """Enhanced skills extraction with better matching."""
+        technical = self._extract_technical_skills(text)
+        soft = self._extract_soft_skills(text)
+        return technical + soft
+    
+    def _extract_technical_skills(self, text: str) -> List[str]:
+        """Extract technical skills from text."""
         found_skills = set()
         text_lower = text.lower()
         
-        # Check for technical skills with word boundaries
         for skill in self.technical_skills:
             pattern = rf'\b{re.escape(skill)}\b'
             if re.search(pattern, text_lower):
-                # Capitalize properly for display
                 found_skills.add(skill.title() if ' ' not in skill else skill)
         
-        # Check for soft skills
+        return sorted(list(found_skills))
+    
+    def _extract_soft_skills(self, text: str) -> List[str]:
+        """Extract soft skills from text."""
+        found_skills = set()
+        text_lower = text.lower()
+        
         for skill in self.soft_skills:
             pattern = rf'\b{re.escape(skill)}\b'
             if re.search(pattern, text_lower):
@@ -238,6 +266,10 @@ class ResumeAnalyzer:
         
         # Return top keywords
         return dict(word_freq.most_common(20))
+    
+    def _get_word_frequency(self, text: str) -> Dict[str, int]:
+        """Get word frequency for the most common words (same as _extract_keywords for compatibility)."""
+        return self._extract_keywords(text)
     
     def _extract_action_verbs(self, text: str) -> List[str]:
         """Extract action verbs from resume text."""
@@ -680,8 +712,8 @@ class ResumeAnalyzer:
         word_count = len(text.split())
         
         # Analyze current state
-        technical_skills = self._extract_skills(text, self.technical_skills)
-        soft_skills = self._extract_skills(text, self.soft_skills)
+        technical_skills = self._extract_technical_skills(text)
+        soft_skills = self._extract_soft_skills(text)
         action_verbs = self._extract_action_verbs(text)
         contact_info = self._extract_contact_info(text)
         
@@ -749,23 +781,3 @@ class ResumeAnalyzer:
             )
         
         return recommendations[:6]  # Return top 6 recommendations
-                recommendations.append(
-                    "Add quantified achievements with specific numbers, percentages, or metrics (e.g., 'Increased sales by 25%', 'Managed team of 15', '$2M budget')."
-                )
-        
-        # Overall quality recommendations
-        if overall_score < 60:
-            recommendations.append(
-                "Consider tailoring your resume for each job application by incorporating keywords and requirements from the specific job posting."
-            )
-        
-        # Professional tips
-        if overall_score >= 80:
-            recommendations.append(
-                "Your resume is strong! Consider creating multiple versions tailored for different types of roles or industries."
-            )
-        
-        # Limit to top 6 recommendations and prioritize by impact
-        return recommendations[:6] if recommendations else [
-            "Great job! Your resume meets most best practices. Keep it updated with your latest achievements and tailor it for specific job applications."
-        ]
