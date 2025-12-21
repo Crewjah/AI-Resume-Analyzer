@@ -89,7 +89,7 @@ class ResumeAnalyzer:
             resume_text: The extracted text from resume
             
         Returns:
-            Dictionary containing detailed analysis results
+            Dictionary containing detailed analysis results with actionable insights
         """
         if not resume_text or not resume_text.strip():
             return self._get_empty_result()
@@ -97,7 +97,28 @@ class ResumeAnalyzer:
         # Clean and normalize text
         clean_text = self._clean_text(resume_text)
         
-        # Extract information
+        # Enhanced analysis with more valuable insights
+        analysis = {
+            'word_count': len(clean_text.split()),
+            'character_count': len(clean_text),
+            'paragraph_count': len([p for p in clean_text.split('\n\n') if p.strip()]),
+            'sentence_count': len([s for s in clean_text.split('.') if s.strip()]),
+            'technical_skills': self._extract_skills(clean_text, self.technical_skills),
+            'soft_skills': self._extract_skills(clean_text, self.soft_skills),
+            'action_verbs': self._extract_action_verbs(clean_text),
+            'action_verbs_count': len(self._extract_action_verbs(clean_text)),
+            'word_frequency': self._get_word_frequency(clean_text),
+            'scores': self._calculate_enhanced_scores(clean_text),
+            'recommendations': self._generate_recommendations(clean_text),
+            'readability_score': self._calculate_readability(clean_text),
+            'keyword_density': self._calculate_keyword_density(clean_text),
+            'ats_keywords': self._extract_ats_keywords(clean_text),
+            'contact_info': self._extract_contact_info(resume_text),
+            'education_keywords': self._extract_education_keywords(clean_text),
+            'experience_keywords': self._extract_experience_keywords(clean_text)
+        }
+        
+        return analysis
         skills = self._extract_skills(clean_text)
         keywords = self._extract_keywords(clean_text)
         
@@ -531,6 +552,203 @@ class ResumeAnalyzer:
                 )
             
             if not has_quantified:
+                recommendations.append(
+                    "Quantify your achievements with specific numbers, percentages, or metrics. For example: 'Increased sales by 25%' instead of 'Increased sales'."
+                )
+        
+        # Priority-based recommendations
+        if overall_score >= 85:
+            recommendations.append(
+                "Excellent resume! Consider creating targeted versions for different types of roles or industries to maximize your opportunities."
+            )
+        elif overall_score >= 70:
+            recommendations.append(
+                "Good foundation! Focus on the specific areas highlighted above to reach the next level of optimization."
+            )
+        else:
+            recommendations.append(
+                "Your resume has potential! Implementing the recommendations above will significantly improve your chances of landing interviews."
+            )
+        
+        return recommendations[:8]  # Return top 8 recommendations
+    
+    def _calculate_readability(self, text: str) -> int:
+        """Calculate readability score (simplified)."""
+        if not text:
+            return 0
+        
+        words = text.split()
+        sentences = text.split('.')
+        
+        if len(sentences) == 0:
+            return 50
+        
+        avg_words_per_sentence = len(words) / len(sentences)
+        
+        # Optimal for resumes: 10-20 words per sentence
+        if 10 <= avg_words_per_sentence <= 20:
+            return 90
+        elif 8 <= avg_words_per_sentence <= 25:
+            return 75
+        else:
+            return 60
+    
+    def _calculate_keyword_density(self, text: str) -> Dict[str, float]:
+        """Calculate keyword density for important terms."""
+        words = text.lower().split()
+        total_words = len(words)
+        
+        if total_words == 0:
+            return {}
+        
+        important_keywords = ['project', 'team', 'manage', 'develop', 'create', 'improve', 'lead']
+        keyword_density = {}
+        
+        for keyword in important_keywords:
+            count = words.count(keyword)
+            density = (count / total_words) * 100
+            keyword_density[keyword] = round(density, 2)
+        
+        return keyword_density
+    
+    def _extract_ats_keywords(self, text: str) -> List[str]:
+        """Extract ATS-friendly keywords."""
+        ats_keywords = []
+        text_lower = text.lower()
+        
+        # Common ATS-friendly terms
+        ats_terms = [
+            'project management', 'team leadership', 'data analysis', 'customer service',
+            'business development', 'strategic planning', 'quality assurance',
+            'software development', 'digital marketing', 'financial analysis'
+        ]
+        
+        for term in ats_terms:
+            if term in text_lower:
+                ats_keywords.append(term)
+        
+        return ats_keywords
+    
+    def _extract_contact_info(self, text: str) -> Dict[str, bool]:
+        """Extract and validate contact information."""
+        contact_info = {
+            'has_email': bool(re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', text)),
+            'has_phone': bool(re.search(r'\b\d{3}[-.]?\d{3}[-.]?\d{4}\b|\(\d{3}\)\s?\d{3}[-.]?\d{4}', text)),
+            'has_linkedin': bool(re.search(r'linkedin\.com', text, re.IGNORECASE)),
+            'has_address': bool(re.search(r'\b\d+\s+\w+\s+(st|street|ave|avenue|rd|road|blvd|boulevard)\b', text, re.IGNORECASE))
+        }
+        
+        return contact_info
+    
+    def _extract_education_keywords(self, text: str) -> List[str]:
+        """Extract education-related keywords."""
+        education_keywords = []
+        text_lower = text.lower()
+        
+        edu_terms = [
+            'bachelor', 'master', 'phd', 'doctorate', 'degree', 'diploma',
+            'university', 'college', 'institute', 'school', 'certification',
+            'gpa', 'honors', 'magna cum laude', 'summa cum laude'
+        ]
+        
+        for term in edu_terms:
+            if term in text_lower:
+                education_keywords.append(term)
+        
+        return education_keywords
+    
+    def _extract_experience_keywords(self, text: str) -> List[str]:
+        """Extract experience-related keywords."""
+        experience_keywords = []
+        text_lower = text.lower()
+        
+        exp_terms = [
+            'years experience', 'months experience', 'internship', 'full-time',
+            'part-time', 'contract', 'freelance', 'consultant', 'manager',
+            'director', 'senior', 'junior', 'lead', 'principal'
+        ]
+        
+        for term in exp_terms:
+            if term in text_lower:
+                experience_keywords.append(term)
+        
+        return experience_keywords
+    
+    def _generate_recommendations(self, text: str) -> List[str]:
+        """Generate comprehensive recommendations."""
+        recommendations = []
+        word_count = len(text.split())
+        
+        # Analyze current state
+        technical_skills = self._extract_skills(text, self.technical_skills)
+        soft_skills = self._extract_skills(text, self.soft_skills)
+        action_verbs = self._extract_action_verbs(text)
+        contact_info = self._extract_contact_info(text)
+        
+        # Content length recommendations
+        if word_count < 200:
+            recommendations.append(
+                "📝 Expand your resume content. Add more details about your achievements, responsibilities, and impact in each role (aim for 300-600 words total)."
+            )
+        elif word_count > 800:
+            recommendations.append(
+                "✂️ Condense your resume content. Focus on the most relevant and impactful achievements to improve readability."
+            )
+        
+        # Skills recommendations
+        if len(technical_skills) < 5:
+            recommendations.append(
+                "🔧 Add more technical skills relevant to your field. Include programming languages, tools, software, and technologies you've used."
+            )
+        
+        if len(soft_skills) < 3:
+            recommendations.append(
+                "🤝 Include more soft skills such as leadership, communication, teamwork, and problem-solving abilities."
+            )
+        
+        # Action verbs
+        if len(action_verbs) < 8:
+            recommendations.append(
+                "⚡ Use more powerful action verbs to describe your achievements. Examples: 'Led', 'Developed', 'Implemented', 'Optimized', 'Achieved'."
+            )
+        
+        # Contact information
+        if not contact_info.get('has_email'):
+            recommendations.append(
+                "📧 Ensure your contact information includes a professional email address."
+            )
+        
+        if not contact_info.get('has_phone'):
+            recommendations.append(
+                "📞 Include your phone number for direct contact from recruiters."
+            )
+        
+        # Quantification
+        quantified_achievements = re.findall(r'\d+%|\d+\+|increased|improved|reduced|saved|generated', text, re.IGNORECASE)
+        if len(quantified_achievements) < 3:
+            recommendations.append(
+                "📊 Quantify your achievements with specific numbers, percentages, or metrics. For example: 'Increased efficiency by 30%' instead of 'Improved efficiency'."
+            )
+        
+        # ATS optimization
+        section_headers = ['experience', 'education', 'skills', 'summary']
+        found_headers = sum(1 for header in section_headers if header in text.lower())
+        if found_headers < 3:
+            recommendations.append(
+                "🤖 Use standard section headings (Experience, Education, Skills, Summary) to improve ATS compatibility."
+            )
+        
+        # Overall improvement
+        if len(recommendations) == 0:
+            recommendations.append(
+                "🌟 Excellent resume! Consider creating targeted versions for different types of roles to maximize your opportunities."
+            )
+        elif len(recommendations) > 5:
+            recommendations.append(
+                "🎯 Focus on implementing 2-3 key recommendations first, then gradually improve other areas."
+            )
+        
+        return recommendations[:6]  # Return top 6 recommendations
                 recommendations.append(
                     "Add quantified achievements with specific numbers, percentages, or metrics (e.g., 'Increased sales by 25%', 'Managed team of 15', '$2M budget')."
                 )
