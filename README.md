@@ -315,7 +315,6 @@ This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) 
 - 📚 [Documentation](docs/)
 - 🐛 [Report Issues](https://github.com/yourusername/smart-resume-analyzer/issues)
 - 💬 [Discussions](https://github.com/yourusername/smart-resume-analyzer/discussions)
-- 📧 Email: support@smartresumeanalyzer.com
 
 ### **Stay Updated**
 - ⭐ **Star this repository** for updates
