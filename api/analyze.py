@@ -42,7 +42,7 @@ def _extract_text_from_upload(upload: UploadFile) -> str:
         return ""
 
 
-@app.post("/api/analyze")
+@app.post("/")
 async def analyze_resume(
     file: UploadFile = File(...),
     job_description: Optional[str] = Form(None),
@@ -66,6 +66,6 @@ async def analyze_resume(
         return JSONResponse(status_code=500, content={"ok": False, "error": str(e)})
 
 
-@app.get("/api/health")
+@app.get("/health")
 async def health():
     return {"ok": True}
