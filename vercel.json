@@ -1,32 +1,16 @@
 {
   "version": 2,
   "name": "smart-resume-analyzer",
-  "builds": [
-    {
-      "src": "api/analyze.py",
-      "use": "@vercel/python"
-    },
-    {
-      "src": "index.html",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/api/$1"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/index.html"
-    }
-  ],
   "functions": {
     "api/analyze.py": {
-      "runtime": "@vercel/python@3.9"
+      "runtime": "@vercel/python@3.11",
+      "includeFiles": [
+        "backend/**",
+        "requirements.txt"
+      ]
     }
   },
   "env": {
-    "PYTHON_VERSION": "3.9"
+    "PYTHON_VERSION": "3.11"
   }
 }
