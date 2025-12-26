@@ -34,98 +34,100 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - FastAPI backend for serverless deployment
 - PDF text extraction functionality
 - Job description matching algorithms
-- Comprehensive documentation (API, Contributing, Deployment guides)
-- CI/CD workflows with GitHub Actions
-- Docker and multi-platform deployment support
-- Static HTML frontend for Vercel deployment
-- Professional project structure and organization
+### Planned
+- DOCX file format support
+- Resume comparison feature
+- Dark mode UI theme
+- Enhanced NLP with advanced models
+- Persistent storage option
 
-### Features
-- **Resume Analysis**: 5-metric scoring system
-  - Content quality analysis
+## [2.0.0] - 2025-12-26
+
+- Comprehensive documentation (API, Contributing, Deployment guides)
+- **Multi-Page Application**: 4-page Streamlit interface (Upload, Results, Job Matching, Settings)
+- **Multi-File Upload**: Analyze multiple resumes simultaneously with file management
+- **Session State Management**: Maintain analysis results across pages
+- **Interactive Visualizations**: Radar, Bar, Donut, and Gauge charts using Plotly 5.18.0
+- **File Management**: Remove individual files with delete buttons
+- **Export Functionality**: Download results as CSV and JSON
+- **Customizable Weights**: Adjust analysis parameters in Settings page
+- **Quick Statistics Dashboard**: Overview metrics on Results page
+- **Job Match Threshold**: Adjustable threshold slider for job matching
+- **Professional UI/UX**: Custom CSS with Inter font and Font Awesome icons
   - Keyword optimization scoring
   - ATS compatibility checking
-  - Structure and formatting evaluation
-  - Completeness assessment
-- **Skills Detection**: Automatic identification of technical and soft skills
+- **Application Structure**: Reorganized into multi-page architecture
+- **File Size Limit**: Standardized to 5MB per file
+- **Port Configuration**: Default port changed to 8502
+- **UI Theme**: Upgraded to professional gradient design (#F5F7FA to #C3CFE2)
+- **Chart API**: Updated to use `use_container_width=True` instead of deprecated `width='stretch'`
+- **Version Display**: Consistent v2.0.0 across all pages
 - **Job Matching**: TF-IDF and cosine similarity algorithms
 - **Recommendations**: Personalized improvement suggestions
-- **Dual Frontend**: Both Streamlit and static HTML interfaces
-- **Multi-platform Deployment**: Streamlit Cloud, Vercel, Heroku, Docker
+- **Critical Bug**: Fixed `StreamlitInvalidWidthError` with `st.dataframe(width=None)`
+- **Chart Rendering**: Replaced deprecated plotly chart width parameters
+- **Version Consistency**: Standardized version number to v2.0.0
+- **Navigation States**: Fixed sidebar active state inconsistencies
+- **Job Matching**: Improved button placement and flow
+- **Documentation**: Updated all docs to remove fake/outdated information
 
+### Removed
+- Deprecated width parameters from plotly charts
+- Fake performance statistics from documentation
+- Outdated deployment instructions
+
+### Technical Details
+- **Dependencies**: Streamlit 1.52.2, Plotly 5.18.0, Pandas 2.3.3, PyPDF2 3.0.1
+- **Code Size**: 1022 lines in main app.py
+- **Pages**: 4 dedicated pages with navigation
+- **Charts**: 4 visualization types (Radar, Bar, Donut, Gauge)
+- **File Formats**: PDF and TXT support
 ### Technical Stack
 - **Backend**: Python, FastAPI
 - **Frontend**: Streamlit, HTML/CSS/JavaScript
+*Note: This version predates current v2.0.0 release*
+
 - **ML/NLP**: Scikit-learn, Custom algorithms
 - **Visualization**: Plotly
 - **PDF Processing**: PyPDF2
-- **Testing**: Pytest
 - **CI/CD**: GitHub Actions
 
 ### Documentation
-- Complete API documentation with examples
-- Step-by-step deployment guides for multiple platforms
-- Comprehensive contributing guidelines
 - Professional README with usage instructions
 - Project architecture and design decisions
-
-### Quality Assurance
-- Automated testing with pytest
-- Code quality checks with CodeQL
-- Continuous integration workflows
-- Comprehensive error handling
-- Security best practices
-
----
-
-## Release Notes
-
-### v1.0.0 - Initial Release
-This is the first stable release of AI Resume Analyzer, providing a complete solution for resume analysis and optimization. The project is designed for both individual use and open-source contribution.
-
-**Key Highlights:**
-- Production-ready codebase with professional architecture
-- Multiple deployment options for different use cases
-- Comprehensive documentation for users and contributors
-- Automated testing and quality assurance
-- Open-source friendly with contribution guidelines
-
-**Getting Started:**
-1. Clone the repository
-2. Run setup script (`setup.ps1` for Windows or `setup.sh` for Unix)
-3. Execute `streamlit run app.py` to start the application
-4. Upload your resume and get instant analysis
-
-**For Contributors:**
-- Check out the [Contributing Guide](docs/CONTRIBUTING.md)
-- Browse [good first issues](https://github.com/Crewjah/AI-Resume-Analyzer/labels/good%20first%20issue)
-- Join our community discussions
-
----
-
-## Future Roadmap
 
 ### Planned Features
 - [ ] Support for DOCX and other document formats
 - [ ] Multi-language resume analysis
+### v2.0.0 - Major Update (December 26, 2025)
+This release represents a complete overhaul of the application with a modern multi-page interface and enhanced user experience.
+
+**Major Highlights:**
+- Multi-page Streamlit application with sidebar navigation
+- Interactive Plotly visualizations on all pages
+- Multi-file upload and analysis capabilities
+- Customizable analysis weights and settings
+- Professional UI with custom CSS and animations
+- Comprehensive bug fixes and stability improvements
+
+**Breaking Changes:**
+- Application structure completely reorganized
+- Default port changed from 8501 to 8502
+- File size limit reduced to 5MB per file
+
+**Migration Guide:**
+- No migration needed for new installations
+- Existing users: Simply pull latest code and restart application
+- All analysis features remain compatible
+
+**Getting Started:**
+1. Clone the repository
+2. Install dependencies: `pip install -r requirements.txt`
+3. Run application: `streamlit run app.py --server.port 8502`
+4. Access at `http://localhost:8502`
+
 - [ ] Industry-specific scoring models
-- [ ] Resume template recommendations
-- [ ] Batch processing capabilities
-- [ ] Advanced NLP with transformer models
-- [ ] Real-time collaboration features
-- [ ] Integration with job boards and ATS systems
-
-### Technical Improvements
-- [ ] Enhanced machine learning models
-- [ ] Performance optimizations
-- [ ] Mobile-responsive design improvements
-- [ ] Accessibility enhancements
-- [ ] Advanced analytics and reporting
-
----
-
-## Contributing
-
+Initial foundational release with basic analysis capabilities.
 We welcome contributions from the community! This project is part of Social Winter of Code 2026.
 
 - 🐛 [Report bugs](https://github.com/Crewjah/AI-Resume-Analyzer/issues/new?template=bug_report.md)

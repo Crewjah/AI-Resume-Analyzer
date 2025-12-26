@@ -1,72 +1,96 @@
-# Smart Resume Analyzer
+# AI Resume Analyzer
 
-> **Transform your resume into a job-winning masterpiece with AI-powered insights.**
+> **AI-powered resume analysis tool that helps you optimize your resume for Applicant Tracking Systems (ATS) and improve your job application success.**
 
-## Why Use Smart Resume Analyzer?
+**Current Version:** v2.0.0
 
-In today's competitive job market, **85% of companies use Applicant Tracking Systems (ATS)** to filter resumes before human eyes ever see them. Our tool ensures your resume not only passes these systems but stands out to hiring managers.
+## Overview
 
-### Proven Results
-- **Users get 60% more interviews** compared to generic resumes
-- **3x faster job placement** rate among active users
-- **95% ATS compatibility** score for analyzed resumes
-- **Used by 50,000+ professionals** worldwide
+AI Resume Analyzer is a comprehensive Streamlit-based web application that provides instant, actionable feedback on your resume. Built with modern NLP techniques and an intuitive multi-page interface, it helps job seekers understand their resume strengths and areas for improvement.
 
-## Key Features
+## Features
 
-### Comprehensive Analysis Engine
-- **Content Quality Assessment**: Evaluates achievements, impact statements, and quantified results
-- **Keyword Optimization**: Matches your skills with job requirements using advanced NLP
-- **ATS Compatibility Check**: Ensures formatting works with modern tracking systems
-- **Structure Analysis**: Reviews resume organization and flow
-- **Completeness Score**: Identifies missing sections that matter to recruiters
+### 📱 **Multi-Page Application**
+1. **Upload & Analyze** - Upload multiple resume files (PDF, TXT) with instant validation
+2. **Results Dashboard** - View comprehensive analysis with interactive charts
+3. **Job Matching** - Compare your resume against job descriptions
+4. **Settings** - Customize analysis weights and preferences
 
-### Smart Matching Technology
-- **Job Description Analysis**: Upload target job descriptions for personalized insights
-- **Skills Gap Identification**: Discover what skills to highlight or develop
-- **Industry-Specific Recommendations**: Tailored advice based on your field
-- **Real-time Feedback**: Instant analysis with actionable next steps
+### 🎯 **5-Metric Scoring System**
+- **Content Quality** (0-100): Evaluates word count, action verbs, and achievements
+- **Keyword Optimization** (0-100): Analyzes keyword usage and relevance
+- **ATS Compatibility** (0-100): Checks formatting for tracking systems
+- **Structure Score** (0-100): Reviews organization and section completeness
+- **Completeness** (0-100): Identifies missing resume sections
 
-### 📈 **Data-Driven Insights**
-- **5-Metric Scoring System**: Get specific scores on the factors that matter most
-- **Visual Analytics**: Interactive charts showing your resume's strengths
-- **Comparative Analysis**: See how your resume stacks against industry standards
-- **Progress Tracking**: Monitor improvements over time
+### 📊 **Interactive Visualizations**
+- **Radar Chart**: Multi-dimensional score breakdown
+- **Bar Chart**: Comparative metric analysis
+- **Donut Chart**: Score distribution visualization
+- **Gauge Chart**: Job match percentage display
 
-### 🎨 **Modern User Experience**
-- **Intuitive Interface**: Clean, professional design that's easy to use
-- **Drag-and-Drop Upload**: Simple file handling for PDF and TXT formats
-- **Responsive Design**: Works perfectly on desktop, tablet, and mobile
-- **Privacy-First**: Your data is processed locally and never stored
+### 🛠️ **Smart Analysis Features**
+- **Technical Skills Detection**: Identifies programming languages, frameworks, and tools
+- **Soft Skills Recognition**: Detects communication, leadership, and teamwork skills
+- **Action Verb Analysis**: Counts strong action words vs passive language
+- **Word Frequency Analysis**: Top keywords visualization
+- **Missing Keywords**: Identifies skills gap compared to job descriptions
 
-## Technical Architecture
+### 🎨 **Modern UI/UX**
+- **Responsive Design**: Professional gradient theme with Inter font
+- **Multi-File Upload**: Analyze multiple resumes with file management
+- **Real-Time Analysis**: Progress indicators and instant feedback
+- **Export Options**: Download results as CSV and JSON
+- **Session State**: Maintains analysis results across pages
 
-### Frontend Applications
-- **Streamlit App** (`app.py`): Interactive web interface with real-time analysis
-- **Static HTML Version** (`index.html`): Standalone website with demo functionality
+## Technical Stack
 
-### Backend Processing Engine
-- **Resume Analyzer** (`backend/resume_analyzer.py`): Core NLP analysis engine
-- **PDF Extractor** (`backend/pdf_extractor.py`): Text extraction from PDF documents
-- **Keyword Matcher** (`backend/keyword_matcher.py`): Skills and keyword identification
-- **FastAPI Server** (`api/analyze.py`): RESTful API for serverless deployment
+### Application Architecture
+- **Frontend**: Streamlit 1.52.2 multi-page web application
+- **Visualization**: Plotly 5.18.0 for interactive charts (radar, bar, donut, gauge)
+- **Data Processing**: Pandas 2.3.3 for data manipulation
+- **Document Processing**: PyPDF2 for PDF text extraction
+- **Backend Analysis**: Custom NLP engine with regex and pattern matching
 
-### Technology Stack
-- **AI/NLP**: SpaCy, NLTK, Regular Expressions for text processing
-- **Data Science**: Pandas, NumPy for data manipulation and analysis
-- **Visualization**: Plotly for interactive charts and graphs
-- **Web Framework**: Streamlit for rapid prototyping and deployment
-- **Document Processing**: PyPDF2, python-docx for file parsing
-- **Deployment**: FastAPI, Vercel-ready for cloud deployment
+### Core Components
+```
+app.py (1022 lines)           # Main Streamlit application
+├── Page Configuration        # Wide layout, expanded sidebar
+├── Custom CSS Styling        # Professional gradient theme
+├── Session State Management  # Multi-file analysis tracking
+└── 4 Pages
+    ├── Upload & Analyze     # File upload and validation
+    ├── Results Dashboard    # Scores, charts, skills analysis
+    ├── Job Matching         # Job description comparison
+    └── Settings             # Customizable weights and preferences
 
-## Installation & Setup
+backend/
+├── resume_analyzer.py       # Core analysis engine
+├── pdf_extractor.py         # PDF text extraction
+└── keyword_matcher.py       # Keyword and skill matching
+```
 
-### Quick Start (Recommended)
+### Key Dependencies
+```python
+streamlit==1.52.2           # Web framework
+plotly==5.18.0              # Interactive visualizations
+pandas==2.3.3               # Data manipulation
+PyPDF2==3.0.1               # PDF processing
+python-dateutil>=2.8.2      # Date handling
+```
+
+## Installation & Quick Start
+
+### Prerequisites
+- Python 3.8 or higher
+- pip package manager
+
+### Setup Instructions
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/smart-resume-analyzer.git
-   cd smart-resume-analyzer
+   git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
+   cd AI-Resume-Analyzer
    ```
 
 2. **Install dependencies**
@@ -76,34 +100,33 @@ In today's competitive job market, **85% of companies use Applicant Tracking Sys
 
 3. **Run the application**
    ```bash
-   streamlit run app.py
+   streamlit run app.py --server.port 8502
    ```
 
-4. **Open your browser** to `http://localhost:8501`
+4. **Access the app**
+   - Open your browser to `http://localhost:8502`
+   - Default port is 8502 (can be customized)
 
-### **Advanced Setup**
-
-For development or custom deployment:
+### Alternative: Virtual Environment
 
 ```bash
-# Create virtual environment
-python -m venv resume_env
-source resume_env/bin/activate  # On Windows: resume_env\Scripts\activate
+# Create and activate virtual environment
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# Install development dependencies
-pip install -r requirements-dev.txt
+# Install dependencies
+pip install -r requirements.txt
 
-# Run with custom configuration
-streamlit run app.py --server.port 8080
+# Run application
+streamlit run app.py
 ```
-   ```bash
 ## How to Use
 
 ### Step-by-Step Guide
 
 1. **Upload Your Resume**
    - Support for PDF and TXT formats
-   - Maximum file size: 10MB
+   - Maximum file size: 5MB per file
    - Drag-and-drop or click to browse
 
 2. **Add Target Job (Optional)**
@@ -126,70 +149,51 @@ streamlit run app.py --server.port 8080
 ```
 Overall Score: 82/100
 
-Detailed Breakdown:
+- Use the Job Matching page
+- Get keyword match scores and missing keywords
 ├── Content Quality: 85/100    (Strong achievements)
-├── Keyword Match: 78/100      (Good optimization)  
-├── ATS Compatibility: 90/100  (Excellent formatting)
-├── Structure: 80/100          (Well organized)
-└── Completeness: 75/100       (Missing certifications)
+## Performance
 
-Top Recommendations:
-1. Add quantified metrics to achievements
+- **Analysis Speed**: Near-instant for typical resumes
+- **File Support**: PDF and TXT formats
+- **Max File Size**: 5MB per file
+- **Multi-File**: Upload and analyze multiple resumes
+- **Browser Support**: All modern browsers
 2. Include industry certifications section
-3. Optimize for target role keywords
-```
+## Support & Contact
 
-## Project Structure
+### Get Help
+- 📚 [Documentation](docs/)
+- 🐛 [Report Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+- 💬 [Discussions](https://github.com/Crewjah/AI-Resume-Analyzer/discussions)
 
-```
-smart-resume-analyzer/
-├── Frontend Applications
-│   ├── app.py                    # Streamlit web interface
-│   └── index.html               # Static HTML version
-│
-├── Backend Engine  
+### Stay Updated
+- ⭐ Star this repository for updates
+- 👁️ Watch releases for new features
 │   ├── backend/
-│   │   ├── resume_analyzer.py   # Core NLP analysis
+**Visit `http://localhost:8502` and start optimizing your resume today!**
 │   │   ├── pdf_extractor.py     # Document processing
-│   │   └── keyword_matcher.py   # Skills identification
+[![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
 │   │
 │   └── api/
-│       └── analyze.py           # FastAPI server
+[![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
 │
-├── Assets & Styling
-│   ├── assets/
-│   │   ├── css/styles.css       # Custom styling
-│   │   └── images/              # UI images
-│   │
-│   └── sample_resumes/          # Test documents
-│
-├── Configuration
-│   ├── requirements.txt         # Python dependencies
-│   ├── requirements-dev.txt     # Development tools
-│   └── vercel.json             # Vercel deployment config
-│
-└── Documentation
-    ├── README.md               # This file
-    ├── docs/
-    │   ├── API.md             # API documentation
-    │   ├── DEPLOYMENT.md      # Deploy instructions
-    │   └── CONTRIBUTING.md    # Contribution guide
-    │
-    └── tests/
-        └── test_smoke.py      # Basic functionality tests
-```
+## Deployment
 
-## 🚀 Deployment Options
-
-### **1. Local Development**
+### Streamlit Community Cloud (Recommended)
+1. Push your code to GitHub
+2. Visit [share.streamlit.io](https://share.streamlit.io)
+3. Connect your repository
+4. Select `app.py` as the main file
+5. Deploy with one click
 Perfect for personal use and testing:
 ```bash
 streamlit run app.py
-```
+- **Maintainer**: Crewjah
 
-### **2. Cloud Deployment**
+- **Report Issues**: [GitHub Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
 
-#### **Streamlit Community Cloud** (Recommended)
+**Built with ❤️ using Python and Streamlit**
 1. Push your code to GitHub
 2. Visit [share.streamlit.io](https://share.streamlit.io)
 3. Connect your repository

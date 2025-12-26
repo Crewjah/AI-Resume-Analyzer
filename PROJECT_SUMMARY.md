@@ -37,107 +37,80 @@ Transform ordinary resumes into job-winning documents through data-driven analys
 
 ## 🛠️ Technical Architecture
 
-### **Frontend Applications**
+# AI Resume Analyzer - Project Summary
 - **`app.py`**: Main Streamlit interface with interactive features
 - **`index.html`**: Standalone HTML version with demo functionality
 - **Custom CSS**: Modern glass morphism design with animations
-
+**AI Resume Analyzer** is a comprehensive Streamlit-based web application designed to help job seekers optimize their resumes for Applicant Tracking Systems (ATS) and improve their job applications. The tool provides instant analysis using NLP techniques and delivers actionable insights through an intuitive multi-page interface.
 ### **Backend Processing**
-- **`resume_analyzer.py`**: Core analysis engine with sophisticated algorithms
-- **`pdf_extractor.py`**: Robust document text extraction
+**Version:** v2.0.0  
+**Technology:** Python, Streamlit, Plotly, Pandas
 - **`keyword_matcher.py`**: Skills and keyword identification
 - **`analyze.py`**: FastAPI server for deployment
 
-### **Technology Stack**
+### **5-Metric Scoring System**
 ```
-🧠 AI/ML:     SpaCy, NLTK, Regex, TF-IDF
-📊 Data:      Pandas, NumPy
-🎨 Frontend:  Streamlit, HTML5, CSS3, JavaScript
-📄 Docs:      PyPDF2, python-docx
+- **Technical Skills Detection**: Automatically identifies programming languages, frameworks, and tools
+- **Soft Skills Recognition**: Detects leadership, communication, and professional skills
+- **Action Verb Analysis**: Counts strong action words vs passive language
+- **ATS Compatibility Check**: Ensures resumes pass applicant tracking systems
 📈 Viz:       Plotly, Custom CSS animations
-🌐 Deploy:    FastAPI, Vercel-ready
+### **Job Matching**
 ```
 
-## 📊 Performance Metrics & Results
-
+- **Match Scoring**: Percentage match with threshold customization
+- **Gauge Visualization**: Visual representation of match quality
 ### **User Impact**
-- **60% increase** in interview callbacks for users
+### **Analysis Engine**
 - **3x faster** job placement rate
-- **95% ATS compatibility** for analyzed resumes
 - **4.8/5 user satisfaction** rating
-- **50,000+ resumes** analyzed worldwide
+- **Word Frequency Analysis**: Top keywords visualization
+- **Readability Scoring**: Content quality assessment
 
 ### **Technical Performance**
-- **< 3 seconds** analysis time per resume
-- **94% accuracy** in skill identification
+- **Multi-Page Application**: 4 dedicated pages (Upload, Results, Job Matching, Settings)
+- **Multi-File Upload**: Analyze multiple resumes with file management
 - **Support for PDF, TXT, DOCX** formats
 - **Mobile-responsive** design
-- **Privacy-first** approach (no data storage)
+- **Responsive Design**: Professional gradient theme with Inter font
+- **Export Options**: Download results as CSV and JSON
 
-## 🎯 Value Proposition
+## Technical Architecture
 
-### **For Job Seekers**
-- **Get hired faster** with optimized resumes
-- **Beat ATS systems** that filter 75% of applications
-- **Specific actionable advice** instead of generic tips
+### **Main Application** (`app.py` - 1022 lines)
+- **Streamlit Framework**: Multi-page application with sidebar navigation
+- **Session State Management**: Tracks uploaded files and analysis results
+- **Custom CSS**: Professional gradient theme with animations
+- **4 Pages**:
+    1. Upload & Analyze - File upload and validation
+    2. Results Dashboard - Comprehensive analysis display
+    3. Job Matching - Job description comparison
+    4. Settings - Customizable weights and preferences
 - **Industry insights** from HR professionals
 - **Free forever** with no hidden costs
-
+- **`resume_analyzer.py`**: Core analysis engine with NLP algorithms
 ### **For Recruiters/HR**
 - **Understand candidate optimization** strategies
-- **Benchmark against top-performing resumes**
 - **Insights into effective resume patterns**
 - **ATS compatibility testing**
 
-## 📁 Project Structure & Organization
-
-```
-smart-resume-analyzer/
-├── 🎨 User Interfaces
-│   ├── app.py                    # Streamlit web application
+🌐 Framework:  Streamlit 1.52.2
+📊 Data:       Pandas 2.3.3
+📈 Viz:        Plotly 5.18.0 (Radar, Bar, Donut, Gauge)
+📄 Docs:       PyPDF2 3.0.1
+🎨 UI:         Custom CSS with Inter font, Font Awesome icons
+🔍 Analysis:   Regex, pattern matching, NLP techniques
 │   └── index.html               # Static HTML demo
 │
-├── 🧠 Core Engine
-│   ├── resume_analyzer.py       # Advanced NLP analysis
-│   ├── pdf_extractor.py         # Document processing
-│   └── keyword_matcher.py       # Skills identification
-│
-├── 🌐 API Layer
-│   └── api/analyze.py           # FastAPI deployment server
-│
-├── 🎨 Assets
-│   ├── css/styles.css          # Modern styling system
-│   └── sample_resumes/         # Test documents
-│
-├── 📚 Documentation
-│   ├── README.md               # Comprehensive guide
-│   ├── API.md                  # API documentation
-│   └── DEPLOYMENT.md           # Deploy instructions
-│
-└── ⚙️ Configuration
-    ├── requirements.txt        # Production dependencies
-    └── requirements-dev.txt    # Development tools
-```
+## Core Features
 
-## 🚀 Deployment & Distribution
-
-### **Multiple Deployment Options**
-- **Local Development**: `streamlit run app.py`
-- **Streamlit Cloud**: One-click deployment
-- **Vercel/Netlify**: Static HTML version
-- **FastAPI**: Enterprise API deployment
-- **Docker**: Containerized deployment
-
-### **Scalability Features**
+### Interactive Visualizations
+- **Radar Chart**: Multi-dimensional score breakdown across 5 metrics
+- **Bar Chart**: Horizontal comparison of metric scores
+- **Donut Chart**: Score distribution visualization
+- **Gauge Chart**: Job match percentage with threshold indicator
+- **Word Cloud**: Top keyword frequency visualization
 - **Serverless-ready**: FastAPI for cloud functions
-- **CDN-optimized**: Static assets for fast loading
-- **API-first**: RESTful endpoints for integration
-- **Documentation**: Complete setup and usage guides
-
-## 💡 Innovation & Differentiation
-
-### **What Makes This Special**
-1. **Real HR Insights**: Built by analyzing 10,000+ successful resumes
 2. **Industry Standards**: Based on actual ATS system requirements
 3. **Actionable Output**: Specific recommendations, not just scores
 4. **Modern UX**: Professional design that inspires confidence
