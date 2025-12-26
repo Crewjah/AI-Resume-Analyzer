@@ -45,47 +45,56 @@ Streamlit Cloud is the easiest way to deploy Streamlit applications.
 
 Changes pushed to your GitHub repository will automatically redeploy the app.
 
-## Vercel (Static + FastAPI)
+## Vercel (FastAPI Function)
 
-Vercel’s 250 MB unzipped limit makes full Streamlit serverless functions impractical. This project deploys a lightweight static UI with a Python (FastAPI) serverless endpoint that stays well under the limit.
+This project deploys only the FastAPI serverless function on Vercel. The Streamlit UI is not hosted on Vercel; use Streamlit Cloud (see above) or another host for the UI.
 
 ### What’s deployed
-- Static UI: `index.html` (served by Vercel as static files)
 - API Function: `api/analyze.py` (FastAPI, handles file upload + analysis)
-- Minimal deps: `fastapi`, `uvicorn`, `python-multipart`, `PyPDF2`
+- Deps: `fastapi`, `uvicorn`, `python-multipart`, `PyPDF2` (plus any analyzer deps in `backend/`)
+
+### Configuration
+- `vercel.json` defines a functions-only setup and Python 3.11 runtime.
+- The function is served at `/api/analyze` externally.
+- Inside the ASGI app, routes are relative to the function root:
+   - `POST /` → analyze upload
+   - `GET /health` → health check
 
 ### One-time setup
 1. Ensure these files exist:
-   - `index.html`
-   - `api/analyze.py`
-   - `requirements.txt` contains only the minimal API deps (no Streamlit)
-2. Remove any `vercel.json` that forces `app.py` (Zero-config is used).
-3. Push to GitHub and connect the repo to Vercel.
+    - `api/analyze.py`
+    - `requirements.txt` (includes API and analyzer dependencies)
+    - `backend/` modules (included via `includeFiles`)
+2. Push to GitHub and connect the repo to Vercel.
 
 ### Deploy steps
 - Push to `main`. Vercel will:
-  - Serve `index.html` and static assets from the repo root
-  - Build a Python serverless function from `api/analyze.py`
-  - Install `requirements.txt` into the function (small footprint)
+   - Package `api/analyze.py` as a Python function
+   - Install `requirements.txt` into the function
+   - Bundle `backend/**` into the function
 
-### Local development
+### Verify deployment
+Replace `<your-deployment>` with your Vercel URL.
 ```bash
-# 1) Install local/dev deps (Streamlit optional for local only)
-pip install -r requirements-dev.txt
+# Health
+curl -s https://<your-deployment>/api/analyze/health
 
-# 2) Run the API on 8000
-uvicorn api.analyze:app --reload --port 8000
-
-# 3) Serve the static UI on 8080 (or open index.html via a live server)
-python -m http.server 8080
-# Open http://localhost:8080
+# Analyze (PDF upload)
+curl -s -X POST https://<your-deployment>/api/analyze \
+   -F "file=@/path/to/resume.pdf" | jq
 ```
-The UI auto-targets `http://localhost:8000` during local dev; in production it calls `/api/analyze` on the same origin.
+
+### Local development (API)
+```bash
+pip install -r requirements.txt
+uvicorn api.analyze:app --reload --port 8000
+# Then test: curl -s http://localhost:8000/health
+```
 
 ### Streamlit note
-Streamlit is kept for local experimentation but is not deployed on Vercel. To run locally:
+Streamlit is for local experimentation and separate hosting. To run locally:
 ```bash
-pip install -r requirements-dev.txt
+pip install -r requirements.txt
 streamlit run app.py
 ```
 
