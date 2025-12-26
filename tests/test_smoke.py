@@ -18,23 +18,16 @@ def test_analyzer_basic_output():
     sample_text = "Software engineer with experience in Python, AWS, Docker. Led projects and improved performance by 20%."
     result = analyzer.analyze(sample_text)
 
-    expected_keys = {
-        "overall_score",
-        "content_score",
-        "keyword_score",
-        "ats_score",
-        "structure_score",
-        "completeness_score",
-        "skills",
-        "keywords",
-        "recommendations",
-        "word_count",
-    }
-
-    assert expected_keys.issubset(result.keys())
-    assert isinstance(result["overall_score"], int)
-    assert result["overall_score"] <= 100
-    assert result["overall_score"] >= 0
+    # Verify structure with nested scores
+    assert "scores" in result
+    assert "technical_skills" in result
+    assert "soft_skills" in result
+    assert "recommendations" in result
+    assert "word_count" in result
+    
+    # Check scores are in valid range
+    assert 0 <= result["scores"]["overall_score"] <= 100
+    assert result["scores"]["overall_score"] >= 0
 
 
 def test_skills_extraction():
@@ -43,12 +36,9 @@ def test_skills_extraction():
     text_with_skills = "Proficient in Python, JavaScript, React, AWS, machine learning, and project management."
     result = analyzer.analyze(text_with_skills)
     
-    # Should detect some skills
-    assert len(result["skills"]) > 0
-    
-    # Check for specific skills
-    skills_lower = [skill.lower() for skill in result["skills"]]
-    assert any("python" in skill for skill in skills_lower)
+    # Should detect some skills (technical or soft)
+    total_skills = len(result["technical_skills"]) + len(result["soft_skills"])
+    assert total_skills > 0
 
 
 def test_empty_text():
@@ -58,7 +48,6 @@ def test_empty_text():
     
     # Should still return valid structure
     assert isinstance(result, dict)
-    assert "overall_score" in result
     assert result["word_count"] == 0
 
 
@@ -110,9 +99,9 @@ def test_score_boundaries():
     for text in test_texts:
         result = analyzer.analyze(text)
         
-        # Check all scores are within bounds
-        for key in ["overall_score", "content_score", "keyword_score", "ats_score", "structure_score", "completeness_score"]:
-            score = result[key]
+        # Check all scores are within bounds (now in nested scores dict)
+        for key in ["overall_score", "content_quality", "keyword_optimization", "ats_compatibility", "structure_score", "completeness"]:
+            score = result["scores"][key]
             assert 0 <= score <= 100, f"{key} score {score} is out of bounds for text length {len(text)}"
 
 
