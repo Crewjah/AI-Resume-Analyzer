@@ -1,16 +1,20 @@
-# AI Resume Analyzer API Dependencies (Vercel-optimized)
-# Core web framework for API
-fastapi>=0.111.0
-uvicorn>=0.24.0
-Mangum>=0.17.0
+# Full dependencies for development and testing
+-r requirements.txt
 
-# File processing
-python-multipart>=0.0.6
-PyPDF2>=3.0.1
-
-# Data processing (required by backend)
-numpy>=1.21.0
+# Data science dependencies (dev/testing only)
+pandas>=1.5.0
 scikit-learn>=1.1.0
-
-# Testing (local dev only)
-pytest>=7.4
+plotly>=5.18.0
+streamlit>=1.28.0
+pdfplumber==0.9.0
+python-docx==0.8.11
+sentence-transformers>=2.2.2
+textract==1.6.5
+wordcloud==1.9.3
+altair==5.2.0
+streamlit-extras
+streamlit-aggrid
+streamlit-option-menu
+python-dotenv==1.0.0
+black==23.11.0
+pylint==3.0.3
