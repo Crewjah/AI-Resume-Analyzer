@@ -1,10 +1,12 @@
-"""Ultra-minimal handler for Vercel"""
-import json
+"""Vercel ASGI handler - ultra minimal test"""
+from fastapi import FastAPI
 
-def handler(request):
-    """Test handler"""
-    return {
-        "statusCode": 200,
-        "headers": {"Content-Type": "application/json"},
-        "body": json.dumps({"message": "Hello from Vercel"})
-    }
+app = FastAPI()
+
+@app.get("/")
+def root():
+    return {"message": "Hello from Vercel"}
+
+@app.get("/health")
+def health():
+    return {"status": "ok"}
