@@ -4,6 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import io
 from PyPDF2 import PdfReader
+from mangum import Mangum
 
 from backend.resume_analyzer import ResumeAnalyzer
 
@@ -69,3 +70,7 @@ async def analyze_resume(
 @app.get("/health")
 async def health():
     return {"ok": True}
+
+
+# Expose AWS Lambda-style handler for Vercel serverless runtime
+handler = Mangum(app)
