@@ -8,8 +8,9 @@ Mangum>=0.17.0
 python-multipart>=0.0.6
 PyPDF2>=3.0.1
 
-# Minimal data processing (lightweight alternatives)
+# Data processing (required by backend)
 numpy>=1.21.0
+scikit-learn>=1.1.0
 
 # Testing (local dev only)
 pytest>=7.4
