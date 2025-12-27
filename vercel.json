@@ -4,10 +4,7 @@
   "functions": {
     "api/analyze.py": {
       "runtime": "@vercel/python@3.11",
-      "includeFiles": [
-        "backend/**",
-        "requirements.txt"
-      ]
+      "includeFiles": "backend/**"
     }
   },
   "env": {
