@@ -12,13 +12,18 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
 from PyPDF2 import PdfReader
 
 # Create FastAPI app
 app = FastAPI(title="AI Resume Analyzer API", version="1.0.0")
+# Serve static assets (JS/CSS)
+ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
+INDEX_HTML = os.path.join(os.path.dirname(__file__), "..", "index.html")
+app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
 # Add CORS middleware
 app.add_middleware(
@@ -64,7 +69,12 @@ def extract_text_from_upload(upload: UploadFile) -> str:
 
 @app.get("/")
 def root():
-    return {"message": "AI Resume Analyzer API", "version": "1.0.0"}
+    try:
+        with open(INDEX_HTML, "r", encoding="utf-8") as f:
+            html = f.read()
+        return HTMLResponse(content=html, status_code=200)
+    except Exception as e:
+        return JSONResponse(status_code=500, content={"error": f"Failed to load homepage: {e}"})
 
 @app.get("/health")
 def health():
