@@ -3,10 +3,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from typing import Optional
 import io
+import traceback
 from PyPDF2 import PdfReader
 from mangum import Mangum
 
-from backend.resume_analyzer import ResumeAnalyzer
+try:
+    from backend.resume_analyzer import ResumeAnalyzer
+except ImportError as e:
+    print(f"Warning: Could not import ResumeAnalyzer: {e}")
+    ResumeAnalyzer = None
 
 
 app = FastAPI(title="AI Resume Analyzer API", version="1.0.0")
@@ -22,12 +27,23 @@ app.add_middleware(
 
 # Lazy initialization to avoid startup errors
 _analyzer = None
+_analyzer_error = None
 
 def get_analyzer():
-    global _analyzer
-    if _analyzer is None:
-        _analyzer = ResumeAnalyzer()
+    global _analyzer, _analyzer_error
+    if _analyzer is None and _analyzer_error is None:
+        try:
+            if ResumeAnalyzer is None:
+                raise ImportError("ResumeAnalyzer not available")
+            _analyzer = ResumeAnalyzer()
+        except Exception as e:
+            _analyzer_error = str(e)
+            traceback.print_exc()
+            raise
+    if _analyzer_error:
+        raise RuntimeError(f"Analyzer init failed: {_analyzer_error}")
     return _analyzer
+
 
 
 
@@ -78,7 +94,18 @@ async def analyze_resume(
 
 @app.get("/health")
 async def health():
-    return {"ok": True}
+    """Simple health check endpoint"""
+    return {"ok": True, "status": "healthy"}
+
+
+@app.get("/status")
+async def status():
+    """API status with analyzer initialization status"""
+    try:
+        analyzer = get_analyzer()
+        return {"ok": True, "analyzer_ready": True}
+    except Exception as e:
+        return {"ok": False, "analyzer_ready": False, "error": str(e)}
 
 
 # Expose AWS Lambda-style handler for Vercel serverless runtime
