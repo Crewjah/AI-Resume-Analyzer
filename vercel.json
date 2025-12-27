@@ -3,7 +3,7 @@
   "name": "smart-resume-analyzer",
   "functions": {
     "api/analyze.py": {
-      "runtime": "vercel-python@3.11.0",
+      "runtime": "@vercel/python@0.5.4",
       "includeFiles": "backend/**"
     }
   },
