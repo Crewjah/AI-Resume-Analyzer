@@ -1,22 +1,15 @@
-# AI Resume Analyzer Dependencies
-# Install with: pip install -r requirements.txt
-
-# Web framework
+# AI Resume Analyzer API Dependencies (Vercel-optimized)
+# Core web framework for API
 fastapi>=0.111.0
 uvicorn>=0.24.0
-streamlit>=1.28.0
 Mangum>=0.17.0
 
 # File processing
 python-multipart>=0.0.6
 PyPDF2>=3.0.1
 
-# Data analysis
-pandas>=1.5.0
+# Minimal data processing (lightweight alternatives)
 numpy>=1.21.0
-scikit-learn>=1.1.0
 
-# Visualization
-plotly>=5.18.0
-# Testing
+# Testing (local dev only)
 pytest>=7.4
