@@ -20,7 +20,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-analyzer = ResumeAnalyzer()
+# Lazy initialization to avoid startup errors
+_analyzer = None
+
+def get_analyzer():
+    global _analyzer
+    if _analyzer is None:
+        _analyzer = ResumeAnalyzer()
+    return _analyzer
+
 
 
 def _extract_text_from_upload(upload: UploadFile) -> str:
@@ -56,6 +64,7 @@ async def analyze_resume(
                 content={"error": "Could not read resume file. Please upload a valid PDF or text file."},
             )
 
+        analyzer = get_analyzer()
         result = analyzer.analyze(resume_text)
 
         # Optionally echo job description back (not used in scoring yet)
