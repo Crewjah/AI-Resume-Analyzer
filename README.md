@@ -4,6 +4,11 @@
 
 **Current Version:** v2.0.0
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
+[![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
+
 ## Overview
 
 AI Resume Analyzer is a comprehensive Streamlit-based web application that provides instant, actionable feedback on your resume. Built with modern NLP techniques and an intuitive multi-page interface, it helps job seekers understand their resume strengths and areas for improvement.
@@ -76,7 +81,8 @@ streamlit==1.52.2           # Web framework
 plotly==5.18.0              # Interactive visualizations
 pandas==2.3.3               # Data manipulation
 PyPDF2==3.0.1               # PDF processing
-python-dateutil>=2.8.2      # Date handling
+scikit-learn>=1.1.0         # Machine learning
+sentence-transformers>=2.2.2 # Semantic similarity
 ```
 
 ## Installation & Quick Start
@@ -100,12 +106,12 @@ python-dateutil>=2.8.2      # Date handling
 
 3. **Run the application**
    ```bash
-   streamlit run app.py --server.port 8502
+   streamlit run app.py
    ```
 
 4. **Access the app**
-   - Open your browser to `http://localhost:8502`
-   - Default port is 8502 (can be customized)
+   - Open your browser to `http://localhost:8501`
+   - The browser should open automatically
 
 ### Alternative: Virtual Environment
 
@@ -120,6 +126,7 @@ pip install -r requirements.txt
 # Run application
 streamlit run app.py
 ```
+
 ## How to Use
 
 ### Step-by-Step Guide
@@ -139,93 +146,48 @@ streamlit run app.py
    - Review your 5-metric scoring breakdown
    - Get specific, actionable recommendations
 
-4. **📈 Implement Changes**
+4. **Implement Changes**
    - Follow priority-ranked suggestions
    - Re-analyze to track improvements
-   - Download the complete optimization guide
+   - Download results for reference
 
-### Sample Analysis Report
-
-```
-Overall Score: 82/100
-
-- Use the Job Matching page
-- Get keyword match scores and missing keywords
-├── Content Quality: 85/100    (Strong achievements)
-## Performance
-
-- **Analysis Speed**: Near-instant for typical resumes
-- **File Support**: PDF and TXT formats
-- **Max File Size**: 5MB per file
-- **Multi-File**: Upload and analyze multiple resumes
-- **Browser Support**: All modern browsers
-2. Include industry certifications section
-## Support & Contact
-
-### Get Help
-- 📚 [Documentation](docs/)
-- 🐛 [Report Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
-- 💬 [Discussions](https://github.com/Crewjah/AI-Resume-Analyzer/discussions)
-
-### Stay Updated
-- ⭐ Star this repository for updates
-- 👁️ Watch releases for new features
-│   ├── backend/
-**Visit `http://localhost:8502` and start optimizing your resume today!**
-│   │   ├── pdf_extractor.py     # Document processing
-[![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
-│   │
-│   └── api/
-[![Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://streamlit.io)
-│
 ## Deployment
 
 ### Streamlit Community Cloud (Recommended)
+
 1. Push your code to GitHub
 2. Visit [share.streamlit.io](https://share.streamlit.io)
 3. Connect your repository
 4. Select `app.py` as the main file
 5. Deploy with one click
-Perfect for personal use and testing:
-```bash
-streamlit run app.py
-- **Maintainer**: Crewjah
 
-- **Report Issues**: [GitHub Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+### Docker
 
-**Built with ❤️ using Python and Streamlit**
-1. Push your code to GitHub
-2. Visit [share.streamlit.io](https://share.streamlit.io)
-3. Connect your repository
-4. Deploy with one click
-
-#### **Vercel (FastAPI)**
-```bash
-npm i -g vercel
-vercel --prod
-```
-
-#### **Heroku**
-```bash
-git push heroku main
-```
-
-#### **Docker**
 ```bash
 docker build -t resume-analyzer .
 docker run -p 8501:8501 resume-analyzer
 ```
 
+### Heroku
+
+```bash
+# Create Procfile with:
+# web: streamlit run app.py --server.port=$PORT --server.address=0.0.0.0
+
+heroku create your-app-name
+git push heroku main
+```
+
 ## 💡 Pro Tips for Best Results
 
-### **📝 Resume Optimization**
+### Resume Optimization
 - **Use action verbs**: "Led", "Developed", "Achieved" vs "Responsible for"
 - **Quantify achievements**: "Increased sales by 25%" vs "Improved sales"
 - **Include relevant keywords**: Match 70% of job posting terms
 - **Standard formatting**: Use conventional section headers
 - **ATS-friendly fonts**: Stick to Arial, Calibri, or Times New Roman
 
-### **🎯 Job Matching Strategy**
+### Job Matching Strategy
 - **Analyze multiple roles**: Compare requirements across similar positions
 - **Track keyword frequency**: Focus on terms appearing in 3+ job posts
 - **Customize per application**: Adjust keywords for each specific role
@@ -233,51 +195,39 @@ docker run -p 8501:8501 resume-analyzer
 
 ## 🔧 API Usage
 
-### **REST Endpoint**
-```python
-import requests
-
-# Analyze resume via API
-response = requests.post('/analyze', 
-    files={'file': open('resume.pdf', 'rb')},
-    data={'job_description': 'Software Engineer role...'})
-
-result = response.json()
-print(f"Overall Score: {result['overall_score']}")
-```
-
-### **Python Integration**
+### Python Integration
 ```python
 from backend.resume_analyzer import ResumeAnalyzer
 
 analyzer = ResumeAnalyzer()
 results = analyzer.analyze_resume('path/to/resume.pdf')
-print(results.get_summary())
+print(results)
 ```
 
 ## 📊 Performance Metrics
 
 - **Analysis Speed**: < 3 seconds for typical resume
-- **Accuracy Rate**: 94% skill identification accuracy
-- **ATS Compatibility**: 95% pass rate for analyzed resumes
-- **User Satisfaction**: 4.8/5 average rating
-- **File Support**: PDF, TXT, DOCX formats
+- **File Support**: PDF, TXT formats
+- **Max File Size**: 5MB per file
+- **Multi-File**: Analyze multiple resumes
+- **Browser Support**: All modern browsers
+
 ## 🤝 Contributing
 
 We welcome contributions from the community! Here's how you can help:
 
-### **Ways to Contribute**
-- 🐛 **Report bugs** via [GitHub Issues](https://github.com/yourusername/smart-resume-analyzer/issues)
+### Ways to Contribute
+- 🐛 **Report bugs** via [GitHub Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
 - 💡 **Suggest features** for future releases
 - 🔧 **Submit pull requests** with improvements
 - 📚 **Improve documentation** and add examples
 - 🧪 **Add test cases** for better coverage
 
-### **Development Setup**
+### Development Setup
 ```bash
 # Fork and clone the repository
-git clone https://github.com/yourusername/smart-resume-analyzer.git
-cd smart-resume-analyzer
+git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
 
 # Create development branch
 git checkout -b feature/your-feature-name
@@ -292,85 +242,11 @@ python -m pytest tests/
 git push origin feature/your-feature-name
 ```
 
-### **Code Guidelines**
+### Code Guidelines
 - Follow PEP 8 style guidelines
 - Add docstrings to all functions
 - Include unit tests for new features
 - Update documentation as needed
-
-## 📜 License
-
-This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **SpaCy Team** for excellent NLP library
-- **Streamlit** for rapid web app development
-- **Open Source Community** for inspiration and support
-- **Beta Testers** who provided valuable feedback
-
-## 📞 Support & Contact
-
-### **Get Help**
-- 📚 [Documentation](docs/)
-- 🐛 [Report Issues](https://github.com/yourusername/smart-resume-analyzer/issues)
-- 💬 [Discussions](https://github.com/yourusername/smart-resume-analyzer/discussions)
-
-### **Stay Updated**
-- ⭐ **Star this repository** for updates
-- 👁️ **Watch releases** for new features
-- 📱 **Follow us** on social media
-
----
-
-### 🎯 **Ready to transform your resume?**
-
-```bash
-git clone https://github.com/yourusername/smart-resume-analyzer.git
-cd smart-resume-analyzer
-pip install -r requirements.txt
-streamlit run app.py
-```
-
-**Visit `http://localhost:8501` and start optimizing your resume today!**
-
----
-
-<div align="center">
-
-**Built with ❤️ for job seekers worldwide**
-
-[![GitHub stars](https://img.shields.io/github/stars/yourusername/smart-resume-analyzer?style=social)](https://github.com/yourusername/smart-resume-analyzer/stargazers)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://smart-resume-analyzer.streamlit.app)
-
-</div>
-
-The application evaluates resumes across multiple dimensions:
-
-- **Overall Score**: Weighted average of all metrics
-- **Content Quality**: Word count, action verbs, structure
-- **Keyword Optimization**: Keyword diversity and relevance
-- **ATS Compatibility**: Format and structure for ATS systems
-- **Structure Score**: Presence of key sections and proper formatting
-- **Completeness**: Essential information coverage
-- **Job Match Score**: Similarity with job description (when provided)
-
-## Contributing
-
-We welcome contributions from the community! This project is part of Social Winter of Code 2026.
-
-### How to Contribute
-
-1. Fork the repository
-2. Create a new branch (`git checkout -b feature/your-feature`)
-3. Make your changes
-4. Commit your changes (`git commit -m 'Add some feature'`)
-5. Push to the branch (`git push origin feature/your-feature`)
-6. Open a Pull Request
-
-Please read [CONTRIBUTING.md](docs/CONTRIBUTING.md) for detailed guidelines.
 
 ## Development
 
@@ -389,96 +265,68 @@ pytest --cov=backend tests/
 
 ### Code Style
 
-We follow PEP 8 style guidelines. Format your code using:
-
 ```bash
-pip install black flake8
+pip install black pylint
 black .
-flake8 .
+pylint backend/
 ```
-
-## Deployment
-
-### Deploy on Streamlit Cloud
-
-1. Push your code to GitHub
-2. Go to [share.streamlit.io](https://share.streamlit.io)
-3. Connect your GitHub repository
-4. Select the main file (`app.py`)
-5. Deploy
-
-### Deploy on Vercel
-
-See [DEPLOYMENT.md](docs/DEPLOYMENT.md) for detailed Vercel deployment instructions.
 
 ## Known Limitations
 
-- Currently supports PDF files only
 - Best results with text-based PDFs (not scanned images)
 - English language resumes only
 - Requires internet connection for initial model download
 
 ## Future Enhancements
 
-- Support for DOCX and TXT file formats
+- Support for DOCX file formats
 - Multi-language support
 - Resume template suggestions
 - Industry-specific analysis
 - Resume comparison feature
 - Export detailed reports as PDF
 
-## License
+## 📜 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## 🙏 Acknowledgments
 
-- Social Winter of Code 2026 for the opportunity
-- SpaCy and Hugging Face for NLP models
-- Streamlit for the amazing framework
-- All contributors and supporters
+- **Streamlit** for rapid web app development
+- **Open Source Community** for inspiration and support
+- **Social Winter of Code 2026** for the opportunity
+- **All Contributors** who helped improve this project
 
-## Vercel Deployment
+## 📞 Support & Contact
 
-This project is optimized for Vercel deployment. To deploy:
+### Get Help
+- 📚 [Documentation](docs/)
+- 🐛 [Report Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+- 💬 [Discussions](https://github.com/Crewjah/AI-Resume-Analyzer/discussions)
 
-1. **Fork this repository** to your GitHub account
-2. **Connect to Vercel**:
-   - Visit [vercel.com](https://vercel.com)
-   - Click "New Project"
-   - Import your forked repository
-3. **Configure build settings**:
-   - Framework Preset: Other
-   - Build Command: (leave empty)
-   - Output Directory: (leave empty)
-4. **Deploy**: Vercel will automatically deploy both the static HTML and FastAPI backend
-
-### Environment Variables
-No environment variables are required for basic functionality.
-
-### Custom Domain
-After deployment, you can add a custom domain in your Vercel dashboard.
-
-## Local Development vs Production
-
-- **Local**: Run `streamlit run app.py` for full Streamlit interface
-- **Vercel**: Serves static HTML version with API backend
-- **Features**: Both versions provide complete resume analysis functionality
-
-## Contact & Support
-
-- **Project Maintainer**: Crewjah
-- **GitHub**: [https://github.com/Crewjah/AI-Resume-Analyzer](https://github.com/Crewjah/AI-Resume-Analyzer)
-- **Issues**: [GitHub Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
-
-## Support
-
-If you find this project helpful, please consider:
-- Giving it a star on GitHub
-- Sharing it with others
-- Contributing to the codebase
-- Reporting bugs and suggesting features
+### Stay Updated
+- ⭐ Star this repository for updates
+- 👁️ Watch releases for new features
 
 ---
 
-Made with Python and Streamlit
+### 🎯 **Ready to transform your resume?**
+
+```bash
+git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
+pip install -r requirements.txt
+streamlit run app.py
+```
+
+**Visit `http://localhost:8501` and start optimizing your resume today!**
+
+---
+
+<div align="center">
+
+**Built with ❤️ using Python and Streamlit**
+
+**Project Maintainer**: [Crewjah](https://github.com/Crewjah)
+
+</div>

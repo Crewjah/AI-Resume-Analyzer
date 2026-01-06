@@ -912,8 +912,8 @@ elif page == "🎯 Job Matching":
                                 }
                             }
                         ))
-                        fig.update_layout(paper_bgcolor='white', height=300)
-                        st.plotly_chart(fig, use_container_width=True)
+                    fig.update_layout(paper_bgcolor='white', height=300)
+                    st.plotly_chart(fig, use_container_width=True)
 
 # ============================================================================
 # PAGE: SETTINGS
