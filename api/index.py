@@ -7,6 +7,9 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# API Version
+API_VERSION = "2.0"
+
 # Ensure backend modules can be imported
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -18,7 +21,7 @@ import io
 from PyPDF2 import PdfReader
 
 # Create FastAPI app
-app = FastAPI(title="AI Resume Analyzer API", version="1.0.0")
+app = FastAPI(title="AI Resume Analyzer API", version=API_VERSION)
 
 # Add CORS middleware
 app.add_middleware(
@@ -87,7 +90,7 @@ def health():
 @app.get("/status")
 def status():
     """Check if the analyzer is ready. For Vercel, always return ready since we can do lazy loading."""
-    return {"ready": True, "message": "API is operational"}
+    return {"ready": True, "message": "API is operational", "version": API_VERSION}
 
 @app.post("/api/analyze")
 async def analyze_resume(
