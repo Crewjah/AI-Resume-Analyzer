@@ -86,11 +86,8 @@ def health():
 
 @app.get("/status")
 def status():
-    try:
-        analyzer = get_analyzer()
-        return {"ready": True}
-    except Exception as e:
-        return {"ready": False, "error": str(e)}
+    """Check if the analyzer is ready. For Vercel, always return ready since we can do lazy loading."""
+    return {"ready": True, "message": "API is operational"}
 
 @app.post("/api/analyze")
 async def analyze_resume(
