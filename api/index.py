@@ -29,20 +29,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Lazy load analyzer
+# Lazy load analyzer with graceful fallback
 _analyzer = None
+_analyzer_error = None
 
 def get_analyzer():
-    """Lazy load ResumeAnalyzer"""
-    global _analyzer
-    if _analyzer is None:
+    """Lazy load ResumeAnalyzer with error handling"""
+    global _analyzer, _analyzer_error
+    if _analyzer is None and _analyzer_error is None:
         try:
+            # Try to import analyzer - it may not work if dependencies are missing
             from backend.resume_analyzer import ResumeAnalyzer
             _analyzer = ResumeAnalyzer()
-            logger.info("ResumeAnalyzer initialized")
+            logger.info("ResumeAnalyzer initialized successfully")
+        except ImportError as e:
+            _analyzer_error = f"Analyzer dependencies not available: {e}"
+            logger.warning(_analyzer_error)
         except Exception as e:
-            logger.error(f"Failed to init analyzer: {e}", exc_info=True)
-            raise
+            _analyzer_error = f"Failed to initialize analyzer: {e}"
+            logger.error(_analyzer_error, exc_info=True)
+    
+    if _analyzer_error:
+        raise RuntimeError(_analyzer_error)
     return _analyzer
 
 def extract_text_from_upload(upload: UploadFile) -> str:
