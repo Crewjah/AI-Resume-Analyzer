@@ -30,4 +30,16 @@ build
 .coverage
 htmlcov
 .tox
+.cache
+.pytest_cache
+*.so
+.venv/lib/python*/site-packages/torch
+.venv/lib/python*/site-packages/transformers
+.venv/lib/python*/site-packages/sentence_transformers
+.venv/lib/python*/site-packages/huggingface_hub
+.venv/lib/python*/site-packages/.*cache*
+/node_modules
+.next
+.turbo
+out
 

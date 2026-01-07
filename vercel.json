@@ -7,11 +7,16 @@
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "50mb",
-        "runtime": "python3.11"
+        "runtime": "python3.11",
+        "cleanUrls": true
       }
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/index.py"
+    },
     {
       "src": "/assets/(.*)",
       "dest": "/assets/$1",
@@ -20,15 +25,13 @@
       }
     },
     {
-      "src": "/api/(.*)",
-      "dest": "/api/index.py"
-    },
-    {
-      "src": "/.*",
+      "src": "/(.*)",
       "dest": "/api/index.py"
     }
   ],
   "env": {
     "PYTHON_VERSION": "3.11"
-  }
+  },
+  "buildCommand": "pip install -r requirements.txt",
+  "outputDirectory": ".vercel/output"
 }
