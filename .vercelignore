@@ -33,6 +33,10 @@ htmlcov
 .cache
 .pytest_cache
 *.so
+# Exclude full requirements file for Vercel (use lightweight requirements.txt instead)
+requirements-full.txt
+requirements-dev.txt
+# Exclude large package caches
 .venv/lib/python*/site-packages/torch
 .venv/lib/python*/site-packages/transformers
 .venv/lib/python*/site-packages/sentence_transformers
