@@ -13,17 +13,12 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
-from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
 from PyPDF2 import PdfReader
 
 # Create FastAPI app
 app = FastAPI(title="AI Resume Analyzer API", version="1.0.0")
-# Serve static assets (JS/CSS)
-ASSETS_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
-INDEX_HTML = os.path.join(os.path.dirname(__file__), "..", "index.html")
-app.mount("/assets", StaticFiles(directory=ASSETS_DIR), name="assets")
 
 # Add CORS middleware
 app.add_middleware(
@@ -34,20 +29,28 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Lazy load analyzer
+# Lazy load analyzer with graceful fallback
 _analyzer = None
+_analyzer_error = None
 
 def get_analyzer():
-    """Lazy load ResumeAnalyzer"""
-    global _analyzer
-    if _analyzer is None:
+    """Lazy load ResumeAnalyzer with error handling"""
+    global _analyzer, _analyzer_error
+    if _analyzer is None and _analyzer_error is None:
         try:
+            # Try to import analyzer - it may not work if dependencies are missing
             from backend.resume_analyzer import ResumeAnalyzer
             _analyzer = ResumeAnalyzer()
-            logger.info("ResumeAnalyzer initialized")
+            logger.info("ResumeAnalyzer initialized successfully")
+        except ImportError as e:
+            _analyzer_error = f"Analyzer dependencies not available: {e}"
+            logger.warning(_analyzer_error)
         except Exception as e:
-            logger.error(f"Failed to init analyzer: {e}", exc_info=True)
-            raise
+            _analyzer_error = f"Failed to initialize analyzer: {e}"
+            logger.error(_analyzer_error, exc_info=True)
+    
+    if _analyzer_error:
+        raise RuntimeError(_analyzer_error)
     return _analyzer
 
 def extract_text_from_upload(upload: UploadFile) -> str:
@@ -70,7 +73,8 @@ def extract_text_from_upload(upload: UploadFile) -> str:
 @app.get("/")
 def root():
     try:
-        with open(INDEX_HTML, "r", encoding="utf-8") as f:
+        index_path = os.path.join(os.path.dirname(__file__), "..", "index.html")
+        with open(index_path, "r", encoding="utf-8") as f:
             html = f.read()
         return HTMLResponse(content=html, status_code=200)
     except Exception as e:
