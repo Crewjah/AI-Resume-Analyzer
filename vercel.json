@@ -11,14 +11,14 @@
       }
     },
     {
-      "src": "favicon.svg",
+      "src": "public/**",
       "use": "@vercel/static"
     }
   ],
   "routes": [
     {
       "src": "/favicon.(ico|svg)",
-      "dest": "/favicon.svg"
+      "dest": "/public/favicon.svg"
     },
     {
       "src": "/api/(.*)",
