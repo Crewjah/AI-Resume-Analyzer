@@ -9,17 +9,9 @@
         "maxLambdaSize": "200mb",
         "runtime": "python3.11"
       }
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static"
     }
   ],
   "routes": [
-    {
-      "src": "/favicon.(ico|svg)",
-      "dest": "/public/favicon.svg"
-    },
     {
       "src": "/api/(.*)",
       "dest": "/api/index.py"
@@ -28,6 +20,11 @@
       "src": "/assets/(.*)",
       "dest": "/api/index.py"
     },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.svg"
+    },
+    { "handle": "filesystem" },
     {
       "src": "/(.*)",
       "dest": "/api/index.py"

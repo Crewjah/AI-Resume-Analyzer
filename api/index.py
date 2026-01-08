@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
+from fastapi.responses import JSONResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
@@ -89,12 +89,7 @@ def root():
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Failed to load homepage: {e}"})
 
-@app.get("/favicon.ico")
-def favicon():
-    favicon_path = os.path.join(os.path.dirname(__file__), "..", "favicon.svg")
-    if os.path.exists(favicon_path):
-        return FileResponse(favicon_path, media_type="image/svg+xml")
-    return JSONResponse(status_code=404, content={"error": "Favicon not found"})
+# Static favicon is served by Vercel from /public; no API route needed.
 
 @app.get("/health")
 def health():
