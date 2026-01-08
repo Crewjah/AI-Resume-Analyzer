@@ -4,7 +4,7 @@ from fastapi.responses import JSONResponse
 from typing import Optional
 import io
 import traceback
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 from mangum import Mangum
 
 try:

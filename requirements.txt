@@ -1,7 +1,23 @@
-# Lightweight dependencies for Vercel deployment
-# Optimized to stay under 250MB Lambda size limit
+# Core Dependencies for Streamlit App
+streamlit>=1.28.0
+pandas>=2.1.0
+numpy>=1.24.0
+
+# Data Processing & PDF Handling
+pypdf>=4.0.0
+pdfplumber>=0.9.0
+python-docx>=0.8.11
+
+# Visualization
+plotly>=5.18.0
+
+# Machine Learning (lightweight)
+scikit-learn>=1.3.0
+
+# Utilities
+python-dotenv==1.0.0
+
+# For API deployment (optional)
 fastapi>=0.111.0
 uvicorn>=0.24.0
 python-multipart>=0.0.6
-PyPDF2>=3.0.1
-python-dotenv==1.0.0

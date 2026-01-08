@@ -19,7 +19,7 @@ from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
-from PyPDF2 import PdfReader
+from pypdf import PdfReader
 
 # Create FastAPI app
 app = FastAPI(title="AI Resume Analyzer API", version=API_VERSION)
