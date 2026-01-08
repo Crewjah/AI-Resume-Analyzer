@@ -89,7 +89,15 @@ def root():
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Failed to load homepage: {e}"})
 
-# Static favicon is served by Vercel from /public; no API route needed.
+@app.get("/api/favicon.svg")
+@app.get("/api/favicon.ico")
+def api_favicon():
+    """Serve favicon directly from API with inline SVG"""
+    svg_content = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="8" fill="#2f6fec"/>
+  <text x="32" y="44" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="#ffffff" text-anchor="middle">AI</text>
+</svg>'''
+    return HTMLResponse(content=svg_content, media_type="image/svg+xml")
 
 @app.get("/health")
 def health():
