@@ -18,17 +18,20 @@
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": {
-        "cache-control": "public, max-age=86400"
-      }
+      "dest": "/api/index.py"
     },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.svg"
+    },
+    { "handle": "filesystem" },
     {
       "src": "/(.*)",
       "dest": "/api/index.py"
     }
   ],
   "env": {
-    "PYTHON_VERSION": "3.11"
+    "PYTHON_VERSION": "3.11",
+    "BUILD_TIMESTAMP": "2026-01-07"
   }
 }

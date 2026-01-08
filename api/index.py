@@ -7,18 +7,22 @@ import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+# API Version
+API_VERSION = "2.0"
+
 # Ensure backend modules can be imported
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
 from PyPDF2 import PdfReader
 
 # Create FastAPI app
-app = FastAPI(title="AI Resume Analyzer API", version="1.0.0")
+app = FastAPI(title="AI Resume Analyzer API", version=API_VERSION)
 
 # Add CORS middleware
 app.add_middleware(
@@ -28,6 +32,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount static files
+assets_path = os.path.join(os.path.dirname(__file__), "..", "assets")
+if os.path.exists(assets_path):
+    app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
 # Lazy load analyzer with graceful fallback
 _analyzer = None
@@ -80,17 +89,16 @@ def root():
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Failed to load homepage: {e}"})
 
+# Static favicon is served by Vercel from /public; no API route needed.
+
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
 @app.get("/status")
 def status():
-    try:
-        analyzer = get_analyzer()
-        return {"ready": True}
-    except Exception as e:
-        return {"ready": False, "error": str(e)}
+    """Check if the analyzer is ready. For Vercel, always return ready since we can do lazy loading."""
+    return {"ready": True, "message": "API is operational", "version": API_VERSION}
 
 @app.post("/api/analyze")
 async def analyze_resume(
