@@ -1,2 +1,0 @@
-# Full dependencies for development and testing
--r requirements-full.txt
