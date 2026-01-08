@@ -91,7 +91,7 @@ def root():
 
 @app.get("/favicon.ico")
 def favicon():
-    favicon_path = os.path.join(os.path.dirname(__file__), "..", "favicon.ico")
+    favicon_path = os.path.join(os.path.dirname(__file__), "..", "favicon.svg")
     if os.path.exists(favicon_path):
         return FileResponse(favicon_path, media_type="image/svg+xml")
     return JSONResponse(status_code=404, content={"error": "Favicon not found"})
