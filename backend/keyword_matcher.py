@@ -1,12 +1,10 @@
 import re
 from typing import Dict, List, Set
 from collections import Counter
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.metrics.pairwise import cosine_similarity
 
 def calculate_match_score(resume_text: str, job_description: str) -> int:
     """
-    Calculate the match score between a resume and job description.
+    Calculate the match score between a resume and job description using simple keyword matching.
     
     Args:
         resume_text: Text extracted from resume
@@ -22,17 +20,8 @@ def calculate_match_score(resume_text: str, job_description: str) -> int:
     resume_clean = _clean_text(resume_text)
     job_clean = _clean_text(job_description)
     
-    # Calculate cosine similarity using TF-IDF
-    try:
-        vectorizer = TfidfVectorizer(stop_words='english', max_features=100)
-        tfidf_matrix = vectorizer.fit_transform([resume_clean, job_clean])
-        similarity = cosine_similarity(tfidf_matrix[0:1], tfidf_matrix[1:2])[0][0]
-        
-        # Convert to percentage
-        base_score = int(similarity * 100)
-    except:
-        # Fallback to keyword matching
-        base_score = _keyword_overlap_score(resume_clean, job_clean)
+    # Calculate keyword overlap score
+    base_score = _keyword_overlap_score(resume_clean, job_clean)
     
     # Bonus for matching important keywords
     important_keywords = _extract_important_keywords(job_clean)

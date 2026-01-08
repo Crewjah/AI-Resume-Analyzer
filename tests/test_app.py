@@ -1,5 +1,5 @@
 """
-Integration tests for the Streamlit app.
+Integration tests for the FastAPI application.
 """
 import sys
 from pathlib import Path
@@ -10,22 +10,24 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 import pytest
-from unittest.mock import patch, MagicMock
-import streamlit as st
-from streamlit.testing.v1 import AppTest
+from fastapi.testclient import TestClient
+from api.index import app
+
+client = TestClient(app)
 
 
 def test_app_loads():
-    """Test that the app loads without errors."""
-    # This is a basic test that would need to be expanded
-    # based on specific Streamlit testing requirements
-    pass
+    """Test that the app homepage loads without errors."""
+    response = client.get("/")
+    assert response.status_code == 200
+    assert "Resume Analyzer" in response.text or "AI Resume" in response.text
 
 
-def test_file_upload_handling():
-    """Test file upload functionality."""
-    # Mock file upload scenarios
-    pass
+def test_analyze_endpoint_exists():
+    """Test that the analyze endpoint exists."""
+    # This should return 422 (validation error) without file, not 404
+    response = client.post("/api/analyze")
+    assert response.status_code in [422, 400]  # Expects file upload
 
 
 def test_analysis_workflow():
