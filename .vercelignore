@@ -77,4 +77,5 @@ requirements-dev.txt
 
 # Vercel
 .vercel/
+.vercel-deploy
 
