@@ -18,10 +18,7 @@
     },
     {
       "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": {
-        "cache-control": "public, max-age=86400"
-      }
+      "dest": "/api/index.py"
     },
     {
       "src": "/(.*)",
