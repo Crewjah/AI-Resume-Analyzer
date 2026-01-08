@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Test files in root directory (keep only in tests/ folder)
+/test_*.py
+/*_test.py
+
 # Virtual environments
 venv/
 env/

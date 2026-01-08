@@ -1,49 +1,80 @@
+# Git and version control
 .git
 .gitignore
+.gitattributes
 .github
-.pytest_cache
+
+# Python cache and bytecode
 __pycache__
 *.pyc
 *.pyo
 *.pyd
+*.py[cod]
+*$py.class
 .Python
-env
-venv
-.venv
-.env
-.DS_Store
-node_modules
-tests
-docs
-scripts
-.vercel
-CHANGELOG.md
-LICENSE
-ROADMAP.md
-PROJECT_SUMMARY.md
-README.md
-*.egg-info
-dist
-build
-.eggs
-*.egg
+
+# Virtual environments (CRITICAL - prevents 250MB+ size)
+env/
+venv/
+.venv/
+ENV/
+
+# Testing
+.pytest_cache
+tests/
+test_*.py
+*_test.py
 .coverage
 htmlcov
 .tox
 .cache
-.pytest_cache
+.hypothesis
+
+# Development
+.env
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+scripts/
+docs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Node modules
+node_modules/
+.next/
+.turbo/
+out/
+
+# Documentation
+README.md
+DEPLOYMENT.md
+QUICK_START.md
+COMPLETION_SUMMARY.md
+LICENSE
+CHANGELOG.md
+ROADMAP.md
+PROJECT_SUMMARY.md
+
+# Build artifacts
+*.egg-info/
+dist/
+build/
+.eggs/
+*.egg
 *.so
-# Exclude full requirements file for Vercel (use lightweight requirements.txt instead)
+
+# Extra requirements files
 requirements-full.txt
 requirements-dev.txt
-# Exclude large package caches
-.venv/lib/python*/site-packages/torch
-.venv/lib/python*/site-packages/transformers
-.venv/lib/python*/site-packages/sentence_transformers
-.venv/lib/python*/site-packages/huggingface_hub
-.venv/lib/python*/site-packages/.*cache*
-/node_modules
-.next
-.turbo
-out
+
+# Streamlit (not used)
+.streamlit/
+
+# Vercel
+.vercel/
 
