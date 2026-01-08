@@ -47,7 +47,7 @@ def get_analyzer():
     global _analyzer, _analyzer_error
     if _analyzer is None and _analyzer_error is None:
         try:
-            # Try to import analyzer - it may not work if dependencies are missing
+            # Import clean analyzer
             from backend.resume_analyzer import ResumeAnalyzer
             _analyzer = ResumeAnalyzer()
             logger.info("ResumeAnalyzer initialized successfully")

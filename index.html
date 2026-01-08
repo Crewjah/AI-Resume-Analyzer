@@ -1,66 +1,288 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AI Resume Analyzer</title>
-  <link rel="icon" type="image/svg+xml" href="favicon.svg" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
-  <style>
-    /* Minimal layout helpers in case stylesheet loads later */
-    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 0; padding: 0; background: #0b1321; color: #e6edf3; }
-    .container { max-width: 880px; margin: 40px auto; padding: 24px; background: #121a2b; border: 1px solid #1f2a44; border-radius: 12px; }
-    h1 { margin-top: 0; font-size: 24px; }
-    .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
-    .row { display: flex; gap: 12px; align-items: center; }
-    label { font-weight: 600; }
-    input[type=file], textarea { width: 100%; }
-    button { background: #2f6fec; border: none; padding: 10px 16px; color: #fff; border-radius: 8px; cursor: pointer; }
-    button:disabled { opacity: 0.6; cursor: not-allowed; }
-    .card { background: #0e1726; border: 1px solid #1f2a44; border-radius: 12px; padding: 12px; }
-    pre { white-space: pre-wrap; word-break: break-word; }
-    .pill { display: inline-block; padding: 4px 10px; border-radius: 999px; font-size: 12px; border: 1px solid #1f2a44; }
-    .ok { color: #2bd576; border-color: #1f3d2b; }
-    .bad { color: #ff616e; border-color: #3b1f27; }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer - Professional Resume Analysis Tool</title>
+    <link rel="stylesheet" href="assets/css/main.css">
 </head>
 <body>
-  <div class="container">
-    <h1>AI Resume Analyzer</h1>
-    <p>Upload your resume (PDF or text) and optionally provide a job description. The API will analyze your resume and highlight matches and suggestions.</p>
-
-    <div class="grid">
-      <div class="card">
-        <form id="analyze-form">
-          <div class="grid">
-            <div>
-              <label for="resume">Resume File (PDF or .txt)</label>
-              <input id="resume" name="file" type="file" accept="application/pdf,text/plain" required />
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <h1>AI Resume Analyzer</h1>
+                <p>Professional resume analysis powered by advanced NLP</p>
             </div>
-            <div>
-              <label for="job">Job Description (optional)</label>
-              <textarea id="job" name="job_description" rows="6" placeholder="Paste a job description here..."></textarea>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="nav">
+        <div class="container">
+            <ul class="nav-list">
+                <li><a href="#upload" class="nav-link active" data-page="upload">Upload Resume</a></li>
+                <li><a href="#results" class="nav-link" data-page="results">Results</a></li>
+                <li><a href="#about" class="nav-link" data-page="about">About</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            
+            <!-- Upload Page -->
+            <div id="upload-page" class="page active">
+                <div class="page-header">
+                    <h2>Upload Your Resume</h2>
+                    <p>Upload your resume in PDF or text format for comprehensive analysis</p>
+                </div>
+
+                <div class="upload-section">
+                    <form id="analyze-form" class="upload-form">
+                        <div class="form-group">
+                            <label for="resume-file" class="form-label">Resume File</label>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="resume-file" accept=".pdf,.txt" required>
+                                <div class="file-input-display">
+                                    <span class="file-icon">&#128206;</span>
+                                    <span id="file-name" class="file-name">Choose a file (PDF or TXT, max 5MB)</span>
+                                    <button type="button" id="clear-file" class="clear-btn hidden">Clear</button>
+                                </div>
+                            </div>
+                            <small class="form-help">Supported formats: PDF, TXT | Maximum size: 5MB</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="job-description" class="form-label">Job Description (Optional)</label>
+                            <textarea id="job-description" rows="6" 
+                                placeholder="Paste the job description here to see how well your resume matches..."></textarea>
+                            <small class="form-help">Adding a job description will provide additional matching insights</small>
+                        </div>
+
+                        <button type="submit" id="analyze-btn" class="btn btn-primary btn-large">
+                            <span class="btn-text">Analyze Resume</span>
+                            <span class="btn-loader hidden"></span>
+                        </button>
+
+                        <div id="upload-status" class="status-message hidden"></div>
+                    </form>
+                </div>
+
+                <div class="info-section">
+                    <h3>What We Analyze</h3>
+                    <div class="feature-grid">
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128202;</div>
+                            <h4>Content Quality</h4>
+                            <p>Word count, action verbs, and achievement quantification</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128270;</div>
+                            <h4>Keyword Optimization</h4>
+                            <p>Technical and soft skills detection</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128760;</div>
+                            <h4>ATS Compatibility</h4>
+                            <p>Applicant Tracking System friendliness</p>
+                        </div>
+                        <div class="feature-card">
+                            <div class="feature-icon">&#128209;</div>
+                            <h4>Structure</h4>
+                            <p>Section organization and formatting</p>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-              <button id="submit-btn" type="submit">Analyze Resume</button>
-              <span id="status-pill" class="pill">Checking API...</span>
+
+            <!-- Results Page -->
+            <div id="results-page" class="page">
+                <div class="page-header">
+                    <h2>Analysis Results</h2>
+                    <div class="results-actions">
+                        <button id="download-report" class="btn btn-secondary">Download Report</button>
+                        <button id="analyze-another" class="btn btn-outline">Analyze Another</button>
+                    </div>
+                </div>
+
+                <div id="no-results" class="empty-state">
+                    <div class="empty-icon">&#128196;</div>
+                    <h3>No Analysis Yet</h3>
+                    <p>Upload a resume to see detailed analysis results</p>
+                    <button onclick="showPage('upload')" class="btn btn-primary">Upload Resume</button>
+                </div>
+
+                <div id="results-content" class="hidden">
+                    <!-- Overall Score -->
+                    <div class="overall-score-section">
+                        <div class="overall-score-card">
+                            <h3>Overall Score</h3>
+                            <div class="score-display">
+                                <div class="score-circle" id="overall-score-circle">
+                                    <span id="overall-score-value">0</span>
+                                    <span class="score-unit">%</span>
+                                </div>
+                                <div id="overall-score-label" class="score-label">Needs Improvement</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Score Breakdown -->
+                    <div class="scores-section">
+                        <h3>Score Breakdown</h3>
+                        <div class="scores-grid">
+                            <div class="score-card">
+                                <div class="score-card-header">
+                                    <h4>Content Quality</h4>
+                                    <span id="content-score" class="score-number">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="content-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <p class="score-description">Word count, action verbs, achievements</p>
+                            </div>
+
+                            <div class="score-card">
+                                <div class="score-card-header">
+                                    <h4>Keyword Optimization</h4>
+                                    <span id="keyword-score" class="score-number">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="keyword-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <p class="score-description">Skills and relevant keywords</p>
+                            </div>
+
+                            <div class="score-card">
+                                <div class="score-card-header">
+                                    <h4>ATS Compatibility</h4>
+                                    <span id="ats-score" class="score-number">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="ats-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <p class="score-description">Applicant Tracking System friendly</p>
+                            </div>
+
+                            <div class="score-card">
+                                <div class="score-card-header">
+                                    <h4>Structure</h4>
+                                    <span id="structure-score" class="score-number">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="structure-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <p class="score-description">Organization and sections</p>
+                            </div>
+
+                            <div class="score-card">
+                                <div class="score-card-header">
+                                    <h4>Completeness</h4>
+                                    <span id="completeness-score" class="score-number">0%</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div id="completeness-progress" class="progress-fill" style="width: 0%"></div>
+                                </div>
+                                <p class="score-description">Required information present</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Skills Found -->
+                    <div class="skills-section">
+                        <div class="skills-column">
+                            <h3>Technical Skills Found</h3>
+                            <div id="technical-skills" class="skills-list">
+                                <p class="empty-message">No technical skills detected</p>
+                            </div>
+                        </div>
+                        <div class="skills-column">
+                            <h3>Soft Skills Found</h3>
+                            <div id="soft-skills" class="skills-list">
+                                <p class="empty-message">No soft skills detected</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recommendations -->
+                    <div class="recommendations-section">
+                        <h3>Recommendations for Improvement</h3>
+                        <div id="recommendations-list" class="recommendations-list">
+                            <p class="empty-message">No recommendations available</p>
+                        </div>
+                    </div>
+
+                    <!-- Additional Info -->
+                    <div class="info-grid">
+                        <div class="info-card">
+                            <div class="info-label">Word Count</div>
+                            <div id="word-count" class="info-value">0</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Action Verbs</div>
+                            <div id="action-verbs-count" class="info-value">0</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Sections Detected</div>
+                            <div id="sections-count" class="info-value">0</div>
+                        </div>
+                        <div class="info-card">
+                            <div class="info-label">Skills Found</div>
+                            <div id="skills-count" class="info-value">0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </form>
-      </div>
 
-      <div class="card">
-        <h2 style="margin-top:0">Result</h2>
-        <div id="result"></div>
-      </div>
+            <!-- About Page -->
+            <div id="about-page" class="page">
+                <div class="page-header">
+                    <h2>About This Tool</h2>
+                    <p>Professional resume analysis using advanced natural language processing</p>
+                </div>
 
-      <div class="card">
-        <h3 style="margin-top:0">Debug Info</h3>
-        <pre id="debug"></pre>
-      </div>
-    </div>
-  </div>
+                <div class="about-content">
+                    <section class="about-section">
+                        <h3>How It Works</h3>
+                        <p>Our AI Resume Analyzer uses advanced algorithms to evaluate your resume across multiple dimensions:</p>
+                        <ul>
+                            <li><strong>Content Analysis:</strong> Evaluates word count, use of action verbs, and quantified achievements</li>
+                            <li><strong>Keyword Optimization:</strong> Identifies technical and soft skills mentioned in your resume</li>
+                            <li><strong>ATS Compatibility:</strong> Checks formatting and structure for Applicant Tracking Systems</li>
+                            <li><strong>Structure Evaluation:</strong> Ensures all essential resume sections are present and well-organized</li>
+                            <li><strong>Completeness Check:</strong> Verifies that required information like contact details is included</li>
+                        </ul>
+                    </section>
 
-  <script src="assets/js/app.js"></script>
+                    <section class="about-section">
+                        <h3>Honest Analysis</h3>
+                        <p>This tool provides genuine, actionable feedback based on industry best practices. All scores are calculated using transparent algorithms - no inflated numbers or fake results.</p>
+                    </section>
+
+                    <section class="about-section">
+                        <h3>Privacy</h3>
+                        <p>Your resume data is processed securely and is not stored. Analysis happens in real-time, and your data is immediately discarded after processing.</p>
+                    </section>
+
+                    <section class="about-section">
+                        <h3>Version</h3>
+                        <p>Version 2.0.0 - Built with FastAPI and modern web technologies</p>
+                    </section>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p>&copy; 2026 AI Resume Analyzer. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="assets/js/main.js"></script>
 </body>
 </html>
