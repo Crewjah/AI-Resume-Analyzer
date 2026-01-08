@@ -15,7 +15,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, HTMLResponse
+from fastapi.responses import JSONResponse, HTMLResponse, FileResponse
 from fastapi.staticfiles import StaticFiles
 from typing import Optional
 import io
@@ -99,6 +99,22 @@ def health():
 def status():
     """Check if the analyzer is ready. For Vercel, always return ready since we can do lazy loading."""
     return {"ready": True, "message": "API is operational", "version": API_VERSION}
+
+@app.get("/favicon.svg")
+def favicon_svg():
+    base_dir = os.path.dirname(__file__)
+    public_path = os.path.join(base_dir, "..", "public", "favicon.svg")
+    fallback_path = os.path.join(base_dir, "..", "favicon.svg")
+    if os.path.exists(public_path):
+        return FileResponse(public_path, media_type="image/svg+xml")
+    if os.path.exists(fallback_path):
+        return FileResponse(fallback_path, media_type="image/svg+xml")
+    return JSONResponse(status_code=404, content={"error": "Favicon not found"})
+
+@app.get("/favicon.ico")
+def favicon_ico():
+    # Serve SVG for .ico requests as most browsers accept SVG favicons
+    return favicon_svg()
 
 @app.post("/api/analyze")
 async def analyze_resume(
