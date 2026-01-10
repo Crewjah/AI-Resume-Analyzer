@@ -46,3 +46,8 @@ sample_data/
 # Logs
 *.log
 logs/
+*.pyc
+__pycache__/
+.pytest_cache/
+*.broken
+*.corrupted
