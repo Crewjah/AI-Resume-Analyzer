@@ -2,25 +2,14 @@
 
 # 📄 AI Resume Analyzer
 
-### Professional Resume Analysis Tool with AI-Powered Insights
+### Professional Resume Analysis Tool with Transparent Scoring
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
-[![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/network/members)
-
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
 
-[![GitHub issues](https://img.shields.io/github/issues/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
-[![GitHub pull requests](https://img.shields.io/github/issues-pr/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/pulls)
-[![GitHub last commit](https://img.shields.io/github/last-commit/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/commits/main)
-[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/CONTRIBUTING.md)
-[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/Crewjah/AI-Resume-Analyzer)
-
-[Features](#features) • [Demo](#demo) • [Installation](#installation) • [Usage](#usage) • [Contributing](#contributing) • [License](#license)
+[Features](#features) • [Installation](#installation) • [Usage](#usage) • [Contributing](#contributing) • [License](#license)
 
 </div>
 
