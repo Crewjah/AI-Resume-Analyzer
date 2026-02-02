@@ -1,14 +1,24 @@
 <div align="center">
 
-# AI Resume Analyzer
+# 📄 AI Resume Analyzer
 
 ### Professional Resume Analysis Tool with AI-Powered Insights
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/Crewjah/AI-Resume-Analyzer?style=social)](https://github.com/Crewjah/AI-Resume-Analyzer/network/members)
+
 [![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
 [![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)](https://vercel.com)
+
+[![GitHub issues](https://img.shields.io/github/issues/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+[![GitHub pull requests](https://img.shields.io/github/issues-pr/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/pulls)
+[![GitHub last commit](https://img.shields.io/github/last-commit/Crewjah/AI-Resume-Analyzer)](https://github.com/Crewjah/AI-Resume-Analyzer/commits/main)
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/CONTRIBUTING.md)
+[![Open Source Love](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/Crewjah/AI-Resume-Analyzer)
 
 [Features](#features) • [Demo](#demo) • [Installation](#installation) • [Usage](#usage) • [Contributing](#contributing) • [License](#license)
 
@@ -88,6 +98,28 @@ Top Recommendations:
 ## Tech Stack
 
 <div align="center">
+
+### Languages & Frameworks
+
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+
+### Frameworks & Libraries
+
+![FastAPI](https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white)
+![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)
+![Plotly](https://img.shields.io/badge/Plotly-3F4F75?style=for-the-badge&logo=plotly&logoColor=white)
+![NumPy](https://img.shields.io/badge/NumPy-013243?style=for-the-badge&logo=numpy&logoColor=white)
+![Pandas](https://img.shields.io/badge/Pandas-150458?style=for-the-badge&logo=pandas&logoColor=white)
+
+### Deployment & Tools
+
+![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Git](https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white)
+![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)
 
 | Category | Technologies |
 |----------|-------------|
@@ -690,23 +722,27 @@ Special thanks to all [contributors](https://github.com/Crewjah/AI-Resume-Analyz
 
 ---
 
+<div align="center">
+
 ## Project Stats
 
-![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)
-![GitHub forks](https://img.shields.io/github/forks/Crewjah/AI-Resume-Analyzer?style=social)
-![GitHub issues](https://img.shields.io/github/issues/Crewjah/AI-Resume-Analyzer)
-![GitHub pull requests](https://img.shields.io/github/issues-pr/Crewjah/AI-Resume-Analyzer)
-![GitHub last commit](https://img.shields.io/github/last-commit/Crewjah/AI-Resume-Analyzer)
+![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/stargazers)
+![GitHub forks](https://img.shields.io/github/forks/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/network/members)
+![GitHub issues](https://img.shields.io/github/issues/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/pulls)
+![GitHub last commit](https://img.shields.io/github/last-commit/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/commits/main)
+![GitHub contributors](https://img.shields.io/github/contributors/Crewjah/AI-Resume-Analyzer?style=for-the-badge)](https://github.com/Crewjah/AI-Resume-Analyzer/graphs/contributors)
 
 ---
 
-<div align="center">
-
-### If this project helped you, please give it a star!
+### ⭐ If this project helped you, please give it a star! ⭐
 
 **Made with ❤️ by [Crewjah](https://github.com/Crewjah)**
 
 *Helping job seekers succeed, one resume at a time.*
+
+[![GitHub followers](https://img.shields.io/github/followers/Crewjah?style=social)](https://github.com/Crewjah)
+[![Twitter Follow](https://img.shields.io/twitter/follow/Crewjah?style=social)](https://twitter.com/Crewjah)
 
 [Report Bug](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Request Feature](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Contribute](docs/CONTRIBUTING.md)
 
