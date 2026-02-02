@@ -1,213 +1,355 @@
+<div align="center">
+
 # AI Resume Analyzer
 
-> Professional resume analysis tool powered by advanced natural language processing
+### Professional Resume Analysis Tool with AI-Powered Insights
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?logo=streamlit&logoColor=white)](https://streamlit.io)
+[![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](docs/CONTRIBUTING.md)
+
+[Features](#features) • [Demo](#demo) • [Installation](#installation) • [Usage](#usage) • [Contributing](#contributing) • [License](#license)
+
+</div>
+
+---
 
 ## Overview
 
-AI Resume Analyzer is a web-based application that provides honest, actionable feedback on your resume. Built with modern web technologies and transparent scoring algorithms, it helps job seekers understand their resume strengths and areas for improvement.
+**AI Resume Analyzer** is an intelligent, open-source tool that provides honest and actionable feedback on resumes. Built with transparency in mind, it uses advanced NLP and rule-based algorithms to analyze resumes across multiple dimensions, helping job seekers optimize their applications for both human recruiters and Applicant Tracking Systems (ATS).
 
-**No fake data. No inflated scores. Just genuine, helpful analysis.**
+### Why AI Resume Analyzer?
+
+- **Transparent Scoring** - No black-box algorithms, clear methodology for all scores
+- **Multi-Dimensional Analysis** - Content, keywords, ATS compatibility, structure, and completeness
+- **Real-Time Feedback** - Instant analysis with detailed recommendations
+- **No Inflated Scores** - Honest, realistic assessment to drive genuine improvements
+- **100% Open Source** - Community-driven development with complete transparency
+
+---
 
 ## Features
 
-### Comprehensive Analysis
+### Comprehensive Analysis Engine
 
-- **Content Quality (0-100)**: Evaluates word count, action verbs, and quantified achievements
-- **Keyword Optimization (0-100)**: Identifies technical and soft skills in your resume
-- **ATS Compatibility (0-100)**: Checks formatting for Applicant Tracking Systems
-- **Structure Score (0-100)**: Reviews organization and essential sections
-- **Completeness (0-100)**: Verifies required information is present
-
-### Key Capabilities
-
-- Upload resume files (PDF or TXT format, up to 5MB)
-- Detect technical skills (programming languages, frameworks, tools)
-- Identify soft skills (leadership, communication, teamwork)
-- Extract action verbs and achievements
-- Generate tailored recommendations for improvement
-- Download analysis reports
-- Optional job description matching
+| Feature | Description |
+|---------|-------------|
+| **Content Quality** | Evaluates word count, action verbs, and quantified achievements (0-100 score) |
+| **Keyword Optimization** | Identifies technical and soft skills to maximize ATS compatibility (0-100 score) |
+| **ATS Compatibility** | Checks formatting for Applicant Tracking Systems (0-100 score) |
+| **Structure Score** | Reviews organization and essential sections (0-100 score) |
+| **Completeness** | Verifies all required information is present (0-100 score) |
 
 ### User Interface
 
-- Clean, professional design with responsive layout
-- Multi-page navigation (Upload, Results, About)
-- Real-time file validation
-- Progress indicators during analysis
-- Color-coded scores and visual feedback
-- Mobile-friendly responsive design
+- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
+- **Dark/Light Mode** - Comfortable viewing in any environment
+- **Interactive Visualizations** - Charts and graphs powered by Plotly
+- **Download Reports** - Export analysis results in multiple formats
+- **Real-Time Processing** - Instant feedback as you upload
 
-## Technical Stack
+### Advanced Capabilities
 
-### Frontend
-- **HTML5**: Semantic, accessible markup
-- **CSS3**: Modern styling with CSS Grid and Flexbox
-- **JavaScript (ES6+)**: Interactive functionality without frameworks
+- Support for PDF and TXT resume formats (up to 5MB)
+- Technical skills detection (Python, Java, React, AWS, etc.)
+- Soft skills identification (Leadership, Communication, Teamwork)
+- Action verbs and quantified achievements extraction
+- Education and experience section analysis
+- Optional job description matching for targeted optimization
+- Personalized improvement recommendations
 
-### Backend
-- **FastAPI**: High-performance Python web framework
-- **PyPDF2**: PDF text extraction
-- **Python 3.8+**: Core analysis logic
+---
 
-### Deployment
-- **Vercel**: Serverless deployment platform
-- Optimized for edge functions and static assets
+## Demo
+
+> **Live Demo**: [Coming Soon]
+
+### Sample Analysis
+
+```
+Overall Score: 78/100
+
+├─ Content Quality:      82/100  ✓ Good
+├─ Keyword Optimization: 75/100  ⚠ Needs Work  
+├─ ATS Compatibility:    88/100  ✓ Excellent
+├─ Structure:            90/100  ✓ Excellent
+└─ Completeness:         65/100  ⚠ Needs Work
+
+Top Recommendations:
+1. Add 3-5 more technical skills relevant to your field
+2. Include quantified achievements in your experience section
+3. Add your LinkedIn profile URL to contact information
+```
+
+---
+
+## Tech Stack
+
+<div align="center">
+
+| Category | Technologies |
+|----------|-------------|
+| **Frontend** | HTML5, CSS3, JavaScript (ES6+) |
+| **Backend** | Python 3.8+, FastAPI, Streamlit |
+| **NLP & Analysis** | NLTK, spaCy, Custom Algorithms |
+| **PDF Processing** | PyPDF2, python-docx |
+| **Visualization** | Plotly, Matplotlib |
+| **Deployment** | Vercel, Docker-ready |
+
+</div>
+
+---
 
 ## Project Structure
 
 ```
 AI-Resume-Analyzer/
-├── api/
-│   ├── index.py              # Main FastAPI application
-│   └── analyze.py            # Analysis endpoint (legacy)
-├── backend/
-│   ├── resume_analyzer.py    # Core analysis engine
-│   ├── keyword_matcher.py    # Keyword matching utilities
-│   └── pdf_extractor.py      # PDF extraction utilities
-├── assets/
+├── api/                      # FastAPI backend
+│   ├── index.py                 # Main API application
+│   └── analyze.py               # Analysis endpoints
+├── backend/                  # Core analysis engine
+│   ├── resume_analyzer.py       # Main analyzer logic
+│   ├── keyword_matcher.py       # Keyword detection
+│   └── pdf_extractor.py         # PDF text extraction
+├── assets/                   # Static resources
 │   ├── css/
-│   │   └── main.css          # Application styles
+│   │   └── main.css            # Application styles
 │   └── js/
-│       └── main.js           # Client-side logic
-├── index.html                # Main application page
-├── vercel.json               # Vercel configuration
-├── requirements.txt          # Python dependencies
-└── README.md                 # This file
+│       └── main.js             # Client-side logic
+├── docs/                     # Documentation
+│   ├── API.md                  # API documentation
+│   ├── CONTRIBUTING.md         # Contribution guidelines
+│   └── DEPLOYMENT.md           # Deployment guide
+├── tests/                    # Test suite
+│   ├── test_app.py
+│   ├── test_resume_analyzer.py
+│   └── test_smoke.py
+├── scripts/                  # Setup scripts
+│   ├── setup.sh                # Unix/Linux/macOS
+│   └── setup.ps1               # Windows PowerShell
+├── app.py                       # Streamlit application
+├── requirements.txt             # Python dependencies
+├── vercel.json                 # Vercel configuration
+├── LICENSE                     # MIT License
+└── README.md                   # This file
 ```
 
-## Installation & Setup
+---
+
+## Installation
 
 ### Prerequisites
 
-- Python 3.8 or higher
-- pip package manager
+Before you begin, ensure you have the following installed:
 
-### Local Development
+- **Python** 3.8 or higher ([Download](https://www.python.org/downloads/))
+- **pip** package manager (comes with Python)
+- **Git** ([Download](https://git-scm.com/downloads))
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
-   cd AI-Resume-Analyzer
-   ```
+### Quick Start
 
-2. **Install dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+#### Step 1: Clone the Repository
 
-3. **Run locally with Vercel CLI** (recommended)
-   ```bash
-   npm install -g vercel
-   vercel dev
-   ```
+```bash
+git clone https://github.com/Crewjah/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
+```
 
-4. **Or run with uvicorn** (alternative)
-   ```bash
-   uvicorn api.index:app --reload
-   ```
+#### Step 2: Set Up Virtual Environment (Recommended)
 
-5. **Open in browser**
-   ```
-   http://localhost:3000 (Vercel)
-   http://localhost:8000 (uvicorn)
-   ```
+**On macOS/Linux:**
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+**On Windows:**
+```bash
+python -m venv venv
+venv\Scripts\activate
+```
+
+#### Step 3: Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+#### Step 4: Download NLP Models (Required for first run)
+
+```bash
+python -c "import nltk; nltk.download('punkt'); nltk.download('stopwords')"
+python -m spacy download en_core_web_sm
+```
+
+---
+
+## Usage
+
+### Running the Application
+
+#### Option 1: Streamlit (Recommended)
+
+```bash
+streamlit run app.py
+```
+
+Then open your browser to `http://localhost:8501`
+
+#### Option 2: FastAPI with Vercel Dev
+
+```bash
+# Install Vercel CLI (first time only)
+npm install -g vercel
+
+# Run development server
+vercel dev
+```
+
+Then open your browser to `http://localhost:3000`
+
+#### Option 3: FastAPI with Uvicorn
+
+```bash
+uvicorn api.index:app --reload --port 8000
+```
+
+Then open your browser to `http://localhost:8000`
+
+### Using the Analyzer
+
+1. **Upload Resume** - Drag & drop or select your resume (PDF/TXT)
+2. **Add Job Description** (Optional) - Paste the job description for targeted analysis
+3. **Analyze** - Click the analyze button
+4. **Review Results** - View your scores, detected skills, and recommendations
+5. **Download Report** - Export your analysis for future reference
+
+### API Usage
+
+```python
+import requests
+
+# Analyze resume via API
+with open('resume.pdf', 'rb') as file:
+    response = requests.post(
+        'http://localhost:8000/api/analyze',
+        files={'file': file}
+    )
+    
+analysis = response.json()
+print(f"Overall Score: {analysis['overall_score']}/100")
+```
+
+For complete API documentation, see [docs/API.md](docs/API.md)
+
+---
 
 ## Deployment
 
-### Deploy to Vercel
+### Deploy to Vercel (Recommended)
 
-1. **Install Vercel CLI**
+1. **Fork this repository** to your GitHub account
+
+2. **Import to Vercel**
+   - Go to [vercel.com](https://vercel.com)
+   - Click "New Project"
+   - Import your forked repository
+   - Deploy with default settings
+
+3. **Or use Vercel CLI**
    ```bash
    npm install -g vercel
-   ```
-
-2. **Login to Vercel**
-   ```bash
    vercel login
-   ```
-
-3. **Deploy**
-   ```bash
-   vercel
-   ```
-
-4. **Production deployment**
-   ```bash
    vercel --prod
    ```
 
-### Environment Variables
+### Deploy with Docker
 
-No environment variables are required for basic operation.
+```bash
+# Build image
+docker build -t ai-resume-analyzer .
+
+# Run container
+docker run -p 8501:8501 ai-resume-analyzer
+```
+
+### Deploy to Other Platforms
+
+- **Heroku**: See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#heroku)
+- **AWS**: See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#aws)
+- **Google Cloud**: See [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md#gcp)
+
+---
 
 ## How It Works
 
-### Analysis Process
+### Analysis Methodology
 
-1. **File Upload**: User uploads resume (PDF or TXT)
-2. **Text Extraction**: System extracts text from the file
-3. **Content Analysis**: Algorithm analyzes multiple dimensions:
-   - Word count and content quality
-   - Action verbs and quantified achievements
-   - Technical and soft skills detection
-   - Section structure and completeness
-   - ATS compatibility factors
-4. **Score Calculation**: Transparent algorithms calculate scores:
-   - Overall = 25% Content + 20% Keywords + 25% ATS + 15% Structure + 15% Completeness
-5. **Recommendations**: System generates specific, actionable improvements
-6. **Results Display**: User sees detailed scores and insights
+Our transparent scoring system evaluates resumes across 5 key dimensions:
 
-### Scoring Methodology
+#### 1. Content Quality (0-100)
+- **Word Count**: Optimal range 300-700 words
+- **Action Verbs**: Bonus +2 points each (max 30)
+- **Quantified Achievements**: +5 points each (max 30)
+- **Base Score**: 40 points for appropriate length
 
-All scores are calculated using transparent, rule-based algorithms:
+#### 2. Keyword Optimization (0-100)
+| Skills Detected | Score |
+|-----------------|-------|
+| 15+ skills      | 100   |
+| 10-14 skills    | 85    |
+| 7-9 skills      | 70    |
+| 5-6 skills      | 55    |
+| 3-4 skills      | 40    |
 
-#### Content Quality (0-100)
-- Optimal word count: 300-700 words
-- Action verbs bonus: +2 points each (max 30)
-- Quantified achievements: +5 points each (max 30)
-- Base score: 40 points for appropriate length
-
-#### Keyword Optimization (0-100)
-- Based on number of relevant skills detected
-- 15+ skills: 100 points
-- 10-14 skills: 85 points
-- 7-9 skills: 70 points
-- 5-6 skills: 55 points
-- 3-4 skills: 40 points
-
-#### ATS Compatibility (0-100)
+#### 3. ATS Compatibility (0-100)
 - Starts at 100, deductions for:
   - Missing essential sections: -25 points each
-  - Missing contact info: -15 points (email), -10 points (phone)
+  - Missing email: -15 points
+  - Missing phone: -10 points
   - Missing dates: -10 points
 
-#### Structure Score (0-100)
-- 5+ sections: 100 points
-- 4 sections: 85 points
-- 3 sections: 70 points
-- Fewer sections: proportional scoring
+#### 4. Structure Score (0-100)
+| Sections | Score |
+|----------|-------|
+| 5+       | 100   |
+| 4        | 85    |
+| 3        | 70    |
+| <3       | Proportional |
 
-#### Completeness (0-100)
+#### 5. Completeness (0-100)
 - Starts at 100, deductions for:
-  - Missing email: -15 points
-  - Missing phone: -15 points
-  - Missing experience/education/skills: -12 points each
+  - Missing contact info: -15 points each
+  - Missing key sections: -12 points each
 
-## API Endpoints
+### Overall Score Calculation
 
-### POST /api/analyze
+```
+Overall = (25% × Content) + (20% × Keywords) + (25% × ATS) + (15% × Structure) + (15% × Completeness)
+```
 
-Analyze a resume file.
+---
+
+## API Reference
+
+### Endpoints
+
+#### `POST /api/analyze`
+
+Analyze a resume file and get comprehensive feedback.
 
 **Request:**
-- Method: POST
-- Content-Type: multipart/form-data
-- Body:
-  - `file`: Resume file (PDF or TXT)
-  - `job_description`: Optional job description text
+```bash
+curl -X POST http://localhost:8000/api/analyze \
+  -F "file=@resume.pdf" \
+  -F "job_description=Looking for Python developer..."
+```
+
+**Parameters:**
+- `file` (required): Resume file (PDF or TXT, max 5MB)
+- `job_description` (optional): Target job description for matching
 
 **Response:**
 ```json
@@ -215,128 +357,358 @@ Analyze a resume file.
   "ok": true,
   "data": {
     "scores": {
-      "overall_score": 75,
-      "content_quality": 80,
-      "keyword_optimization": 70,
-      "ats_compatibility": 85,
-      "structure_score": 75,
+      "overall_score": 78,
+      "content_quality": 82,
+      "keyword_optimization": 75,
+      "ats_compatibility": 88,
+      "structure_score": 90,
       "completeness": 65
     },
-    "technical_skills": ["Python", "JavaScript", "React"],
-    "soft_skills": ["Leadership", "Communication"],
-    "action_verbs": ["developed", "led", "implemented"],
-    "action_verbs_count": 12,
-    "word_count": 450,
-    "recommendations": ["Add more quantified achievements", "Include contact information"]
+    "technical_skills": ["Python", "JavaScript", "React", "AWS"],
+    "soft_skills": ["Leadership", "Communication", "Problem-solving"],
+    "action_verbs": ["developed", "led", "implemented", "optimized"],
+    "action_verbs_count": 15,
+    "word_count": 520,
+    "recommendations": [
+      "Add 3-5 more technical skills",
+      "Include LinkedIn profile URL",
+      "Quantify achievements with metrics"
+    ]
   }
 }
 ```
 
-### GET /health
+#### `GET /health`
 
-Health check endpoint.
+Health check endpoint for monitoring.
 
 **Response:**
 ```json
 {
-  "status": "ok"
+  "status": "healthy",
+  "timestamp": "2026-02-02T10:30:00Z"
 }
 ```
 
-### GET /status
+#### `GET /status`
 
-Check if analyzer is ready.
+Check API readiness and version.
 
 **Response:**
 ```json
 {
   "ready": true,
   "message": "API is operational",
-  "version": "2.0"
+  "version": "2.0.0"
 }
 ```
 
-## Usage Tips
-
-### For Best Results
-
-1. **Use a complete resume**: Include all standard sections
-2. **Format properly**: Use clear section headings
-3. **Include contact info**: Email and phone number
-4. **Quantify achievements**: Use numbers and percentages
-5. **List relevant skills**: Both technical and soft skills
-6. **Use action verbs**: Start bullet points with strong verbs
-
-### What to Avoid
-
-- Excessive formatting or special characters
-- Missing essential sections (Experience, Education, Skills)
-- Vague descriptions without specific achievements
-- Typos and grammatical errors
-- Inconsistent date formats
-
-## Privacy & Security
-
-- **No data storage**: Resume data is processed in real-time and immediately discarded
-- **No tracking**: We don't track or store personal information
-- **Secure processing**: All data stays within the session
-- **No third parties**: Your resume is never sent to external services
-
-## Development
-
-### Running Tests
-
-```bash
-pytest tests/
-```
-
-### Code Structure
-
-- `backend/resume_analyzer.py`: Core analysis algorithms
-- `assets/js/main.js`: Client-side interaction logic
-- `assets/css/main.css`: Styling and responsive design
-- `api/index.py`: API server and routes
-
-### Contributing
-
-Contributions are welcome! Please:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## License
-
-MIT License - See LICENSE file for details
-
-## Version History
-
-### Version 2.0.0 (Current)
-- Complete redesign with professional UI
-- Honest scoring algorithms without fake data
-- Multi-page navigation
-- Improved error handling
-- Mobile-responsive design
-- Download report functionality
-
-## Support
-
-For issues or questions:
-- Open an issue on GitHub
-- Check existing issues for solutions
-
-## Acknowledgments
-
-Built with:
-- FastAPI for the backend API
-- Vercel for deployment
-- PyPDF2 for PDF processing
-- Modern web standards (HTML5, CSS3, ES6+)
+📖 **Full API documentation**: [docs/API.md](docs/API.md)
 
 ---
 
-**Note**: This tool provides guidance based on general resume best practices. Always tailor your resume to specific job requirements and industries.
+## Contributing
 
-Made with care for job seekers everywhere.
+We welcome contributions from the community! Whether it's bug fixes, new features, documentation improvements, or feedback, all contributions are appreciated.
+
+### How to Contribute
+
+1. **Fork the repository**
+   ```bash
+   # Click the "Fork" button on GitHub, then:
+   git clone https://github.com/YOUR_USERNAME/AI-Resume-Analyzer.git
+   cd AI-Resume-Analyzer
+   ```
+
+2. **Create a feature branch**
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+
+3. **Make your changes**
+   - Write clean, documented code
+   - Follow existing code style
+   - Add tests if applicable
+
+4. **Test your changes**
+   ```bash
+   pytest tests/
+   ```
+
+5. **Commit your changes**
+   ```bash
+   git commit -m "Add amazing feature"
+   ```
+
+6. **Push to your fork**
+   ```bash
+   git push origin feature/amazing-feature
+   ```
+
+7. **Open a Pull Request**
+   - Go to the original repository
+   - Click "New Pull Request"
+   - Describe your changes clearly
+
+### Contribution Guidelines
+
+- **Code Quality**: Write clean, readable, well-documented code
+- **Testing**: Add tests for new features
+- **Documentation**: Update docs for any changes
+- **Focus**: One feature/fix per pull request
+- **Communication**: Discuss major changes in issues first
+
+### Development Setup
+
+```bash
+# Install development dependencies
+pip install -r requirements.txt
+pip install pytest black flake8
+
+# Run tests
+pytest tests/ -v
+
+# Format code
+black .
+
+# Lint code
+flake8 --max-line-length=100
+```
+
+### Areas for Contribution
+
+- **Bug Fixes**: Check [Issues](https://github.com/Crewjah/AI-Resume-Analyzer/issues)
+- **New Features**: AI improvements, new analysis metrics
+- **Documentation**: Tutorials, examples, translations
+- **UI/UX**: Design improvements, accessibility
+- **Testing**: Increase test coverage
+- **Internationalization**: Multi-language support
+
+### Code of Conduct
+
+Be respectful, inclusive, and constructive. We're building this together!
+
+**Full contributing guide**: [docs/CONTRIBUTING.md](docs/CONTRIBUTING.md)
+
+---
+
+## Testing
+
+### Run Tests
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=backend --cov-report=html
+
+# Run specific test file
+pytest tests/test_resume_analyzer.py -v
+```
+
+### Test Structure
+
+```
+tests/
+├── test_app.py                 # Streamlit app tests
+├── test_resume_analyzer.py     # Core analyzer tests
+└── test_smoke.py              # Integration tests
+```
+
+---
+
+## Best Practices & Tips
+
+### For Users
+
+**Do:**
+- Include all standard resume sections
+- Use clear section headings
+- Add contact information (email, phone, LinkedIn)
+- Quantify achievements with numbers/percentages
+- List relevant technical and soft skills
+- Start bullet points with action verbs
+
+**Avoid:**
+- Excessive formatting or graphics
+- Missing essential sections
+- Vague descriptions without achievements
+- Typos and grammatical errors
+- Inconsistent date formats
+
+### For Developers
+
+- Follow PEP 8 style guide for Python
+- Write docstrings for all functions
+- Add type hints where applicable
+- Keep functions focused and small
+- Write tests for new features
+
+---
+
+## Privacy & Security
+
+We take your privacy seriously:
+
+- **No Data Storage** - Resumes are processed in real-time and immediately discarded
+- **No Tracking** - We don't track or store personal information
+- **Secure Processing** - All data stays within your session
+- **No Third Parties** - Your resume never leaves our servers
+- **Open Source** - Fully transparent codebase for audit
+
+---
+
+## Roadmap
+
+### Current Version: 2.0.0
+
+### Planned Features
+
+- **AI-Powered Recommendations** - GPT integration for personalized suggestions
+- **Resume Templates** - Downloadable ATS-friendly templates
+- **Cover Letter Analysis** - Extend analysis to cover letters
+- **LinkedIn Profile Optimizer** - Analyze LinkedIn profiles
+- **Multi-Language Support** - Internationalization (i18n)
+- **Browser Extension** - Quick analysis from LinkedIn/Indeed
+- **Mobile App** - iOS and Android applications
+- **Premium Features** - Advanced analytics and insights
+
+### Version History
+
+#### v2.0.0 (Current) - February 2026
+- Complete UI redesign with Streamlit
+- Transparent scoring algorithms
+- Dark/light mode support
+- Interactive visualizations with Plotly
+- Download report functionality
+- Mobile-responsive design
+
+#### v1.0.0 - Initial Release
+- Basic resume analysis
+- PDF/TXT support
+- Keyword detection
+- FastAPI backend
+
+---
+
+## FAQ
+
+<details>
+<summary><b>Is this really free?</b></summary>
+Yes! AI Resume Analyzer is completely free and open source under the MIT License.
+</details>
+
+<details>
+<summary><b>Do you store my resume?</b></summary>
+No. Your resume is processed in real-time and immediately discarded. We don't store any personal data.
+</details>
+
+<details>
+<summary><b>What file formats are supported?</b></summary>
+Currently PDF and TXT files up to 5MB. DOCX support is coming soon.
+</details>
+
+<details>
+<summary><b>How accurate is the analysis?</b></summary>
+Our scoring is based on industry best practices and ATS requirements. While helpful, always tailor your resume to specific job requirements.
+</details>
+
+<details>
+<summary><b>Can I use this for commercial purposes?</b></summary>
+Yes! The MIT License allows commercial use. Just provide attribution.
+</details>
+
+<details>
+<summary><b>How can I improve my score?</b></summary>
+Follow the personalized recommendations provided after analysis. Generally: add relevant skills, quantify achievements, and ensure all essential sections are present.
+</details>
+
+---
+
+## License
+
+This project is licensed under the **MIT License** - see the [LICENSE](LICENSE) file for details.
+
+```
+MIT License
+
+Copyright (c) 2026 Crewjah
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+```
+
+### What this means:
+- Commercial use
+- Modification
+- Distribution
+- Private use
+- Attribution required
+- No warranty provided
+
+---
+
+## Acknowledgments
+
+Built with these amazing technologies:
+
+- [Python](https://www.python.org/) - Core programming language
+- [Streamlit](https://streamlit.io/) - Interactive web framework
+- [FastAPI](https://fastapi.tiangolo.com/) - Modern API framework
+- [PyPDF2](https://pypdf2.readthedocs.io/) - PDF processing
+- [NLTK](https://www.nltk.org/) - Natural language processing
+- [spaCy](https://spacy.io/) - Advanced NLP
+- [Plotly](https://plotly.com/) - Interactive visualizations
+- [Vercel](https://vercel.com/) - Deployment platform
+
+Special thanks to all [contributors](https://github.com/Crewjah/AI-Resume-Analyzer/graphs/contributors) who have helped improve this project!
+
+---
+
+## Support & Contact
+
+### Get Help
+
+- **Documentation**: Check our [docs](docs/) folder
+- **Bug Reports**: [Open an issue](https://github.com/Crewjah/AI-Resume-Analyzer/issues/new?template=bug_report.md)
+- **Feature Requests**: [Request a feature](https://github.com/Crewjah/AI-Resume-Analyzer/issues/new?template=feature_request.md)
+- **Discussions**: [GitHub Discussions](https://github.com/Crewjah/AI-Resume-Analyzer/discussions)
+
+### Community
+
+- **Star this repo** if you find it helpful!
+- **Share** with friends looking for resume help
+- **Contribute** to make it even better
+
+---
+
+## Project Stats
+
+![GitHub stars](https://img.shields.io/github/stars/Crewjah/AI-Resume-Analyzer?style=social)
+![GitHub forks](https://img.shields.io/github/forks/Crewjah/AI-Resume-Analyzer?style=social)
+![GitHub issues](https://img.shields.io/github/issues/Crewjah/AI-Resume-Analyzer)
+![GitHub pull requests](https://img.shields.io/github/issues-pr/Crewjah/AI-Resume-Analyzer)
+![GitHub last commit](https://img.shields.io/github/last-commit/Crewjah/AI-Resume-Analyzer)
+
+---
+
+<div align="center">
+
+### If this project helped you, please give it a star!
+
+**Made with ❤️ by [Crewjah](https://github.com/Crewjah)**
+
+*Helping job seekers succeed, one resume at a time.*
+
+[Report Bug](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Request Feature](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Contribute](docs/CONTRIBUTING.md)
+
+</div>
+
