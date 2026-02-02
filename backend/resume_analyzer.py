@@ -66,6 +66,10 @@ class ResumeAnalyzer:
         
         return {
             'scores': scores,
+            'skills': {
+                'technical': technical_skills,
+                'soft': soft_skills
+            },
             'technical_skills': technical_skills,
             'soft_skills': soft_skills,
             'action_verbs': action_verbs,
@@ -87,6 +91,10 @@ class ResumeAnalyzer:
                 'ats_compatibility': 0,
                 'structure_score': 0,
                 'completeness': 0
+            },
+            'skills': {
+                'technical': [],
+                'soft': []
             },
             'technical_skills': [],
             'soft_skills': [],

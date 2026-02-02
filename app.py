@@ -10,12 +10,21 @@ import sys
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'backend'))
 
+from resume_analyzer import ResumeAnalyzer
+from pdf_extractor import extract_text_from_pdf, extract_text_from_docx
+from keyword_matcher import calculate_match_score, extract_missing_keywords, get_keyword_suggestions
+
 st.set_page_config(
     page_title="AI Resume Analyzer",
     page_icon="📄",
     layout="wide",
     initial_sidebar_state="expanded"
 )
+
+
+@st.cache_resource
+def get_analyzer() -> ResumeAnalyzer:
+    return ResumeAnalyzer()
 
 # Session state
 if 'page' not in st.session_state:
@@ -98,40 +107,71 @@ else:
 """
 
 st.markdown(theme_css + """
+    /* ========================================
+       PROFESSIONAL DESIGN SYSTEM
+       ======================================== */
     
-    /* Header */
+    /* TYPOGRAPHY */
+    h1 { font-size: 3rem; font-weight: 800; color: #1F2937; letter-spacing: -0.5px; margin: 0 0 1rem 0; }
+    h2 { font-size: 2.25rem; font-weight: 700; color: #1F2937; margin: 2rem 0 1rem 0; }
+    h3 { font-size: 1.5rem; font-weight: 600; color: #1F2937; margin: 1.5rem 0 0.75rem 0; }
+    h4 { font-size: 1.25rem; font-weight: 600; color: #6B7280; margin: 1rem 0 0.5rem 0; }
+    
+    p { font-size: 1rem; font-weight: 400; color: #6B7280; line-height: 1.6; margin: 0.5rem 0; }
+    
+    small { font-size: 0.875rem; font-weight: 400; color: #9CA3AF; }
+    
+    /* SPACING SCALE (8px base) */
+    .spacing-xs { margin: 4px; }
+    .spacing-sm { margin: 8px; }
+    .spacing-md { margin: 16px; }
+    .spacing-lg { margin: 24px; }
+    .spacing-xl { margin: 32px; }
+    .spacing-2xl { margin: 48px; }
+    .spacing-3xl { margin: 64px; }
+    
+    /* HERO HEADER */
     .header-container {
-        background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+        background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
         color: white;
-        padding: 3rem 2rem;
-        margin-bottom: 2rem;
+        padding: 4rem 2rem;
+        margin-bottom: 3rem;
         text-align: center;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        border-radius: 0.75rem;
+        box-shadow: 0 10px 15px rgba(37, 99, 235, 0.15);
+        border-radius: 12px;
+        animation: fadeIn 0.5s ease;
     }
-    .header-title { 
-        font-size: 2.75rem; font-weight: 800; margin: 0; padding: 1rem 0;
-        color: #FFFFFF; letter-spacing: -0.5px;
+    .header-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin: 0;
+        padding: 0;
+        color: #FFFFFF;
+        letter-spacing: -0.5px;
+        text-transform: none;
     }
-    .header-subtitle { 
-        font-size: 1.25rem; opacity: 0.95; margin: 0.5rem 0 0 0; 
-        color: rgba(255, 255, 255, 0.9); font-weight: 500;
+    .header-subtitle {
+        font-size: 1.25rem;
+        opacity: 0.95;
+        margin: 0.75rem 0 0 0;
+        color: rgba(255, 255, 255, 0.9);
+        font-weight: 500;
     }
     
-    /* Feature Cards */
+    /* FEATURE CARDS */
     .feature-card {
-        background: #FFFFFF;
+        background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
         padding: 2rem 1.5rem;
-        border-radius: 0.75rem;
+        border-radius: 12px;
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         border: 2px solid #E5E7EB;
         text-align: center;
-        transition: all 0.3s ease;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         height: 100%;
     }
     .feature-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px rgba(37, 99, 235, 0.15);
         border-color: #2563EB;
     }
     .feature-card h3 {
@@ -143,148 +183,119 @@ st.markdown(theme_css + """
     .feature-card p {
         color: #6B7280 !important;
         font-size: 0.95rem;
-        line-height: 1.5;
+        line-height: 1.6;
         margin: 0;
     }
     
-    /* Info Boxes */
+    /* STATUS BOXES */
     .info-box {
         background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
         padding: 1.5rem;
-        border-radius: 0.75rem;
-        border-left: 4px solid #2563EB;
+        border-radius: 8px;
+        border-left: 5px solid #2563EB;
         margin: 1.5rem 0;
         color: #1F2937;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
     }
     .success-box {
         background: linear-gradient(135deg, #F0FDF4 0%, #DBEAFE 100%);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border-left: 4px solid #10B981;
-        margin: 1.5rem 0;
-        color: #1F2937;
+        border-left-color: #10B981;
+        box-shadow: 0 2px 6px rgba(16, 185, 129, 0.1);
     }
     .warning-box {
         background: linear-gradient(135deg, #FEF9E7 0%, #FEF08A 100%);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border-left: 4px solid #F59E0B;
-        margin: 1.5rem 0;
-        color: #1F2937;
+        border-left-color: #F59E0B;
+        box-shadow: 0 2px 6px rgba(245, 158, 11, 0.1);
     }
     .error-box {
         background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 100%);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border-left: 4px solid #EF4444;
-        margin: 1.5rem 0;
-        color: #1F2937;
+        border-left-color: #EF4444;
+        box-shadow: 0 2px 6px rgba(239, 68, 68, 0.1);
     }
     
-    /* Statistics */
+    /* STATISTICS CARDS */
     .stat-card {
         background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
+        padding: 2rem 1.5rem;
+        border-radius: 12px;
         border: 1px solid #E5E7EB;
         text-align: center;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
     }
     .stat-number {
-        font-size: 2rem;
+        font-size: 2.25rem;
         font-weight: 800;
         color: #2563EB !important;
-        margin: 0.5rem 0;
+        margin: 0.75rem 0;
     }
     .stat-label {
         font-size: 0.875rem;
         color: #6B7280 !important;
         font-weight: 600;
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 0.75px;
     }
     
-    /* Footer */
-    .footer-container {
-        text-align: center;
-        color: #6B7280;
-        font-size: 0.875rem;
-        padding: 2rem 1rem;
-        border-top: 2px solid #E5E7EB;
-        margin-top: 3rem;
-        background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
-        border-radius: 0.75rem;
-    }
-    .footer-links a {
-        color: #2563EB;
-        text-decoration: none;
-        margin: 0 0.75rem;
-        font-weight: 500;
-        transition: color 0.2s ease;
-    }
-    .footer-links a:hover {
-        color: #1E40AF;
-        text-decoration: underline;
-    }
-    
-    /* Section Headings */
-    .section-heading {
-        font-size: 1.875rem;
-        font-weight: 800;
-        color: #1F2937;
-        margin: 2.5rem 0 1.5rem 0;
-        padding-bottom: 0.75rem;
-        border-bottom: 3px solid #2563EB;
-    }
-    
-    /* Step Boxes */
+    /* STEP BOXES */
     .step-box {
         background: linear-gradient(135deg, #F3F4F6 0%, #E5E7EB 100%);
-        padding: 1.5rem;
-        border-radius: 0.75rem;
-        border-left: 4px solid #2563EB;
+        padding: 2rem;
+        border-radius: 12px;
+        border-left: 5px solid #2563EB;
         text-align: left;
+        transition: all 0.3s ease;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .step-box:hover {
+        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
     }
     .step-number {
         display: inline-block;
         background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
         color: white;
-        width: 36px;
-        height: 36px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
-        line-height: 36px;
+        line-height: 44px;
         text-align: center;
         font-weight: 700;
-        font-size: 0.9rem;
-        margin-bottom: 0.75rem;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
     }
     .step-title {
         font-weight: 700;
         color: #1F2937 !important;
         font-size: 1.125rem;
-        margin: 0.5rem 0;
+        margin: 0.75rem 0;
     }
     .step-description {
         font-size: 0.9rem;
         color: #6B7280 !important;
         margin: 0.5rem 0 0 0;
-        line-height: 1.5;
+        line-height: 1.6;
     }
     
-    /* Button Styling */
+    /* BUTTONS */
     .stButton > button {
         background-color: #2563EB !important;
         color: white !important;
         border: none !important;
-        border-radius: 0.5rem !important;
+        border-radius: 8px !important;
         font-weight: 600 !important;
         padding: 0.75rem 2rem !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2) !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2) !important;
+        font-size: 1rem !important;
     }
     .stButton > button:hover {
         background-color: #1E40AF !important;
-        box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3) !important;
+        box-shadow: 0 8px 12px rgba(37, 99, 235, 0.3) !important;
         transform: translateY(-2px) !important;
     }
     .stButton > button:active {
@@ -292,40 +303,44 @@ st.markdown(theme_css + """
         transform: translateY(0) !important;
     }
     
-    /* File Uploader */
+    /* FILE UPLOADER */
     .stFileUploader label {
         color: #1F2937 !important;
         font-weight: 600 !important;
+        font-size: 1rem !important;
     }
     .stFileUploader > div > div {
-        border: 2px dashed #2563EB !important;
-        border-radius: 0.5rem !important;
+        border: 3px dashed #2563EB !important;
+        border-radius: 12px !important;
+        background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%) !important;
+        padding: 2rem !important;
+        transition: all 0.3s ease !important;
+    }
+    .stFileUploader > div > div:hover {
+        border-color: #1E40AF !important;
+        background: linear-gradient(135deg, #E0F2FE 0%, #D0E7FC 100%) !important;
     }
     
-    /* Text Input */
-    .stTextInput > div > div > input {
-        border: 2px solid #E5E7EB !important;
-        border-radius: 0.5rem !important;
-    }
-    .stTextInput > div > div > input:focus {
-        border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
-    }
-    
-    /* Text Area */
+    /* INPUTS */
+    .stTextInput > div > div > input,
     .stTextArea > div > div > textarea {
         border: 2px solid #E5E7EB !important;
-        border-radius: 0.5rem !important;
+        border-radius: 8px !important;
+        font-size: 1rem !important;
+        transition: all 0.3s ease !important;
     }
+    .stTextInput > div > div > input:focus,
     .stTextArea > div > div > textarea:focus {
         border-color: #2563EB !important;
-        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1) !important;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1) !important;
     }
     
-    /* Tabs */
+    /* TABS */
     .stTabs [data-baseweb="tab-list"] button {
         color: #6B7280 !important;
         font-weight: 500 !important;
+        border-bottom: 3px solid transparent !important;
+        transition: all 0.3s ease !important;
     }
     .stTabs [data-baseweb="tab-list"] button[aria-selected="true"] {
         color: #2563EB !important;
@@ -333,11 +348,90 @@ st.markdown(theme_css + """
         font-weight: 700 !important;
     }
     
-    /* Selectbox */
-    .stSelectbox > div > div > select {
-        border: 2px solid #E5E7EB !important;
-        border-radius: 0.5rem !important;
+    /* METRICS */
+    [data-testid="metric-container"] {
+        background: linear-gradient(135deg, #FFFFFF 0%, #F9FAFB 100%) !important;
+        border: 1px solid #E5E7EB !important;
+        border-radius: 12px !important;
+        padding: 1.5rem !important;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
     }
+    [data-testid="metric-container"] > div > div > div:first-child {
+        color: #6B7280 !important;
+        font-size: 0.875rem !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.75px !important;
+    }
+    [data-testid="metric-container"] > div > div > div:last-child {
+        color: #2563EB !important;
+        font-size: 2rem !important;
+        font-weight: 800 !important;
+    }
+    
+    /* SECTION HEADING */
+    .section-heading {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1F2937;
+        margin: 3rem 0 2rem 0;
+        padding-bottom: 1rem;
+        border-bottom: 3px solid #2563EB;
+    }
+    
+    /* FOOTER */
+    .footer-container {
+        text-align: center;
+        color: #6B7280;
+        font-size: 0.875rem;
+        padding: 3rem 2rem;
+        border-top: 2px solid #E5E7EB;
+        margin-top: 4rem;
+        background: linear-gradient(135deg, #F9FAFB 0%, #F3F4F6 100%);
+        border-radius: 12px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+    .footer-links a {
+        color: #2563EB;
+        text-decoration: none;
+        margin: 0 1rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .footer-links a:hover {
+        color: #1E40AF;
+        text-decoration: underline;
+    }
+    
+    /* ANIMATIONS */
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes slideUp {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes pulse {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+    
+    .stMetric { animation: slideUp 0.5s ease-out; }
+    
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+        .header-title { font-size: 2rem; }
+        .section-heading { font-size: 1.5rem; }
+        h2 { font-size: 1.75rem; }
+        .stat-number { font-size: 1.75rem; }
+        .step-number { width: 36px; height: 36px; line-height: 36px; }
+    }
+    
+    /* UTILITIES */
+    .divider { border-top: 2px solid #E5E7EB; margin: 2rem 0; }
+    .highlight { background: linear-gradient(120deg, #FEF08A, #FBBF24); padding: 0.25rem 0.5rem; border-radius: 4px; }
+
     
     /* Metric Cards */
     [data-testid="metric-container"] {
@@ -432,7 +526,8 @@ with st.sidebar:
     
     st.markdown("---")
     if st.session_state.analysis_results:
-        st.metric("Overall Score", f"{st.session_state.analysis_results.get('overall_score', 0):.0f}%")
+        sidebar_scores = st.session_state.analysis_results.get('scores', {})
+        st.metric("Overall Score", f"{sidebar_scores.get('overall_score', 0):.0f}%")
 
 
 def show_home_page():
@@ -500,7 +595,7 @@ def show_home_page():
             <div class="step-number">2</div>
             <div style="font-size: 2.5rem; margin: 1rem 0;">🤖</div>
             <div class="step-title">Analyze</div>
-            <div class="step-description">Our AI analyzes across 50+ dimensions</div>
+            <div class="step-description">We analyze across 5 core dimensions</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -525,31 +620,31 @@ def show_home_page():
         """, unsafe_allow_html=True)
     
     st.markdown("---")
-    st.markdown("<h2 class='section-heading' style='color: #2563EB !important;'>📈 By The Numbers</h2>", unsafe_allow_html=True)
+    st.markdown("<h2 class='section-heading' style='color: #2563EB !important;'>📈 Key Highlights</h2>", unsafe_allow_html=True)
     
     col1, col2, col3, col4 = st.columns(4, gap="medium")
     
     with col1:
         st.markdown("""
         <div class="stat-card">
-            <div class="stat-label">Resumes Analyzed</div>
-            <div class="stat-number">10,000+</div>
+            <div class="stat-label">Processing Mode</div>
+            <div class="stat-number">Local</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
         <div class="stat-card">
-            <div class="stat-label">Accuracy Rate</div>
-            <div class="stat-number">95%</div>
+            <div class="stat-label">Scoring Model</div>
+            <div class="stat-number">Transparent</div>
         </div>
         """, unsafe_allow_html=True)
     
     with col3:
         st.markdown("""
         <div class="stat-card">
-            <div class="stat-label">Avg. Analysis Time</div>
-            <div class="stat-number">&lt; 5s</div>
+            <div class="stat-label">Analysis Time</div>
+            <div class="stat-number">File Dependent</div>
         </div>
         """, unsafe_allow_html=True)
     
@@ -578,27 +673,31 @@ def show_upload_page():
         if uploaded_file:
             st.success(f"File selected: {uploaded_file.name}")
             st.info(f"Size: {uploaded_file.size / 1024:.1f} KB")
-            
+
             if st.button("Analyze Resume", use_container_width=True):
                 with st.spinner("Analyzing..."):
-                    from resume_analyzer import ResumeAnalyzer
-                    from pdf_extractor import extract_text_from_pdf
-                    
                     try:
                         if uploaded_file.type == "application/pdf":
                             resume_text = extract_text_from_pdf(uploaded_file)
                         elif "wordprocessingml" in uploaded_file.type:
-                            from pdf_extractor import extract_text_from_docx
                             resume_text = extract_text_from_docx(uploaded_file)
                         else:
-                            resume_text = uploaded_file.getvalue().decode("utf-8")
-                        
-                        analyzer = ResumeAnalyzer()
+                            resume_text = uploaded_file.getvalue().decode("utf-8", errors="ignore")
+
+                        if resume_text.startswith("Error"):
+                            st.error(resume_text)
+                            return
+
+                        analyzer = get_analyzer()
                         results = analyzer.analyze(resume_text)
-                        
-                        st.session_state.resume_data = {'text': resume_text, 'filename': uploaded_file.name}
+
+                        st.session_state.resume_data = {
+                            'text': resume_text,
+                            'filename': uploaded_file.name,
+                            'file_type': uploaded_file.type
+                        }
                         st.session_state.analysis_results = results
-                        
+
                         st.success("Analysis complete!")
                         st.session_state.page = 'analysis'
                         st.rerun()
@@ -625,16 +724,17 @@ def show_analysis_page():
         return
     
     results = st.session_state.analysis_results
-    
+    scores = results.get('scores', {})
+
     col1, col2, col3, col4 = st.columns(4)
     with col1:
-        st.metric("Overall Score", f"{results.get('overall_score', 0):.0f}%")
+        st.metric("Overall Score", f"{scores.get('overall_score', 0):.0f}%")
     with col2:
-        st.metric("Content Quality", f"{results.get('content_score', 0):.0f}%")
+        st.metric("Content Quality", f"{scores.get('content_quality', 0):.0f}%")
     with col3:
-        st.metric("Keyword Optimization", f"{results.get('keyword_score', 0):.0f}%")
+        st.metric("Keyword Optimization", f"{scores.get('keyword_optimization', 0):.0f}%")
     with col4:
-        st.metric("ATS Score", f"{results.get('ats_score', 0):.0f}%")
+        st.metric("ATS Score", f"{scores.get('ats_compatibility', 0):.0f}%")
     
     st.markdown("---")
     
@@ -643,12 +743,15 @@ def show_analysis_page():
     with tab1:
         st.markdown("<h3 style='color: #1F2937;'>Content Analysis</h3>", unsafe_allow_html=True)
         st.markdown(f"<div style='color: #6B7280;'><strong>Word Count:</strong> {results.get('word_count', 0)}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='color: #6B7280;'><strong>Action Verbs:</strong> {results.get('action_verb_count', 0)}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='color: #6B7280;'><strong>Sections Found:</strong> {results.get('section_count', 0)}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='color: #6B7280;'><strong>Action Verbs:</strong> {results.get('action_verbs_count', 0)}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='color: #6B7280;'><strong>Sections Found:</strong> {len(results.get('sections_detected', []))}</div>", unsafe_allow_html=True)
     
     with tab2:
         st.markdown("<h3 style='color: #1F2937;'>Detected Skills</h3>", unsafe_allow_html=True)
-        skills = results.get('skills', {})
+        skills = {
+            'technical': results.get('technical_skills', []),
+            'soft': results.get('soft_skills', [])
+        }
         col1, col2 = st.columns(2)
         with col1:
             st.markdown("<h4 style='color: #1F2937;'>Technical</h4>", unsafe_allow_html=True)
@@ -667,10 +770,12 @@ def show_analysis_page():
     with tab4:
         st.markdown("<h3 style='color: #1F2937;'>Technical Details</h3>", unsafe_allow_html=True)
         st.json({
-            "overall_score": f"{results.get('overall_score', 0):.1f}%",
-            "content_score": f"{results.get('content_score', 0):.1f}%",
-            "keyword_score": f"{results.get('keyword_score', 0):.1f}%",
-            "ats_score": f"{results.get('ats_score', 0):.1f}%"
+            "overall_score": f"{scores.get('overall_score', 0):.1f}%",
+            "content_quality": f"{scores.get('content_quality', 0):.1f}%",
+            "keyword_optimization": f"{scores.get('keyword_optimization', 0):.1f}%",
+            "ats_compatibility": f"{scores.get('ats_compatibility', 0):.1f}%",
+            "structure_score": f"{scores.get('structure_score', 0):.1f}%",
+            "completeness": f"{scores.get('completeness', 0):.1f}%"
         })
 
 
@@ -690,7 +795,27 @@ def show_job_matching_page():
     
     if st.button("Analyze Match"):
         if job_description:
-            st.success("Match analysis coming soon")
+            resume_text = st.session_state.resume_data.get('text', '')
+            with st.spinner("Analyzing job match..."):
+                match_score = calculate_match_score(resume_text, job_description)
+                missing_keywords = extract_missing_keywords(resume_text, job_description)
+                suggestions = get_keyword_suggestions(job_description)
+
+            st.metric("Match Score", f"{match_score}%")
+
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**Missing Keywords (Top 10)**")
+                if missing_keywords:
+                    st.markdown("<ul>" + "".join([f"<li>{k}</li>" for k in missing_keywords]) + "</ul>", unsafe_allow_html=True)
+                else:
+                    st.success("No critical keywords missing.")
+
+            with col2:
+                st.markdown("**Suggested Keywords**")
+                st.markdown("**Technical:** " + ", ".join(suggestions.get('technical_skills', [])) if suggestions.get('technical_skills') else "**Technical:** None detected")
+                st.markdown("**Soft Skills:** " + ", ".join(suggestions.get('soft_skills', [])) if suggestions.get('soft_skills') else "**Soft Skills:** None detected")
+                st.markdown("**Action Verbs:** " + ", ".join(suggestions.get('action_verbs', [])) if suggestions.get('action_verbs') else "**Action Verbs:** None detected")
         else:
             st.warning("Please enter a job description")
 
@@ -706,15 +831,44 @@ def show_ats_check_page():
             st.rerun()
         return
     
+    results = st.session_state.analysis_results
+    scores = results.get('scores', {})
+    contact_info = results.get('contact_info', {})
+    sections = set(results.get('sections_detected', []))
+
+    st.metric("ATS Compatibility", f"{scores.get('ats_compatibility', 0):.0f}%")
+
+    required_sections = {"Experience", "Education", "Skills", "Summary"}
+    missing_sections = sorted(list(required_sections - sections))
+
+    missing_contact = []
+    if not contact_info.get('has_email'):
+        missing_contact.append("Email")
+    if not contact_info.get('has_phone'):
+        missing_contact.append("Phone")
+
     col1, col2 = st.columns(2)
-    
+
     with col1:
         st.markdown("<h3 style='color: #10B981;'>✓ Good Practices</h3>", unsafe_allow_html=True)
-        st.markdown("<div style='color: #6B7280;'><li>Use standard fonts</li><li>Clear section headers</li><li>Bullet points</li><li>PDF format</li></div>", unsafe_allow_html=True)
-    
+        good_items = [
+            "Clear section headers",
+            "Readable text and spacing",
+            "Standard bullet points",
+            "Consistent date formatting"
+        ]
+        st.markdown("<div style='color: #6B7280;'><ul>" + "".join([f"<li>{i}</li>" for i in good_items]) + "</ul></div>", unsafe_allow_html=True)
+
     with col2:
-        st.markdown("<h3 style='color: #EF4444;'>✗ Avoid</h3>", unsafe_allow_html=True)
-        st.markdown("<div style='color: #6B7280;'><li>Tables and columns</li><li>Graphics/images</li><li>Headers/footers</li><li>Complex formatting</li></div>", unsafe_allow_html=True)
+        st.markdown("<h3 style='color: #EF4444;'>✗ Missing or Risk Areas</h3>", unsafe_allow_html=True)
+        risk_items = []
+        if missing_sections:
+            risk_items.append("Missing sections: " + ", ".join(missing_sections))
+        if missing_contact:
+            risk_items.append("Missing contact: " + ", ".join(missing_contact))
+        if not risk_items:
+            risk_items.append("No major ATS risks detected.")
+        st.markdown("<div style='color: #6B7280;'><ul>" + "".join([f"<li>{i}</li>" for i in risk_items]) + "</ul></div>", unsafe_allow_html=True)
 
 
 def show_about_page():
@@ -738,7 +892,7 @@ def show_about_page():
     <h3 style='color: #1F2937; margin-top: 2rem;'>How It Works</h3>
     <div style='color: #6B7280;'><ol>
     <li>Upload your resume (PDF, DOCX, or TXT)</li>
-    <li>Our AI analyzes it across multiple dimensions</li>
+    <li>The analyzer evaluates content, keywords, ATS, structure, and completeness</li>
     <li>You get instant, honest feedback</li>
     <li>Implement recommendations</li>
     <li>Re-upload to see improvements</li>
@@ -777,7 +931,7 @@ st.markdown("---")
 st.markdown("""
 <div class="footer-container">
     <p style="margin: 0.5rem 0; font-weight: 600; color: #1F2937;">© 2026 AI Resume Analyzer</p>
-    <p style="margin: 0.5rem 0; color: #6B7280;">Professional resume analysis powered by AI</p>
+    <p style="margin: 0.5rem 0; color: #6B7280;">Professional resume analysis powered by NLP and rules</p>
     <div class="footer-links" style="margin-top: 1rem;">
         <a href="#">Privacy Policy</a> |
         <a href="#">Terms of Service</a> |

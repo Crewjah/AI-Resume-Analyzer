@@ -1,6 +1,7 @@
 import PyPDF2
 from io import BytesIO
 from typing import Union
+import docx
 
 def extract_text_from_pdf(pdf_file: Union[BytesIO, bytes]) -> str:
     """
@@ -57,3 +58,26 @@ def get_pdf_metadata(pdf_file: Union[BytesIO, bytes]) -> dict:
         
     except Exception as e:
         return {'error': str(e)}
+
+
+def extract_text_from_docx(docx_file: Union[BytesIO, bytes]) -> str:
+    """
+    Extract text content from a DOCX file.
+
+    Args:
+        docx_file: DOCX file object (from Streamlit file uploader) or bytes
+
+    Returns:
+        Extracted text as a string
+    """
+    try:
+        document = docx.Document(docx_file)
+        paragraphs = [p.text for p in document.paragraphs if p.text]
+        text = "\n".join(paragraphs).strip()
+
+        if not text:
+            return "Error: Could not extract text from DOCX. The file might be empty or corrupted."
+
+        return text
+    except Exception as e:
+        return f"Error extracting text from DOCX: {str(e)}"

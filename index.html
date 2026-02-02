@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resume Analyzer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #1F2937;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(30, 58, 138, 0.2);
+            padding: 60px 40px;
+            text-align: center;
+            animation: slideUp 0.6s ease-out;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1E3A8A;
+            margin-bottom: 16px;
+            letter-spacing: -0.5px;
+        }
+        
+        .subtitle {
+            font-size: 1.125rem;
+            color: #6B7280;
+            margin-bottom: 40px;
+            line-height: 1.6;
+        }
+        
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        
+        .feature {
+            padding: 20px;
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            border-radius: 12px;
+            border-left: 4px solid #2563EB;
+        }
+        
+        .feature h3 {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #2563EB;
+            margin-bottom: 8px;
+        }
+        
+        .feature p {
+            font-size: 0.875rem;
+            color: #6B7280;
+            line-height: 1.5;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            gap: 16px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 40px;
+        }
+        
+        .btn {
+            padding: 12px 32px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #2563EB 0%, #1E40AF 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.4);
+        }
+        
+        .btn-secondary {
+            background: white;
+            color: #2563EB;
+            border: 2px solid #2563EB;
+        }
+        
+        .btn-secondary:hover {
+            background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+        }
+        
+        .info-box {
+            background: linear-gradient(135deg, #F0FDF4 0%, #ECFDF5 100%);
+            border-left: 4px solid #10B981;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            text-align: left;
+            font-size: 0.9rem;
+            color: #166534;
+        }
+        
+        .footer {
+            margin-top: 40px;
+            padding-top: 40px;
+            border-top: 2px solid #E5E7EB;
+            font-size: 0.875rem;
+            color: #9CA3AF;
+        }
+        
+        .footer a {
+            color: #2563EB;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Resume Analyzer</h1>
+        <p class="subtitle">
+            Professional resume analysis powered by NLP and rules-based algorithms.
+            Get honest, actionable feedback to improve your resume.
+        </p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>📊 Content Quality</h3>
+                <p>Word count, action verbs, and achievements analysis</p>
+            </div>
+            <div class="feature">
+                <h3>🔍 Skills Detection</h3>
+                <p>Extract technical and soft skills automatically</p>
+            </div>
+            <div class="feature">
+                <h3>✅ ATS Check</h3>
+                <p>Ensure compatibility with Applicant Tracking Systems</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 Job Matching</h3>
+                <p>Compare against job descriptions</p>
+            </div>
+        </div>
+        
+        <div class="cta-buttons">
+            <button class="btn btn-primary" onclick="openApp()">Start Analyzing</button>
+            <a href="https://github.com/Crewjah/AI-Resume-Analyzer" class="btn btn-secondary" target="_blank">View on GitHub</a>
+        </div>
+        
+        <div class="info-box">
+            <strong>✓ Real Functionality:</strong> Uses actual PDF/DOCX parsing, NLP for skill extraction, transparent scoring algorithms, and real job matching logic. No fake data or inflated scores.
+        </div>
+        
+        <div class="footer">
+            <p>© 2026 AI Resume Analyzer | Open Source</p>
+            <p>
+                <a href="https://github.com/Crewjah/AI-Resume-Analyzer" target="_blank">GitHub</a> •
+                <a href="https://github.com/Crewjah/AI-Resume-Analyzer/blob/main/LICENSE" target="_blank">License</a>
+            </p>
+        </div>
+    </div>
+    
+    <script>
+        function openApp() {
+            // For local development
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                window.open('http://localhost:8501', '_blank');
+            } else {
+                alert('Streamlit app is running on the deployed instance. Please access it directly.');
+            }
+        }
+    </script>
+</body>
+</html>
