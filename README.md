@@ -735,14 +735,11 @@ Special thanks to all [contributors](https://github.com/Crewjah/AI-Resume-Analyz
 
 ---
 
-### ⭐ If this project helped you, please give it a star! ⭐
+### If this project helped you, please give it a star!
 
 **Made with ❤️ by [Crewjah](https://github.com/Crewjah)**
 
 *Helping job seekers succeed, one resume at a time.*
-
-[![GitHub followers](https://img.shields.io/github/followers/Crewjah?style=social)](https://github.com/Crewjah)
-[![Twitter Follow](https://img.shields.io/twitter/follow/Crewjah?style=social)](https://twitter.com/Crewjah)
 
 [Report Bug](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Request Feature](https://github.com/Crewjah/AI-Resume-Analyzer/issues) · [Contribute](docs/CONTRIBUTING.md)
 
