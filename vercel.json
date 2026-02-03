@@ -7,8 +7,7 @@
       "use": "@vercel/python",
       "config": {
         "maxLambdaSize": "250mb",
-        "runtime": "python3.12",
-        "requirements": "requirements-production.txt"
+        "runtime": "python3.12"
       }
     }
   ],
@@ -35,6 +34,5 @@
     "PYTHON_VERSION": "3.12",
     "BUILD_TIMESTAMP": "2026-02-03",
     "PYTHONPATH": "/api"
-  },
-  "buildCommand": "python -c 'import nltk; nltk.download(\"punkt\", quiet=True); nltk.download(\"stopwords\", quiet=True)'"
+  }
 }

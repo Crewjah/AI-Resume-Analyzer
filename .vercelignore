@@ -1,53 +1,83 @@
-# Git and version control
-.git
+# CRITICAL: Exclude everything not needed for API
+
+# Git and version control (MUST BE FIRST)
+.git/
 .gitignore
 .gitattributes
 .github
 
 # Python cache and bytecode
-__pycache__
+__pycache__/
 *.pyc
 *.pyo
 *.pyd
 *.py[cod]
 *$py.class
 .Python
+*.egg-info/
+dist/
+build/
 
-# Virtual environments (CRITICAL - prevents 250MB+ size)
+# Virtual environments
 env/
 venv/
 .venv/
 ENV/
+.env
 
-# Testing
-.pytest_cache
+# All development-only files
 tests/
-test_*.py
-*_test.py
+docs/
+scripts/
+.vscode/
+.idea/
+.pytest_cache/
 .coverage
 htmlcov
 .tox
 .cache
 .hypothesis
-
-# Development
-.env
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-scripts/
-docs/
-
-# OS files
 .DS_Store
 Thumbs.db
+
+# UI/Local files (not needed for API)
+app.py
+*.html
+!index.html
+public/
+assets/
+.streamlit/
 
 # Node modules
 node_modules/
 .next/
 .turbo/
+npm-debug.log
+
+# Markdown files (not needed for deployment)
+*.md
+!README.md
+
+# Alternative requirements files
+requirements-dev.txt
+requirements-production.txt
+
+# Misc development files
+test_*.py
+*_test.py
+check_deployment.py
+verify_project.py
+test_local.py
+*.log
+logs/
+.env*
+!.env.example
+
+# CI/CD
+.github/workflows/
+.gitlab-ci.yml
+.circleci/
+
 
 # Streamlit
 app.py
