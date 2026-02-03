@@ -48,6 +48,35 @@ Thumbs.db
 node_modules/
 .next/
 .turbo/
+
+# Streamlit
+app.py
+.streamlit/
+streamlit/
+
+# Documentation & Examples
+public/
+*.md
+!README.md
+sample_data/
+test_resumes/
+AUDIT_REPORT.md
+DEPLOYMENT_READY.md
+DEPLOYMENT_SUMMARY.md
+DEPLOYMENT.md
+PROJECT_STATUS.md
+QUICK_REFERENCE.md
+QUICK_START.md
+
+# Logs and artifacts
+*.log
+logs/
+dist/
+build/
+*.egg-info/
+check_deployment.py
+verify_project.py
+test_local.py
 out/
 
 # Documentation

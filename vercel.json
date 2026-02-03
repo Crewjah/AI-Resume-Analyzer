@@ -6,8 +6,9 @@
       "src": "api/index.py",
       "use": "@vercel/python",
       "config": {
-        "maxLambdaSize": "200mb",
-        "runtime": "python3.11"
+        "maxLambdaSize": "250mb",
+        "runtime": "python3.12",
+        "requirements": "requirements-production.txt"
       }
     }
   ],
@@ -31,7 +32,9 @@
     }
   ],
   "env": {
-    "PYTHON_VERSION": "3.11",
-    "BUILD_TIMESTAMP": "2026-01-07"
-  }
+    "PYTHON_VERSION": "3.12",
+    "BUILD_TIMESTAMP": "2026-02-03",
+    "PYTHONPATH": "/api"
+  },
+  "buildCommand": "python -c 'import nltk; nltk.download(\"punkt\", quiet=True); nltk.download(\"stopwords\", quiet=True)'"
 }

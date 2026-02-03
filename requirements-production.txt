@@ -1,0 +1,21 @@
+# Production dependencies for Vercel deployment (optimized for size)
+# Remove Streamlit and heavy visualization libraries
+
+# API & Server
+fastapi>=0.111.0
+uvicorn>=0.24.0
+python-multipart>=0.0.6
+
+# PDF & Document Processing
+PyPDF2>=3.0.1
+python-docx>=0.8.11
+
+# Data Processing & Analysis (lightweight alternatives)
+numpy>=1.24.0
+
+# NLP & Text Processing (lightweight)
+nltk>=3.8.1
+
+# Utilities
+python-dotenv>=1.0.0
+requests>=2.31.0
