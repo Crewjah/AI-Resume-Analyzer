@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Resume Analyzer</title>
+    <meta name="description" content="AI Resume Analyzer - Professional resume analysis with transparent scoring">
+    <meta name="theme-color" content="#2563EB">
+    <title>AI Resume Analyzer - Professional Resume Analysis Tool</title>
+    <link rel="stylesheet" href="assets/css/main.css">
     <style>
         * {
             margin: 0;
@@ -12,7 +15,7 @@
         }
         
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
             background: linear-gradient(135deg, #1E3A8A 0%, #2563EB 100%);
             min-height: 100vh;
             display: flex;
@@ -23,13 +26,12 @@
         }
         
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 100%;
             background: white;
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(30, 58, 138, 0.2);
             padding: 60px 40px;
-            text-align: center;
             animation: slideUp 0.6s ease-out;
         }
         
@@ -61,17 +63,22 @@
         
         .features {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
             gap: 24px;
             margin-bottom: 40px;
-            text-align: left;
         }
         
         .feature {
-            padding: 20px;
+            padding: 24px;
             background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
             border-radius: 12px;
             border-left: 4px solid #2563EB;
+            transition: all 0.3s ease;
+        }
+        
+        .feature:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(37, 99, 235, 0.15);
         }
         
         .feature h3 {
@@ -85,6 +92,7 @@
             font-size: 0.875rem;
             color: #6B7280;
             line-height: 1.5;
+            margin: 0;
         }
         
         .cta-buttons {
@@ -105,6 +113,10 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             text-decoration: none;
             display: inline-block;
+            min-height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .btn-primary {
@@ -126,6 +138,7 @@
         
         .btn-secondary:hover {
             background: linear-gradient(135deg, #F0F9FF 0%, #E0F2FE 100%);
+            transform: translateY(-2px);
         }
         
         .info-box {
@@ -139,15 +152,144 @@
             color: #166534;
         }
         
+        .info-box strong {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 700;
+        }
+        
         .footer {
             margin-top: 40px;
             padding-top: 40px;
             border-top: 2px solid #E5E7EB;
             font-size: 0.875rem;
             color: #9CA3AF;
+            text-align: center;
         }
         
         .footer a {
+            color: #2563EB;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        .badge {
+            display: inline-block;
+            background: rgba(37, 99, 235, 0.1);
+            color: #2563EB;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            margin: 4px;
+        }
+        
+        .security-badges {
+            margin-top: 20px;
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 24px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .features {
+                grid-template-columns: 1fr;
+            }
+            
+            .cta-buttons {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📄 AI Resume Analyzer</h1>
+        <p class="subtitle">Professional Resume Analysis with Transparent Scoring</p>
+        
+        <div class="features">
+            <div class="feature">
+                <h3>⚡ Instant Analysis</h3>
+                <p>Upload your resume and get comprehensive analysis in seconds with detailed scores across multiple dimensions.</p>
+            </div>
+            <div class="feature">
+                <h3>🎯 ATS Optimized</h3>
+                <p>Check your resume's compatibility with Applicant Tracking Systems to maximize your chances with recruiters.</p>
+            </div>
+            <div class="feature">
+                <h3>📊 Transparent Scoring</h3>
+                <p>No black-box algorithms. See exactly how your score is calculated and understand how to improve.</p>
+            </div>
+            <div class="feature">
+                <h3>💡 Smart Recommendations</h3>
+                <p>Get actionable recommendations to improve your resume score and stand out to employers.</p>
+            </div>
+            <div class="feature">
+                <h3>🔐 100% Private</h3>
+                <p>Your resume is never stored. All analysis happens securely in your session and is immediately discarded.</p>
+            </div>
+            <div class="feature">
+                <h3>🎓 Skills Detection</h3>
+                <p>Automatically detect and analyze technical and soft skills in your resume.</p>
+            </div>
+        </div>
+        
+        <div class="cta-buttons">
+            <button class="btn btn-primary" onclick="window.location.href='/api/analyze'">
+                🚀 Start Analysis
+            </button>
+            <button class="btn btn-secondary" onclick="window.location.href='https://github.com/Crewjah/AI-Resume-Analyzer'">
+                📖 View on GitHub
+            </button>
+        </div>
+        
+        <div class="info-box">
+            <strong>✨ How It Works</strong>
+            1. Upload your resume (PDF or TXT)<br>
+            2. Add optional job description for targeted analysis<br>
+            3. Get instant feedback with scores and recommendations<br>
+            4. Review detailed insights and actionable improvements
+        </div>
+        
+        <div class="security-badges">
+            <span class="badge">🔒 Secure</span>
+            <span class="badge">📱 Mobile-Friendly</span>
+            <span class="badge">⚙️ Free to Use</span>
+            <span class="badge">🌐 Open Source</span>
+        </div>
+        
+        <div class="footer">
+            <p>
+                Built with <span style="color: #EF4444;">❤</span> by 
+                <a href="https://github.com/Crewjah" target="_blank">Crewjah</a>
+            </p>
+            <p style="margin-top: 12px; font-size: 0.8rem;">
+                <a href="https://github.com/Crewjah/AI-Resume-Analyzer/blob/main/LICENSE" target="_blank">MIT License</a> | 
+                <a href="https://github.com/Crewjah/AI-Resume-Analyzer/blob/main/docs/CONTRIBUTING.md" target="_blank">Contribute</a> | 
+                <a href="https://github.com/Crewjah/AI-Resume-Analyzer/issues" target="_blank">Report Issues</a>
+            </p>
+            <p style="margin-top: 12px;">
+                Your resume is never stored. We don't track or share your data.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
             color: #2563EB;
             text-decoration: none;
             font-weight: 600;
