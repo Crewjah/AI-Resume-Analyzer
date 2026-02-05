@@ -468,7 +468,11 @@ st.markdown(theme_css + """
         styles={
             "container": {"padding": "0!important", "background-color": "#F8FAFC" if not st.session_state.dark_mode else "#1F2937"},
             "icon": {"color": "#2563EB" if not st.session_state.dark_mode else "#3B82F6", "font-size": "20px"},
-            "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px", "color": "#1F2937" if not st.session_state.dark_mode else "#F9FAFB
+            "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px", "color": "#1F2937" if not st.session_state.dark_mode else "#F9FAFB"},
+            "nav-link-selected": {"background-color": "#2563EB", "color": "white"}
+        }
+    )
+    .stWarning {
         background: linear-gradient(135deg, #FEF9E7 0%, #FEF08A 100%) !important;
         border: 1px solid #F59E0B !important;
         border-left: 4px solid #F59E0B !important;
@@ -507,9 +511,12 @@ st.markdown(theme_css + """
 
 # Sidebar
 with st.sidebar:
-    st.markdown("### AI Resume Analyzer")
+    st.markdown("### 📄 AI Resume Analyzer")
+    st.markdown(f"**Version:** 2.0.0")
     st.markdown("---")
     
+    
+    # Navigation menu
     selected_page = option_menu(
         menu_title=None,
         options=["Home", "Upload Resume", "Analysis", "Job Matching", "ATS Check", "About"],
@@ -517,10 +524,10 @@ with st.sidebar:
         menu_icon="cast",
         default_index=0,
         styles={
-            "container": {"padding": "0!important", "background-color": "#F8FAFC"},
-            "icon": {"color": "#2563EB", "font-size": "20px"},
-            "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px"},
-            "nav-link-selected": {"background-color": "#2563EB", "color": "white"},
+            "container": {"padding": "0!important", "background-color": "#F8FAFC" if not st.session_state.dark_mode else "#1F2937"},
+            "icon": {"color": "#2563EB" if not st.session_state.dark_mode else "#3B82F6", "font-size": "20px"},
+            "nav-link": {"font-size": "15px", "text-align": "left", "margin": "0px", "color": "#1F2937" if not st.session_state.dark_mode else "#F9FAFB"},
+            "nav-link-selected": {"background-color": "#2563EB", "color": "white"}
         }
     )
     
@@ -671,38 +678,64 @@ def show_upload_page():
         uploaded_file = st.file_uploader("Choose resume", type=["pdf", "docx", "txt"])
         
         if uploaded_file:
+            # Validate file size
+            max_size_mb = 5
+            if uploaded_file.size > max_size_mb * 1024 * 1024:
+                st.error(f"File too large. Maximum size is {max_size_mb}MB.")
+                return
+            
+            # Validate file type
+            allowed_types = ["application/pdf", "text/plain"]
+            if uploaded_file.type not in allowed_types and not uploaded_file.name.lower().endswith(('.pdf', '.txt', '.docx')):
+                st.error("Unsupported file type. Please upload PDF, DOCX, or TXT files only.")
+                return
+                
             st.success(f"File selected: {uploaded_file.name}")
             st.info(f"Size: {uploaded_file.size / 1024:.1f} KB")
 
             if st.button("Analyze Resume", use_container_width=True):
-                with st.spinner("Analyzing..."):
+                with st.spinner("Analyzing your resume..."):
                     try:
-                        if uploaded_file.type == "application/pdf":
+                        # Extract text based on file type
+                        if uploaded_file.type == "application/pdf" or uploaded_file.name.lower().endswith('.pdf'):
                             resume_text = extract_text_from_pdf(uploaded_file)
-                        elif "wordprocessingml" in uploaded_file.type:
+                        elif "wordprocessingml" in str(uploaded_file.type) or uploaded_file.name.lower().endswith('.docx'):
                             resume_text = extract_text_from_docx(uploaded_file)
                         else:
                             resume_text = uploaded_file.getvalue().decode("utf-8", errors="ignore")
 
-                        if resume_text.startswith("Error"):
-                            st.error(resume_text)
+                        # Check if text extraction was successful
+                        if not resume_text or len(resume_text.strip()) < 10:
+                            st.error("Could not extract meaningful text from the file. Please check if the file is valid and contains text.")
                             return
 
+                        # Perform analysis
                         analyzer = get_analyzer()
                         results = analyzer.analyze(resume_text)
 
+                        # Store results in session state
                         st.session_state.resume_data = {
                             'text': resume_text,
                             'filename': uploaded_file.name,
-                            'file_type': uploaded_file.type
+                            'file_type': uploaded_file.type,
+                            'file_size': uploaded_file.size
                         }
                         st.session_state.analysis_results = results
 
-                        st.success("Analysis complete!")
+                        st.success("✅ Analysis completed successfully!")
+                        st.balloons()
+                        
+                        # Auto-navigate to results
                         st.session_state.page = 'analysis'
                         st.rerun()
+                        
+                    except ValueError as e:
+                        st.error(f"File processing error: {str(e)}")
+                    except RuntimeError as e:
+                        st.error(f"Analysis error: {str(e)}")
                     except Exception as e:
-                        st.error(f"Error: {str(e)}")
+                        st.error(f"Unexpected error: {str(e)}")
+                        st.info("Please try again or contact support if the problem persists.")
     
     with col2:
         st.markdown("<h3 style='color: #1F2937;'>Formats Supported</h3>", unsafe_allow_html=True)
@@ -713,70 +746,176 @@ def show_upload_page():
 
 
 def show_analysis_page():
-    """Analysis page"""
-    st.markdown("<h2 style='color: #1F2937;'>📊 Analysis Results</h2>", unsafe_allow_html=True)
+    """Analysis page with comprehensive results display"""
+    st.markdown("<h2 style='color: #1F2937;'>📊 Resume Analysis Results</h2>", unsafe_allow_html=True)
     
     if not st.session_state.analysis_results:
-        st.warning("Upload a resume first")
-        if st.button("Upload Resume"):
-            st.session_state.page = 'upload'
-            st.rerun()
-        return
-    
-    results = st.session_state.analysis_results
-    scores = results.get('scores', {})
-
-    col1, col2, col3, col4 = st.columns(4)
-    with col1:
-        st.metric("Overall Score", f"{scores.get('overall_score', 0):.0f}%")
-    with col2:
-        st.metric("Content Quality", f"{scores.get('content_quality', 0):.0f}%")
-    with col3:
-        st.metric("Keyword Optimization", f"{scores.get('keyword_optimization', 0):.0f}%")
-    with col4:
-        st.metric("ATS Score", f"{scores.get('ats_compatibility', 0):.0f}%")
-    
-    st.markdown("---")
-    
-    tab1, tab2, tab3, tab4 = st.tabs(["Content", "Skills", "Recommendations", "Details"])
-    
-    with tab1:
-        st.markdown("<h3 style='color: #1F2937;'>Content Analysis</h3>", unsafe_allow_html=True)
-        st.markdown(f"<div style='color: #6B7280;'><strong>Word Count:</strong> {results.get('word_count', 0)}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='color: #6B7280;'><strong>Action Verbs:</strong> {results.get('action_verbs_count', 0)}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='color: #6B7280;'><strong>Sections Found:</strong> {len(results.get('sections_detected', []))}</div>", unsafe_allow_html=True)
-    
-    with tab2:
-        st.markdown("<h3 style='color: #1F2937;'>Detected Skills</h3>", unsafe_allow_html=True)
-        skills = {
-            'technical': results.get('technical_skills', []),
-            'soft': results.get('soft_skills', [])
-        }
+        st.warning("📤 No analysis results found. Please upload and analyze a resume first.")
         col1, col2 = st.columns(2)
         with col1:
-            st.markdown("<h4 style='color: #1F2937;'>Technical</h4>", unsafe_allow_html=True)
-            tech_list = "".join([f"<li>{skill}</li>" for skill in skills.get('technical', [])[:10]])
-            st.markdown(f"<div style='color: #6B7280;'><ul>{tech_list}</ul></div>", unsafe_allow_html=True)
+            if st.button("Upload Resume", use_container_width=True):
+                st.session_state.page = 'upload'
+                st.rerun()
         with col2:
-            st.markdown("<h4 style='color: #1F2937;'>Soft</h4>", unsafe_allow_html=True)
-            soft_list = "".join([f"<li>{skill}</li>" for skill in skills.get('soft', [])[:10]])
-            st.markdown(f"<div style='color: #6B7280;'><ul>{soft_list}</ul></div>", unsafe_allow_html=True)
+            if st.button("Back to Home", use_container_width=True):
+                st.session_state.page = 'home'
+                st.rerun()
+        return
     
-    with tab3:
-        st.markdown("<h3 style='color: #1F2937;'>Recommendations</h3>", unsafe_allow_html=True)
-        recs_html = "".join([f"<li>{rec}</li>" for rec in results.get('recommendations', [])[:5]])
-        st.markdown(f"<div style='color: #6B7280;'><ol>{recs_html}</ol></div>", unsafe_allow_html=True)
-    
-    with tab4:
-        st.markdown("<h3 style='color: #1F2937;'>Technical Details</h3>", unsafe_allow_html=True)
-        st.json({
-            "overall_score": f"{scores.get('overall_score', 0):.1f}%",
-            "content_quality": f"{scores.get('content_quality', 0):.1f}%",
-            "keyword_optimization": f"{scores.get('keyword_optimization', 0):.1f}%",
-            "ats_compatibility": f"{scores.get('ats_compatibility', 0):.1f}%",
-            "structure_score": f"{scores.get('structure_score', 0):.1f}%",
-            "completeness": f"{scores.get('completeness', 0):.1f}%"
-        })
+    try:
+        results = st.session_state.analysis_results
+        scores = results.get('scores', {})
+        resume_data = st.session_state.resume_data or {}
+
+        # Display overall metrics
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            score = scores.get('overall_score', 0)
+            color = "green" if score >= 70 else "orange" if score >= 50 else "red"
+            st.metric("Overall Score", f"{score:.0f}%", help="Overall resume effectiveness")
+        with col2:
+            st.metric("Content Quality", f"{scores.get('content_quality', 0):.0f}%", help="Writing quality and impact")
+        with col3:
+            st.metric("Keyword Match", f"{scores.get('keyword_optimization', 0):.0f}%", help="Relevant skills and keywords")
+        with col4:
+            st.metric("ATS Score", f"{scores.get('ats_compatibility', 0):.0f}%", help="Applicant Tracking System compatibility")
+        
+        # File information
+        if resume_data:
+            with st.expander("📁 File Information", expanded=False):
+                col1, col2, col3 = st.columns(3)
+                with col1:
+                    st.write(f"**Filename:** {resume_data.get('filename', 'Unknown')}")
+                with col2:
+                    st.write(f"**Size:** {resume_data.get('file_size', 0) / 1024:.1f} KB")
+                with col3:
+                    st.write(f"**Word Count:** {results.get('word_count', 0)}")
+
+        st.markdown("---")
+        
+        # Detailed analysis tabs
+        tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Scores", "🔧 Skills", "💡 Recommendations", "📋 Details", "📈 Breakdown"])
+        
+        with tab1:
+            st.markdown("<h3 style='color: #1F2937;'>Score Breakdown</h3>", unsafe_allow_html=True)
+            
+            # Score visualization
+            score_data = {
+                'Content Quality': scores.get('content_quality', 0),
+                'Keywords': scores.get('keyword_optimization', 0),
+                'ATS Compatibility': scores.get('ats_compatibility', 0),
+                'Structure': scores.get('structure_score', 0),
+                'Completeness': scores.get('completeness', 0)
+            }
+            
+            for category, score in score_data.items():
+                color = "🟢" if score >= 70 else "🟡" if score >= 50 else "🔴"
+                progress_bar = "█" * int(score / 10) + "░" * (10 - int(score / 10))
+                st.markdown(f"**{category}** {color} `{progress_bar}` {score:.0f}%")
+        
+        with tab2:
+            st.markdown("<h3 style='color: #1F2937;'>Detected Skills</h3>", unsafe_allow_html=True)
+            
+            col1, col2 = st.columns(2)
+            with col1:
+                st.markdown("**🔧 Technical Skills**")
+                tech_skills = results.get('technical_skills', [])
+                if tech_skills:
+                    for skill in tech_skills[:15]:  # Limit display
+                        st.markdown(f"• {skill}")
+                    if len(tech_skills) > 15:
+                        st.markdown(f"*...and {len(tech_skills) - 15} more*")
+                else:
+                    st.markdown("*No technical skills detected*")
+            
+            with col2:
+                st.markdown("**🤝 Soft Skills**")
+                soft_skills = results.get('soft_skills', [])
+                if soft_skills:
+                    for skill in soft_skills[:10]:  # Limit display
+                        st.markdown(f"• {skill}")
+                else:
+                    st.markdown("*No soft skills detected*")
+                    
+            # Action verbs
+            action_verbs = results.get('action_verbs', [])
+            if action_verbs:
+                st.markdown("**⚡ Action Verbs Found**")
+                st.markdown(f"Count: {len(action_verbs)} | Examples: {', '.join(action_verbs[:8])}")
+        
+        with tab3:
+            st.markdown("<h3 style='color: #1F2937;'>Improvement Recommendations</h3>", unsafe_allow_html=True)
+            
+            recommendations = results.get('recommendations', [])
+            if recommendations:
+                for i, rec in enumerate(recommendations, 1):
+                    icon = "🎯" if i <= 3 else "💡"
+                    priority = "High Priority" if i <= 3 else "Standard"
+                    st.markdown(f"{icon} **{priority}:** {rec}")
+            else:
+                st.success("🎉 Great job! No major improvements needed.")
+        
+        with tab4:
+            st.markdown("<h3 style='color: #1F2937;'>Detailed Analysis</h3>", unsafe_allow_html=True)
+            
+            # Sections detected
+            sections = results.get('sections_detected', [])
+            st.markdown(f"**📑 Resume Sections Found:** {', '.join(sections) if sections else 'None detected'}")
+            
+            # Contact information
+            contact_info = results.get('contact_info', {})
+            st.markdown("**📧 Contact Information:**")
+            st.markdown(f"• Email: {'✅' if contact_info.get('has_email') else '❌'}")
+            st.markdown(f"• Phone: {'✅' if contact_info.get('has_phone') else '❌'}")
+            st.markdown(f"• LinkedIn: {'✅' if contact_info.get('has_linkedin') else '❌'}")
+            
+            # Word frequency
+            word_freq = results.get('word_frequency', {})
+            if word_freq:
+                st.markdown("**📈 Top Keywords:**")
+                for word, count in list(word_freq.items())[:8]:
+                    st.markdown(f"• {word}: {count} times")
+        
+        with tab5:
+            st.markdown("<h3 style='color: #1F2937;'>Technical Breakdown</h3>", unsafe_allow_html=True)
+            
+            # Show raw scores
+            st.json({
+                "Overall Score": f"{scores.get('overall_score', 0):.1f}%",
+                "Content Quality": f"{scores.get('content_quality', 0):.1f}%",
+                "Keyword Optimization": f"{scores.get('keyword_optimization', 0):.1f}%",
+                "ATS Compatibility": f"{scores.get('ats_compatibility', 0):.1f}%",
+                "Structure Score": f"{scores.get('structure_score', 0):.1f}%",
+                "Completeness": f"{scores.get('completeness', 0):.1f}%",
+                "Total Skills Found": len(results.get('technical_skills', [])) + len(results.get('soft_skills', [])),
+                "Action Verbs Count": results.get('action_verbs_count', 0)
+            })
+        
+        # Action buttons
+        st.markdown("---")
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("📤 Analyze Another Resume", use_container_width=True):
+                # Clear session state
+                st.session_state.analysis_results = None
+                st.session_state.resume_data = None
+                st.session_state.page = 'upload'
+                st.rerun()
+        with col2:
+            if st.button("🎯 Job Matching", use_container_width=True):
+                st.session_state.page = 'job_matching'
+                st.rerun()
+        with col3:
+            if st.button("✅ ATS Check", use_container_width=True):
+                st.session_state.page = 'ats_check'
+                st.rerun()
+                
+    except Exception as e:
+        st.error(f"Error displaying analysis results: {str(e)}")
+        st.info("Please try analyzing your resume again.")
+        if st.button("Back to Upload"):
+            st.session_state.page = 'upload'
+            st.rerun()
 
 
 def show_job_matching_page():

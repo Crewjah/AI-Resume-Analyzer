@@ -2,6 +2,9 @@
 import sys
 import os
 import logging
+import io
+import threading
+from typing import Optional
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
@@ -38,46 +41,79 @@ assets_path = os.path.join(os.path.dirname(__file__), "..", "assets")
 if os.path.exists(assets_path):
     app.mount("/assets", StaticFiles(directory=assets_path), name="assets")
 
-# Lazy load analyzer with graceful fallback
+import threading
+
+# Thread-safe analyzer initialization
 _analyzer = None
 _analyzer_error = None
+_analyzer_lock = threading.Lock()
 
 def get_analyzer():
-    """Lazy load ResumeAnalyzer with error handling"""
+    """Thread-safe lazy load ResumeAnalyzer with error handling"""
     global _analyzer, _analyzer_error
+    
     if _analyzer is None and _analyzer_error is None:
-        try:
-            # Import clean analyzer
-            from backend.resume_analyzer import ResumeAnalyzer
-            _analyzer = ResumeAnalyzer()
-            logger.info("ResumeAnalyzer initialized successfully")
-        except ImportError as e:
-            _analyzer_error = f"Analyzer dependencies not available: {e}"
-            logger.warning(_analyzer_error)
-        except Exception as e:
-            _analyzer_error = f"Failed to initialize analyzer: {e}"
-            logger.error(_analyzer_error, exc_info=True)
+        with _analyzer_lock:
+            # Double-check locking pattern
+            if _analyzer is None and _analyzer_error is None:
+                try:
+                    from backend.resume_analyzer import ResumeAnalyzer
+                    _analyzer = ResumeAnalyzer()
+                    logger.info("ResumeAnalyzer initialized successfully")
+                except ImportError as e:
+                    _analyzer_error = f"Analyzer dependencies not available: {e}"
+                    logger.warning(_analyzer_error)
+                except Exception as e:
+                    _analyzer_error = f"Failed to initialize analyzer: {e}"
+                    logger.error(_analyzer_error, exc_info=True)
     
     if _analyzer_error:
         raise RuntimeError(_analyzer_error)
     return _analyzer
 
 def extract_text_from_upload(upload: UploadFile) -> str:
-    """Extract text from file"""
-    content = upload.file.read()
-    upload.file.seek(0)
-    
-    if (upload.content_type and "pdf" in upload.content_type) or (upload.filename and upload.filename.lower().endswith(".pdf")):
-        reader = PdfReader(io.BytesIO(content))
-        pages = []
-        for page in reader.pages:
+    """Extract text from file with proper error handling and validation"""
+    try:
+        # Validate file size (5MB limit)
+        max_size = 5 * 1024 * 1024  # 5MB
+        content = upload.file.read()
+        if len(content) > max_size:
+            raise ValueError(f"File too large. Maximum size is {max_size // (1024*1024)}MB")
+        
+        upload.file.seek(0)
+        
+        # Validate file type and extract text
+        if (upload.content_type and "pdf" in upload.content_type) or \
+           (upload.filename and upload.filename.lower().endswith(".pdf")):
             try:
-                pages.append(page.extract_text() or "")
-            except:
-                pages.append("")
-        return "\n".join(pages)
+                reader = PdfReader(io.BytesIO(content))
+                pages = []
+                for page in reader.pages:
+                    try:
+                        text = page.extract_text() or ""
+                        pages.append(text)
+                    except Exception as e:
+                        logger.warning(f"Failed to extract text from page: {e}")
+                        pages.append("")
+                text = "\n".join(pages).strip()
+                if not text:
+                    raise ValueError("No text could be extracted from PDF")
+                return text
+            except Exception as e:
+                raise ValueError(f"Failed to process PDF: {str(e)}")
+        
+        elif upload.filename and upload.filename.lower().endswith(".txt"):
+            try:
+                return content.decode("utf-8", errors="ignore").strip()
+            except Exception as e:
+                raise ValueError(f"Failed to process text file: {str(e)}")
+        
+        else:
+            raise ValueError("Unsupported file type. Please upload PDF or TXT files only")
     
-    return content.decode("utf-8", errors="ignore")
+    except Exception as e:
+        logger.error(f"File processing error: {e}")
+        raise
 
 @app.get("/")
 def root():
@@ -254,21 +290,59 @@ def analyze_page():
 
 @app.post("/api/analyze")
 async def analyze_resume(
-    file: UploadFile = File(...),
-    job_description: Optional[str] = Form(None),
+    file: UploadFile = File(..., description="Resume file (PDF or TXT, max 5MB)"),
+    job_description: Optional[str] = Form(None, description="Optional job description for matching"),
 ):
+    """Analyze resume with comprehensive error handling"""
     try:
-        resume_text = extract_text_from_upload(file)
-        if not resume_text.strip():
-            return JSONResponse(status_code=400, content={"error": "Could not read file"})
+        # Validate file
+        if not file.filename:
+            return JSONResponse(
+                status_code=400, 
+                content={"ok": False, "error": "No file provided"}
+            )
+        
+        # Extract text with validation
+        try:
+            resume_text = extract_text_from_upload(file)
+        except ValueError as e:
+            return JSONResponse(
+                status_code=400,
+                content={"ok": False, "error": str(e)}
+            )
+        
+        if not resume_text or len(resume_text.strip()) < 10:
+            return JSONResponse(
+                status_code=400,
+                content={"ok": False, "error": "Resume appears to be empty or too short"}
+            )
 
-        analyzer = get_analyzer()
-        result = analyzer.analyze(resume_text)
-
-        if job_description:
-            result["job_description_length"] = len(job_description.strip())
+        # Get analyzer and analyze
+        try:
+            analyzer = get_analyzer()
+            result = analyzer.analyze(resume_text)
+        except RuntimeError as e:
+            return JSONResponse(
+                status_code=503,
+                content={"ok": False, "error": f"Service unavailable: {str(e)}"}
+            )
+        
+        # Add job description matching if provided
+        if job_description and job_description.strip():
+            try:
+                from backend.keyword_matcher import calculate_match_score
+                match_score = calculate_match_score(resume_text, job_description.strip())
+                result["job_match_score"] = match_score
+                result["job_description_provided"] = True
+            except Exception as e:
+                logger.warning(f"Job matching failed: {e}")
+                result["job_description_provided"] = False
 
         return {"ok": True, "data": result}
+        
     except Exception as e:
-        logger.error(f"Analysis failed: {e}", exc_info=True)
-        return JSONResponse(status_code=500, content={"ok": False, "error": str(e)})
+        logger.error(f"Unexpected error in analyze endpoint: {e}", exc_info=True)
+        return JSONResponse(
+            status_code=500, 
+            content={"ok": False, "error": "Internal server error"}
+        )

@@ -1,6 +1,13 @@
 import re
+import logging
 from collections import Counter
 from typing import Dict, List, Any
+try:
+    from .config import skills_config, scoring_config
+except ImportError:
+    from config import skills_config, scoring_config
+
+logger = logging.getLogger(__name__)
 
 class ResumeAnalyzer:
     """
@@ -9,28 +16,10 @@ class ResumeAnalyzer:
     """
     
     def __init__(self):
-        """Initialize the analyzer with comprehensive skill databases."""
-        self.technical_skills = {
-            'python', 'java', 'javascript', 'typescript', 'c++', 'c#', 'ruby', 'php', 
-            'swift', 'kotlin', 'go', 'rust', 'scala', 'r', 'sql', 'html', 'css',
-            'react', 'angular', 'vue', 'node.js', 'django', 'flask', 'fastapi', 
-            'spring', 'laravel', 'mysql', 'postgresql', 'mongodb', 'redis', 
-            'aws', 'azure', 'gcp', 'docker', 'kubernetes', 'jenkins', 'git',
-            'machine learning', 'data analysis', 'tensorflow', 'pytorch'
-        }
-        
-        self.soft_skills = {
-            'leadership', 'communication', 'teamwork', 'problem solving',
-            'critical thinking', 'adaptability', 'time management', 'creativity',
-            'attention to detail', 'project management', 'collaboration'
-        }
-        
-        self.action_verbs = {
-            'achieved', 'developed', 'designed', 'implemented', 'created', 'built',
-            'led', 'managed', 'improved', 'optimized', 'increased', 'reduced',
-            'analyzed', 'collaborated', 'presented', 'delivered', 'established',
-            'founded', 'launched', 'supervised', 'coordinated', 'trained'
-        }
+        """Initialize the analyzer with comprehensive skill databases from config."""
+        self.technical_skills = skills_config.TECHNICAL_SKILLS
+        self.soft_skills = skills_config.SOFT_SKILLS
+        self.action_verbs = skills_config.ACTION_VERBS
     
     def analyze(self, resume_text: str) -> Dict[str, Any]:
         """
@@ -41,45 +30,55 @@ class ResumeAnalyzer:
             
         Returns:
             Dictionary containing genuine analysis results
+            
+        Raises:
+            ValueError: If resume_text is invalid
+            RuntimeError: If analysis fails
         """
+        if not isinstance(resume_text, str):
+            raise ValueError("resume_text must be a string")
+            
         if not resume_text or not resume_text.strip():
             return self._get_empty_result()
         
-        clean_text = self._clean_text(resume_text)
-        
-        # Extract genuine features
-        technical_skills = self._extract_technical_skills(clean_text)
-        soft_skills = self._extract_soft_skills(clean_text)
-        action_verbs = self._extract_action_verbs(clean_text)
-        word_freq = self._get_word_frequency(clean_text)
-        sections = self._detect_sections(clean_text)
-        contact_info = self._extract_contact_info(resume_text)
-        
-        # Calculate honest scores
-        scores = self._calculate_scores(clean_text, resume_text, sections, contact_info)
-        
-        # Generate genuine recommendations
-        recommendations = self._generate_recommendations(
-            clean_text, resume_text, scores, technical_skills, 
-            soft_skills, action_verbs, sections, contact_info
-        )
-        
-        return {
-            'scores': scores,
-            'skills': {
-                'technical': technical_skills,
-                'soft': soft_skills
-            },
-            'technical_skills': technical_skills,
-            'soft_skills': soft_skills,
-            'action_verbs': action_verbs,
-            'action_verbs_count': len(action_verbs),
-            'word_count': len(clean_text.split()),
-            'word_frequency': dict(list(word_freq.items())[:10]),
-            'sections_detected': sections,
-            'contact_info': contact_info,
-            'recommendations': recommendations
-        }
+        try:
+            clean_text = self._clean_text(resume_text)
+            
+            # Extract genuine features
+            technical_skills = self._extract_technical_skills(clean_text)
+            soft_skills = self._extract_soft_skills(clean_text)
+            action_verbs = self._extract_action_verbs(clean_text)
+            word_freq = self._get_word_frequency(clean_text)
+            sections = self._detect_sections(clean_text)
+            contact_info = self._extract_contact_info(resume_text)
+            
+            # Calculate honest scores
+            scores = self._calculate_scores(clean_text, resume_text, sections, contact_info)
+            
+            # Generate genuine recommendations
+            recommendations = self._generate_recommendations(
+                clean_text, resume_text, scores, technical_skills, 
+                soft_skills, action_verbs, sections, contact_info
+            )
+            
+            return {
+                'scores': scores,
+                'skills': {
+                    'technical': technical_skills,
+                    'soft': soft_skills
+                },
+                'technical_skills': technical_skills,
+                'soft_skills': soft_skills,
+                'action_verbs': action_verbs,
+                'action_verbs_count': len(action_verbs),
+                'word_count': len(clean_text.split()),
+                'word_frequency': dict(list(word_freq.items())[:10]),
+                'sections_detected': sections,
+                'contact_info': contact_info,
+                'recommendations': recommendations
+            }
+        except Exception as e:
+            raise RuntimeError(f"Analysis failed: {str(e)}") from e
     
     def _get_empty_result(self) -> Dict[str, Any]:
         """Return result for empty input."""
@@ -181,14 +180,15 @@ class ResumeAnalyzer:
     
     def _calculate_scores(self, clean_text: str, original_text: str, 
                          sections: List[str], contact_info: Dict[str, bool]) -> Dict[str, int]:
-        """Calculate honest, accurate scores."""
+        """Calculate honest, accurate scores using configuration constants."""
         word_count = len(clean_text.split())
         
-        # Content Quality Score (0-100)
+        # Content Quality Score (0-100) using config
         content_score = 0
-        if 300 <= word_count <= 700:
+        if scoring_config.OPTIMAL_WORD_COUNT_MIN <= word_count <= scoring_config.OPTIMAL_WORD_COUNT_MAX:
             content_score += 40
-        elif 200 <= word_count < 300 or 700 < word_count <= 900:
+        elif (200 <= word_count < scoring_config.OPTIMAL_WORD_COUNT_MIN or 
+              scoring_config.OPTIMAL_WORD_COUNT_MAX < word_count <= 900):
             content_score += 30
         elif 100 <= word_count < 200:
             content_score += 20
@@ -196,46 +196,45 @@ class ResumeAnalyzer:
             content_score += 10
         
         action_verbs = self._extract_action_verbs(clean_text)
-        content_score += min(30, len(action_verbs) * 2)
+        content_score += min(
+            scoring_config.MAX_ACTION_VERB_BONUS, 
+            len(action_verbs) * scoring_config.ACTION_VERB_BONUS_POINTS
+        )
         
         quantified = len(re.findall(r'\d+%|\d+\+|increased|improved|reduced', clean_text))
-        content_score += min(30, quantified * 5)
-        
-        # Keyword Optimization Score (0-100)
+        content_score += min(
+            scoring_config.MAX_QUANTIFIED_BONUS, 
+            quantified * scoring_config.QUANTIFIED_ACHIEVEMENT_BONUS
+        )
+        # Keyword Optimization Score (0-100) using config
         tech_skills = self._extract_technical_skills(clean_text)
         soft_skills = self._extract_soft_skills(clean_text)
         total_skills = len(tech_skills) + len(soft_skills)
         
-        if total_skills >= 15:
-            keyword_score = 100
-        elif total_skills >= 10:
-            keyword_score = 85
-        elif total_skills >= 7:
-            keyword_score = 70
-        elif total_skills >= 5:
-            keyword_score = 55
-        elif total_skills >= 3:
-            keyword_score = 40
+        keyword_score = 20  # Base score
+        for threshold, score in scoring_config.SKILLS_SCORE_THRESHOLDS.items():
+            if total_skills >= threshold:
+                keyword_score = score
+                break
         else:
             keyword_score = max(20, total_skills * 10)
         
-        # ATS Compatibility Score (0-100)
+        # ATS Compatibility Score (0-100) using config
         ats_score = 100
         
-        essential_sections = ['Experience', 'Education', 'Skills']
-        missing_sections = [s for s in essential_sections if s not in sections]
-        ats_score -= len(missing_sections) * 25
+        missing_sections = [s for s in scoring_config.ESSENTIAL_SECTIONS if s not in sections]
+        ats_score -= len(missing_sections) * scoring_config.MISSING_SECTION_PENALTY
         
         if not contact_info.get('has_email'):
-            ats_score -= 15
+            ats_score -= scoring_config.MISSING_EMAIL_PENALTY
         if not contact_info.get('has_phone'):
-            ats_score -= 10
+            ats_score -= scoring_config.MISSING_PHONE_PENALTY
         
         if not re.search(r'\b(19|20)\d{2}\b', clean_text):
-            ats_score -= 10
+            ats_score -= scoring_config.MISSING_DATES_PENALTY
         
         # Structure Score (0-100)
-        structure_score = 0
+        structure_score = 30  # Base score
         if len(sections) >= 5:
             structure_score = 100
         elif len(sections) >= 4:
@@ -263,13 +262,14 @@ class ResumeAnalyzer:
                 else:
                     completeness_score -= 12
         
-        # Calculate overall score
+        # Calculate overall score using config weights
+        weights = scoring_config.SCORE_WEIGHTS
         overall_score = int(
-            content_score * 0.25 +
-            keyword_score * 0.20 +
-            ats_score * 0.25 +
-            structure_score * 0.15 +
-            completeness_score * 0.15
+            content_score * weights['content_quality'] +
+            keyword_score * weights['keyword_optimization'] +
+            ats_score * weights['ats_compatibility'] +
+            structure_score * weights['structure_score'] +
+            completeness_score * weights['completeness']
         )
         
         return {
@@ -285,7 +285,22 @@ class ResumeAnalyzer:
                                  scores: Dict[str, int], technical_skills: List[str],
                                  soft_skills: List[str], action_verbs: List[str],
                                  sections: List[str], contact_info: Dict[str, bool]) -> List[str]:
-        """Generate honest, actionable recommendations."""
+        """
+        Generate honest, actionable recommendations based on analysis results.
+        
+        Args:
+            clean_text: Cleaned resume text
+            original_text: Original resume text
+            scores: Dictionary of calculated scores
+            technical_skills: List of detected technical skills
+            soft_skills: List of detected soft skills
+            action_verbs: List of detected action verbs
+            sections: List of detected resume sections
+            contact_info: Dictionary of contact information flags
+            
+        Returns:
+            List of recommendation strings
+        """
         recommendations = []
         word_count = len(clean_text.split())
         

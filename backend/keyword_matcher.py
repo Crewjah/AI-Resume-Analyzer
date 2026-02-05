@@ -1,10 +1,13 @@
 import re
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Union
 from collections import Counter
+import logging
+
+logger = logging.getLogger(__name__)
 
 def calculate_match_score(resume_text: str, job_description: str) -> int:
     """
-    Calculate the match score between a resume and job description using simple keyword matching.
+    Calculate the match score between a resume and job description using keyword matching.
     
     Args:
         resume_text: Text extracted from resume
@@ -12,26 +15,40 @@ def calculate_match_score(resume_text: str, job_description: str) -> int:
         
     Returns:
         Match score as integer (0-100)
+        
+    Raises:
+        ValueError: If inputs are invalid
     """
-    if not resume_text or not job_description:
+    if not isinstance(resume_text, str) or not isinstance(job_description, str):
+        raise ValueError("Both resume_text and job_description must be strings")
+        
+    if not resume_text.strip() or not job_description.strip():
         return 0
     
-    # Clean texts
-    resume_clean = _clean_text(resume_text)
-    job_clean = _clean_text(job_description)
+    try:
+        # Clean texts
+        resume_clean = _clean_text(resume_text)
+        job_clean = _clean_text(job_description)
+        
+        # Calculate keyword overlap score
+        base_score = _keyword_overlap_score(resume_clean, job_clean)
+        
+        # Bonus for matching important keywords
+        important_keywords = _extract_important_keywords(job_clean)
+        matched_keywords = sum(1 for keyword in important_keywords if keyword in resume_clean)
+        
+        if important_keywords:
+            keyword_bonus = min(20, (matched_keywords / len(important_keywords)) * 20)
+        else:
+            keyword_bonus = 0
+        
+        final_score = min(100, base_score + int(keyword_bonus))
+        
+        return max(0, final_score)
     
-    # Calculate keyword overlap score
-    base_score = _keyword_overlap_score(resume_clean, job_clean)
-    
-    # Bonus for matching important keywords
-    important_keywords = _extract_important_keywords(job_clean)
-    matched_keywords = sum(1 for keyword in important_keywords if keyword in resume_clean)
-    
-    keyword_bonus = min(20, (matched_keywords / max(len(important_keywords), 1)) * 20)
-    
-    final_score = min(100, base_score + int(keyword_bonus))
-    
-    return final_score
+    except Exception as e:
+        logger.error(f"Error calculating match score: {e}")
+        return 0
 
 
 def _clean_text(text: str) -> str:
@@ -133,16 +150,30 @@ def extract_missing_keywords(resume_text: str, job_description: str) -> List[str
         job_description: Job description text
         
     Returns:
-        List of missing keywords
+        List of missing keywords (top 10)
+        
+    Raises:
+        ValueError: If inputs are invalid
     """
-    resume_clean = _clean_text(resume_text)
-    job_clean = _clean_text(job_description)
+    if not isinstance(resume_text, str) or not isinstance(job_description, str):
+        raise ValueError("Both inputs must be strings")
     
-    job_keywords = _extract_important_keywords(job_clean)
+    if not resume_text.strip() or not job_description.strip():
+        return []
     
-    missing = [keyword for keyword in job_keywords if keyword not in resume_clean]
+    try:
+        resume_clean = _clean_text(resume_text)
+        job_clean = _clean_text(job_description)
+        
+        job_keywords = _extract_important_keywords(job_clean)
+        
+        missing = [keyword for keyword in job_keywords if keyword not in resume_clean]
+        
+        return missing[:10]  # Return top 10 missing keywords
     
-    return missing[:10]  # Return top 10 missing keywords
+    except Exception as e:
+        logger.error(f"Error extracting missing keywords: {e}")
+        return []
 
 
 def get_keyword_suggestions(job_description: str) -> Dict[str, List[str]]:
@@ -154,43 +185,57 @@ def get_keyword_suggestions(job_description: str) -> Dict[str, List[str]]:
         
     Returns:
         Dictionary with categorized keyword suggestions
+        
+    Raises:
+        ValueError: If job_description is invalid
     """
-    job_clean = _clean_text(job_description)
+    if not isinstance(job_description, str):
+        raise ValueError("job_description must be a string")
     
-    suggestions = {
-        'technical_skills': [],
-        'soft_skills': [],
-        'action_verbs': []
-    }
+    if not job_description.strip():
+        return {'technical_skills': [], 'soft_skills': [], 'action_verbs': []}
     
-    # Technical skills to check
-    technical = [
-        'python', 'java', 'javascript', 'react', 'angular', 'docker',
-        'kubernetes', 'aws', 'machine learning', 'sql', 'git'
-    ]
+    try:
+        job_clean = _clean_text(job_description)
+        
+        suggestions = {
+            'technical_skills': [],
+            'soft_skills': [],
+            'action_verbs': []
+        }
+        
+        # Technical skills to check
+        technical = [
+            'python', 'java', 'javascript', 'react', 'angular', 'docker',
+            'kubernetes', 'aws', 'machine learning', 'sql', 'git'
+        ]
+        
+        # Soft skills to check
+        soft = [
+            'leadership', 'communication', 'teamwork', 'analytical',
+            'problem solving', 'project management'
+        ]
+        
+        # Action verbs
+        actions = [
+            'developed', 'managed', 'led', 'designed', 'implemented',
+            'created', 'improved', 'analyzed', 'coordinated'
+        ]
+        
+        for skill in technical:
+            if skill in job_clean:
+                suggestions['technical_skills'].append(skill.title())
+        
+        for skill in soft:
+            if skill in job_clean:
+                suggestions['soft_skills'].append(skill.title())
+        
+        for verb in actions:
+            if verb in job_clean:
+                suggestions['action_verbs'].append(verb.title())
+        
+        return suggestions
     
-    # Soft skills to check
-    soft = [
-        'leadership', 'communication', 'teamwork', 'analytical',
-        'problem solving', 'project management'
-    ]
-    
-    # Action verbs
-    actions = [
-        'developed', 'managed', 'led', 'designed', 'implemented',
-        'created', 'improved', 'analyzed', 'coordinated'
-    ]
-    
-    for skill in technical:
-        if skill in job_clean:
-            suggestions['technical_skills'].append(skill)
-    
-    for skill in soft:
-        if skill in job_clean:
-            suggestions['soft_skills'].append(skill)
-    
-    for verb in actions:
-        if verb in job_clean:
-            suggestions['action_verbs'].append(verb)
-    
-    return suggestions
+    except Exception as e:
+        logger.error(f"Error getting keyword suggestions: {e}")
+        return {'technical_skills': [], 'soft_skills': [], 'action_verbs': []}
