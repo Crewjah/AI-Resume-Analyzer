@@ -746,18 +746,30 @@ def show_upload_page():
 
 
 def show_analysis_page():
-    """Analysis page with comprehensive results display"""
-    st.markdown("<h2 style='color: #1F2937;'>📊 Resume Analysis Results</h2>", unsafe_allow_html=True)
-    
+    """Enhanced analysis results page with professional visualization"""
     if not st.session_state.analysis_results:
-        st.warning("📤 No analysis results found. Please upload and analyze a resume first.")
+        st.markdown("""
+        <div style="
+            background: linear-gradient(135deg, #FEE2E2 0%, #FECACA 100%);
+            padding: 2rem;
+            border-radius: 12px;
+            text-align: center;
+            border: 2px solid #EF4444;
+            margin: 2rem 0;
+        ">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📤</div>
+            <h3 style="color: #DC2626; margin: 0;">No Analysis Found</h3>
+            <p style="color: #991B1B; margin: 0.5rem 0 0 0;">Please upload and analyze a resume first.</p>
+        </div>
+        """, unsafe_allow_html=True)
+        
         col1, col2 = st.columns(2)
         with col1:
-            if st.button("Upload Resume", use_container_width=True):
+            if st.button("📤 Upload Resume", use_container_width=True):
                 st.session_state.page = 'upload'
                 st.rerun()
         with col2:
-            if st.button("Back to Home", use_container_width=True):
+            if st.button("🏠 Back to Home", use_container_width=True):
                 st.session_state.page = 'home'
                 st.rerun()
         return
@@ -765,39 +777,171 @@ def show_analysis_page():
     try:
         results = st.session_state.analysis_results
         scores = results.get('scores', {})
+        overall_score = scores.get('overall_score', 0)
         resume_data = st.session_state.resume_data or {}
-
-        # Display overall metrics
-        col1, col2, col3, col4 = st.columns(4)
-        with col1:
-            score = scores.get('overall_score', 0)
-            color = "green" if score >= 70 else "orange" if score >= 50 else "red"
-            st.metric("Overall Score", f"{score:.0f}%", help="Overall resume effectiveness")
-        with col2:
-            st.metric("Content Quality", f"{scores.get('content_quality', 0):.0f}%", help="Writing quality and impact")
-        with col3:
-            st.metric("Keyword Match", f"{scores.get('keyword_optimization', 0):.0f}%", help="Relevant skills and keywords")
-        with col4:
-            st.metric("ATS Score", f"{scores.get('ats_compatibility', 0):.0f}%", help="Applicant Tracking System compatibility")
         
-        # File information
-        if resume_data:
-            with st.expander("📁 File Information", expanded=False):
-                col1, col2, col3 = st.columns(3)
-                with col1:
-                    st.write(f"**Filename:** {resume_data.get('filename', 'Unknown')}")
-                with col2:
-                    st.write(f"**Size:** {resume_data.get('file_size', 0) / 1024:.1f} KB")
-                with col3:
-                    st.write(f"**Word Count:** {results.get('word_count', 0)}")
-
-        st.markdown("---")
+        # Hero section with overall score visualization
+        score_color = "#10B981" if overall_score >= 80 else "#F59E0B" if overall_score >= 60 else "#EF4444"
+        score_status = "Excellent" if overall_score >= 80 else "Good" if overall_score >= 60 else "Needs Improvement"
         
-        # Detailed analysis tabs
-        tab1, tab2, tab3, tab4, tab5 = st.tabs(["📊 Scores", "🔧 Skills", "💡 Recommendations", "📋 Details", "📈 Breakdown"])
+        st.markdown(f"""
+        <div style="
+            background: linear-gradient(135deg, {score_color}15 0%, {score_color}25 100%);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            text-align: center;
+            margin-bottom: 2rem;
+            border: 3px solid {score_color};
+        ">
+            <h1 style="font-size: 2.5rem; margin: 0; color: #1F2937; font-weight: 700;">
+                📊 Resume Analysis Results
+            </h1>
+            <div style="
+                font-size: 5rem; 
+                margin: 1rem 0; 
+                font-weight: 800; 
+                color: {score_color};
+                text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+            ">{overall_score:.0f}%</div>
+            <h2 style="font-size: 1.5rem; margin: 0; color: #374151;">Overall Resume Score</h2>
+            <div style="
+                background: {score_color}; 
+                color: white; 
+                padding: 0.5rem 1.5rem; 
+                border-radius: 25px; 
+                display: inline-block; 
+                margin-top: 1rem;
+                font-weight: 600;
+            ">{score_status}</div>
+        </div>
+        """, unsafe_allow_html=True)
         
-        with tab1:
-            st.markdown("<h3 style='color: #1F2937;'>Score Breakdown</h3>", unsafe_allow_html=True)
+        # Score breakdown with enhanced visual progress bars
+        st.markdown("<h2 style='color: #1F2937; margin: 2rem 0 1.5rem 0;'>📈 Detailed Score Analysis</h2>", unsafe_allow_html=True)
+        
+        score_categories = {
+            "📝 Content Quality": {
+                "score": scores.get('content_quality', 0),
+                "description": "Writing quality, impact, and achievements"
+            },
+            "🔍 Keyword Optimization": {
+                "score": scores.get('keyword_optimization', 0), 
+                "description": "Relevant skills and industry keywords"
+            },
+            "🤖 ATS Compatibility": {
+                "score": scores.get('ats_compatibility', 0),
+                "description": "Applicant Tracking System friendliness"
+            },
+            "📐 Document Structure": {
+                "score": scores.get('structure_score', 0),
+                "description": "Organization and formatting quality"
+            },
+            "✅ Profile Completeness": {
+                "score": scores.get('completeness', 0),
+                "description": "Essential sections and contact info"
+            }
+        }
+        
+        for category, data in score_categories.items():
+            score = data["score"]
+            description = data["description"]
+            
+            # Color coding based on score ranges
+            if score >= 85:
+                color = "#10B981"  # Green
+                bg_color = "#D1FAE5"
+                status = "Excellent"
+                icon = "🏆"
+            elif score >= 70:
+                color = "#059669"  # Dark green
+                bg_color = "#ECFDF5" 
+                status = "Very Good"
+                icon = "✅"
+            elif score >= 60:
+                color = "#F59E0B"  # Orange
+                bg_color = "#FFFBEB"
+                status = "Good"
+                icon = "⚡"
+            elif score >= 40:
+                color = "#EF4444"  # Red
+                bg_color = "#FEF2F2"
+                status = "Needs Work"
+                icon = "⚠️"
+            else:
+                color = "#DC2626"  # Dark red
+                bg_color = "#FEE2E2"
+                status = "Critical"
+                icon = "🚨"
+                
+            # Calculate progress bar width (minimum 8% for visibility)
+            progress_width = max(8, score)
+            
+            st.markdown(f"""
+            <div style="
+                background: {bg_color};
+                padding: 1.75rem;
+                border-radius: 12px;
+                margin: 1.25rem 0;
+                border: 2px solid {color};
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            ">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <div>
+                        <h3 style="margin: 0; color: #1F2937; font-weight: 600; font-size: 1.25rem;">
+                            {category}
+                        </h3>
+                        <p style="margin: 0.25rem 0 0 0; color: #6B7280; font-size: 0.9rem;">
+                            {description}
+                        </p>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="font-size: 2rem; font-weight: 800; color: {color}; margin-bottom: 0.25rem;">
+                            {score:.0f}%
+                        </div>
+                        <div style="
+                            font-size: 0.8rem; 
+                            font-weight: 600; 
+                            color: {color}; 
+                            background: white; 
+                            padding: 0.25rem 0.75rem; 
+                            border-radius: 15px;
+                            border: 1px solid {color};
+                        ">
+                            {icon} {status}
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="
+                    background: white;
+                    height: 16px;
+                    border-radius: 8px;
+                    overflow: hidden;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
+                    border: 1px solid #E5E7EB;
+                ">
+                    <div style="
+                        background: linear-gradient(90deg, {color}, {color}dd);
+                        height: 100%;
+                        width: {progress_width}%;
+                        border-radius: 8px;
+                        transition: width 0.8s ease;
+                        position: relative;
+                    ">
+                        <div style="
+                            position: absolute;
+                            right: 8px;
+                            top: 50%;
+                            transform: translateY(-50%);
+                            color: white;
+                            font-size: 0.7rem;
+                            font-weight: 600;
+                            text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+                        ">{score:.0f}%</div>
+                    </div>
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
             
             # Score visualization
             score_data = {
@@ -808,55 +952,36 @@ def show_analysis_page():
                 'Completeness': scores.get('completeness', 0)
             }
             
-            for category, score in score_data.items():
-                color = "🟢" if score >= 70 else "🟡" if score >= 50 else "🔴"
-                progress_bar = "█" * int(score / 10) + "░" * (10 - int(score / 10))
-                st.markdown(f"**{category}** {color} `{progress_bar}` {score:.0f}%")
         
-        with tab2:
-            st.markdown("<h3 style='color: #1F2937;'>Detected Skills</h3>", unsafe_allow_html=True)
-            
-            col1, col2 = st.columns(2)
-            with col1:
-                st.markdown("**🔧 Technical Skills**")
-                tech_skills = results.get('technical_skills', [])
-                if tech_skills:
-                    for skill in tech_skills[:15]:  # Limit display
-                        st.markdown(f"• {skill}")
-                    if len(tech_skills) > 15:
-                        st.markdown(f"*...and {len(tech_skills) - 15} more*")
-                else:
-                    st.markdown("*No technical skills detected*")
-            
-            with col2:
-                st.markdown("**🤝 Soft Skills**")
-                soft_skills = results.get('soft_skills', [])
-                if soft_skills:
-                    for skill in soft_skills[:10]:  # Limit display
-                        st.markdown(f"• {skill}")
-                else:
-                    st.markdown("*No soft skills detected*")
-                    
-            # Action verbs
-            action_verbs = results.get('action_verbs', [])
-            if action_verbs:
-                st.markdown("**⚡ Action Verbs Found**")
-                st.markdown(f"Count: {len(action_verbs)} | Examples: {', '.join(action_verbs[:8])}")
+        # Action buttons with enhanced styling
+        st.markdown("<div style='margin: 3rem 0 2rem 0;'></div>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3, gap="large")
         
-        with tab3:
-            st.markdown("<h3 style='color: #1F2937;'>Improvement Recommendations</h3>", unsafe_allow_html=True)
-            
-            recommendations = results.get('recommendations', [])
-            if recommendations:
-                for i, rec in enumerate(recommendations, 1):
-                    icon = "🎯" if i <= 3 else "💡"
-                    priority = "High Priority" if i <= 3 else "Standard"
-                    st.markdown(f"{icon} **{priority}:** {rec}")
-            else:
-                st.success("🎉 Great job! No major improvements needed.")
-        
-        with tab4:
-            st.markdown("<h3 style='color: #1F2937;'>Detailed Analysis</h3>", unsafe_allow_html=True)
+        with col1:
+            if st.button("📤 Upload New Resume", use_container_width=True, help="Upload and analyze a different resume"):
+                # Clear session state
+                st.session_state.analysis_results = None
+                st.session_state.resume_data = None
+                st.session_state.uploaded_file = None
+                st.session_state.page = 'upload'
+                st.rerun()
+                
+        with col2:
+            if st.button("🎯 Job Matching", use_container_width=True, help="Compare your resume against job descriptions"):
+                st.session_state.page = 'job_matching'
+                st.rerun()
+                
+        with col3:
+            if st.button("✅ ATS Deep Check", use_container_width=True, help="Detailed ATS compatibility analysis"):
+                st.session_state.page = 'ats_check'
+                st.rerun()
+                
+    except Exception as e:
+        st.error(f"Error displaying analysis results: {str(e)}")
+        st.info("Please try analyzing your resume again.")
+        if st.button("🔙 Back to Upload", use_container_width=True):
+            st.session_state.page = 'upload'
+            st.rerun()
             
             # Sections detected
             sections = results.get('sections_detected', [])
@@ -891,22 +1016,25 @@ def show_analysis_page():
                 "Action Verbs Count": results.get('action_verbs_count', 0)
             })
         
-        # Action buttons
-        st.markdown("---")
-        col1, col2, col3 = st.columns(3)
+        # Action buttons with enhanced styling
+        st.markdown("<div style='margin: 3rem 0 2rem 0;'></div>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns(3, gap="large")
+        
         with col1:
-            if st.button("📤 Analyze Another Resume", use_container_width=True):
+            if st.button("📤 Analyze New Resume", use_container_width=True, help="Upload and analyze a different resume"):
                 # Clear session state
                 st.session_state.analysis_results = None
                 st.session_state.resume_data = None
-                st.session_state.page = 'upload'
+                st.session_state.uploaded_file = None
                 st.rerun()
+                
         with col2:
-            if st.button("🎯 Job Matching", use_container_width=True):
+            if st.button("🎯 Job Matching", use_container_width=True, help="Compare your resume against job descriptions"):
                 st.session_state.page = 'job_matching'
                 st.rerun()
+                
         with col3:
-            if st.button("✅ ATS Check", use_container_width=True):
+            if st.button("✅ ATS Deep Check", use_container_width=True, help="Detailed ATS compatibility analysis"):
                 st.session_state.page = 'ats_check'
                 st.rerun()
                 
